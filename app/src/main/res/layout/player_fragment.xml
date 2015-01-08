@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/red" >
+
+    <LinearLayout
+        android:id="@+id/player_top_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="5" >
+
+        <LinearLayout
+            android:id="@+id/player_pitch_area"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/red"
+            android:orientation="vertical" >
+
+            <org.qstuff.qplayer.util.VerticalSeekBar
+                android:id="@+id/pitch_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="30dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="30dp"
+                android:background="#00000000"
+                android:max="100"
+                android:progress="0"
+                android:progressDrawable="@drawable/seekbar_progress_blue"
+                android:thumb="@drawable/seekbar_thumb" />
+        
+        </LinearLayout>
+		
+		<LinearLayout
+            android:id="@+id/player_shift_area"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/blue"
+            android:layout_weight="2" >
+
+            <TextView
+                android:id="@+id/player_shift_ph"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="SHIFT"
+                android:textSize="15sp" />
+        </LinearLayout>
+    
+    </LinearLayout>
+    
+    <LinearLayout 
+        android:id="@+id/player_buttons_row_one"
+        android:orientation="horizontal"
+    	android:layout_width="match_parent"
+    	android:layout_height="0dp"
+    	android:layout_weight="1">
+   	
+   		<ImageButton
+   		    android:id="@+id/player_button_previous"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="wrap_content"
+	   	    android:layout_marginLeft="15dp"
+	   	    android:layout_marginRight="15dp"
+	   	    android:layout_marginBottom="5dp"
+	   	    android:layout_marginTop="5dp"
+	   	    android:gravity="center"
+	   	    android:src="@drawable/av_previous"
+	   	    android:background="@color/white"
+    		android:layout_weight="1" />
+   	
+   		<ImageButton
+   		    android:id="@+id/player_button_play"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="wrap_content"
+	   	    android:layout_marginLeft="15dp"
+	   	    android:layout_marginRight="15dp"
+	   	    android:layout_marginBottom="5dp"
+	   	    android:layout_marginTop="5dp"
+	   	    android:gravity="center"
+	   	    android:src="@drawable/av_play"
+	   	    android:background="@color/white"
+    		android:layout_weight="1" />
+   		
+   		<ImageButton
+   		    android:id="@+id/player_button_next"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="wrap_content"
+	   	    android:layout_marginLeft="15dp"
+	   	    android:layout_marginRight="15dp"
+	   	    android:layout_marginBottom="5dp"
+	   	    android:layout_marginTop="5dp"
+	   	    android:gravity="center"
+	   	    android:src="@drawable/av_next"
+	   	    android:background="@color/white"
+    		android:layout_weight="1" />
+   		
+   	</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/player_buttons_row_two"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
+
+    	<ImageButton
+   		    android:id="@+id/player_button_shuffle"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="wrap_content"
+	   	    android:layout_marginLeft="15dp"
+	   	    android:layout_marginRight="15dp"
+	   	    android:layout_marginBottom="5dp"
+	   	    android:layout_marginTop="5dp"
+	   	    android:gravity="center"
+	   	    android:src="@drawable/av_shuffle"
+	   	    android:background="@color/white"
+    		android:layout_weight="1" />
+   	
+   		<ImageButton
+   		    android:id="@+id/player_button_repeat"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="wrap_content"
+	   	    android:layout_marginLeft="15dp"
+	   	    android:layout_marginRight="15dp"
+	   	    android:layout_marginBottom="5dp"
+	   	    android:layout_marginTop="5dp"
+	   	    android:gravity="center"
+	   	    android:src="@drawable/av_repeat"
+	   	    android:background="@color/white"
+    		android:layout_weight="1" />
+   		
+   		<ImageButton
+   		    android:id="@+id/player_button_fullscreen"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="wrap_content"
+	   	    android:layout_marginLeft="15dp"
+	   	    android:layout_marginRight="15dp"
+	   	    android:layout_marginBottom="5dp"
+	   	    android:layout_marginTop="5dp"
+	   	    android:gravity="center"
+	   	    android:src="@drawable/av_full_screen"
+	   	    android:background="@color/white"
+    		android:layout_weight="1" />
+    
+    </LinearLayout>
+
+    <LinearLayout 
+        android:id="@+id/player_current_track"
+        android:orientation="horizontal"
+    	android:layout_width="match_parent"
+    	android:layout_height="0dp"
+    	android:layout_weight="1">
+	    	
+	   	<TextView
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="wrap_content"
+	   	    android:layout_marginLeft="15dp"
+	   	    android:layout_marginRight="15dp"
+	   	    android:layout_marginBottom="5dp"
+	   	    android:layout_marginTop="5dp"
+	   	    android:background="@color/white"
+	   	    android:gravity="center"
+	   	    android:text="CURRENT TRACK"
+	   	    android:textColor="@color/black"
+	   	    android:textSize="20sp" />
+	
+	</LinearLayout>
+   	
+</LinearLayout>
+
