@@ -11,6 +11,9 @@ android {
 
         ndk {
             moduleName "opensles_wrap"
+            cFlags "-DHAVE_CONFIG_H -DFPM_ARM -ffast-math -O3"
+            ldLibs "OpenSLES", "log"
+            stl "stlport_shared"
         }
     }
 
