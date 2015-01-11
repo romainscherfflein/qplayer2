@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * 
@@ -37,6 +38,8 @@ public class PlayerFragment extends Fragment
     @InjectView(R.id.player_button_fullscreen)  ImageButton buttonFullscreen;
     @InjectView(R.id.player_text_current_track) TextView textCurrentTrack;
 
+    private QNativeMediaPlayer player;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);    //To change body of overridden methods use File | Settings | File Templates.
@@ -47,17 +50,20 @@ public class PlayerFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate():");
+
+        player = QNativeMediaPlayer.getInstance();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         Log.d(TAG, "onCreateView():");
-        
+
         View v = inflater.inflate(R.layout.player_fragment, container, false);
         ButterKnife.inject(this, v);
 
         pitchControl.setOnSeekBarChangeListener(this);
+
         return v;
     }
 
@@ -65,16 +71,48 @@ public class PlayerFragment extends Fragment
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume():");
+
+        setAudioFileUri("file:///android_asset/haijaijai.mp3");
+        textCurrentTrack.setText("Echolozn: haijaijai");
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause():");
     }
-    
-    /////////////////////////////////////////////////////////////////////
-    // OnSeekbarChangeListener
-    
+
+    //
+    //
+    //
+
+    public void setAudioFileUri(String uri) {
+        player.setAudioFileUri(uri);
+    }
+
+    //
+    // Player Buttons
+    //
+
+    @OnClick(R.id.player_button_play)
+    public void playButtonClicked() {
+        Log.d(TAG, "playButtonClicked()");
+
+        if (!player.isPlayerReady()) return;
+
+        if (player.isPlaying()) {
+            player.pause();
+            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_play));
+        } else {
+            player.play();
+            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_pause));
+        }
+    }
+
+    //
+    //  OnSeekbarChangeListener
+    //
+
  	@Override
  	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
  		Log.d(TAG, "onProgressChanged(): SB ID: " + seekBar.getId());

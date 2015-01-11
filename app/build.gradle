@@ -7,7 +7,9 @@ android {
     defaultConfig {
         applicationId "org.qstuff.qplayer"
         minSdkVersion 10
-        targetSdkVersion 19
+        targetSdkVersion 21
+        versionCode 1
+        versionName "0.6.0"
 
         ndk {
             moduleName "opensles_wrap"

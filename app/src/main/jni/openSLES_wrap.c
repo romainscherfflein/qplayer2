@@ -46,7 +46,7 @@ static SLpermille playbackMinPitch = 500;
 static SLpermille playbackMaxPitch = 2000;
 
 JNIEXPORT jboolean
-Java_net_antamauna_android_djplayer_mediaplayer_QMediaPlayer_createEngine(
+Java_org_qstuff_qplayer_player_QNativeMediaPlayer_createEngine(
 		JNIEnv* env, jclass clazz) {
 	LOG_INF("createEngine(): called");
 
@@ -227,7 +227,11 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_createAudioPlayer(
      (*uriPlaybackRate)->SetRate(uriPlaybackRate, minRate);
      */
 
-    return JNI_TRUE;
+    if (SL_RESULT_SUCCESS == result) {
+        return JNI_TRUE;
+    } else {
+        return JNI_FALSE;
+    }
 }
 
 JNIEXPORT jboolean
@@ -278,42 +282,42 @@ SLuint32 getPlayState() {
 }
 
 JNIEXPORT void
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_play(JNIEnv* env,
+Java_org_qstuff_qplayer_player_QNativeMediaPlayer_playNative(JNIEnv* env,
         jclass clazz) {
 	LOG_INF("JNI: play(): called");
     setPlayState(SL_PLAYSTATE_PLAYING);
 }
 
 JNIEXPORT void
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_stop(JNIEnv* env,
+Java_org_qstuff_qplayer_player_QNativeMediaPlayer_stopNative(JNIEnv* env,
         jclass clazz) {
 	LOG_INF("JNI: stop(): called");
     setPlayState(SL_PLAYSTATE_STOPPED);
 }
 
 JNIEXPORT void
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_pause(JNIEnv* env,
+Java_org_qstuff_qplayer_player_QNativeMediaPlayer_pauseNative(JNIEnv* env,
         jclass clazz) {
 	LOG_INF("JNI: pause(): called");
     setPlayState(SL_PLAYSTATE_PAUSED);
 }
 
 JNIEXPORT jboolean
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_isPlaying(
+Java_org_qstuff_qplayer_player_QNativeMediaPlayer_isPlayingNative(
         JNIEnv* env, jclass clazz) {
 	LOG_INF("JNI: isPlaying(): called");
     return (getPlayState() == SL_PLAYSTATE_PLAYING);
 }
 
 JNIEXPORT jboolean
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_isPaused(
+Java_org_qstuff_qplayer_player_QNativeMediaPlayer_isPausedNative(
         JNIEnv* env, jclass clazz) {
 	LOG_INF("JNI: isPaused(): called");
     return (getPlayState() == SL_PLAYSTATE_PAUSED);
 }
 
 JNIEXPORT jboolean
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_isStopped(
+Java_org_qstuff_qplayer_player_QNativeMediaPlayer_isStoppedNative(
         JNIEnv* env, jclass clazz) {
 	LOG_INF("JNI: isStopped(): called");
     return (getPlayState() == SL_PLAYSTATE_STOPPED);
