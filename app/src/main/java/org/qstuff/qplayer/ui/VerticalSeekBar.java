@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.util;
+package org.qstuff.qplayer.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;

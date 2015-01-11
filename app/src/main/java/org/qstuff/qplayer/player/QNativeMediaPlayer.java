@@ -1,4 +1,4 @@
-package org.qstuff.qplayer;
+package org.qstuff.qplayer.player;
 
 import android.util.Log;
 
@@ -7,9 +7,9 @@ import android.util.Log;
  * 
  * @author claus chierici (cc@codeyard.de)
  */
-public class QMediaPlayer {
+public class QNativeMediaPlayer {
 
-	private static final String TAG = "QMediaPlayer";
+	private static final String TAG = "QNativeMediaPlayer";
 	
 	public native boolean createEngine();
     public native boolean releaseEngine();
@@ -33,24 +33,24 @@ public class QMediaPlayer {
     public native void    setLoop( int startPos, int endPos );
     public native void    setNoLoop();
 	
-    private static QMediaPlayer instance;
+    private static QNativeMediaPlayer instance;
     
     static {
     	System.loadLibrary("opensles_wrap");
     }
     
     
-    private QMediaPlayer() {
+    private QNativeMediaPlayer() {
     	super();
     	Log.i(TAG, "CTOR()");
     }
     
     
-    public static QMediaPlayer getQMediaPlayer() {
-    	Log.i(TAG, "getQMediaPla():");
+    public static QNativeMediaPlayer getInstance() {
+    	Log.i(TAG, "getInstance():");
 
     	if (instance == null) {
-			instance = new QMediaPlayer();
+			instance = new QNativeMediaPlayer();
 		}
 		return instance;
     }

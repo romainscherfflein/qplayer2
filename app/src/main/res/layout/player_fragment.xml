@@ -20,7 +20,7 @@
             android:background="@color/red"
             android:orientation="vertical" >
 
-            <org.qstuff.qplayer.util.VerticalSeekBar
+            <org.qstuff.qplayer.ui.VerticalSeekBar
                 android:id="@+id/pitch_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

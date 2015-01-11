@@ -3,14 +3,13 @@ package org.qstuff.qplayer;
 import org.qstuff.qplayer.content.ContentFragment;
 import org.qstuff.qplayer.content.FilesystemBrowserFragment;
 import org.qstuff.qplayer.player.PlayerFragment;
+import org.qstuff.qplayer.ui.OnSlidingPaneControl;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
 /**
  * 

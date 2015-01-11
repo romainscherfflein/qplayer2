@@ -1,4 +1,4 @@
-package org.qstuff.qplayer;
+package org.qstuff.qplayer.ui;
 
 import org.qstuff.qplayer.content.FilesystemBrowserFragment;
 

@@ -1,7 +1,7 @@
 package org.qstuff.qplayer.player;
 
 import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.util.VerticalSeekBar;
+import org.qstuff.qplayer.ui.VerticalSeekBar;
 
 import android.app.Activity;
 import android.os.Bundle;
