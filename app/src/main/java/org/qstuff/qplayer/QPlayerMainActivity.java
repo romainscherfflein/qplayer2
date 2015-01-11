@@ -51,6 +51,4 @@ public class QPlayerMainActivity extends FragmentActivity
 
         contentFragment.addNewRightPane(fragment, path);
     }
-
-    
 }

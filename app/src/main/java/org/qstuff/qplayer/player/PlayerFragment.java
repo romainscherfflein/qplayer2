@@ -10,8 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 /**
  * 
@@ -23,7 +28,14 @@ public class PlayerFragment extends Fragment
 
     private static final String TAG = "PlayerFragment";
 
-    private VerticalSeekBar seekBarPitch;
+    @InjectView(R.id.pitch_control)             VerticalSeekBar pitchControl;
+    @InjectView(R.id.player_button_previous)    ImageButton buttonPrevious;
+    @InjectView(R.id.player_button_play)        ImageButton buttonPlay;
+    @InjectView(R.id.player_button_next)        ImageButton buttonNext;
+    @InjectView(R.id.player_button_shuffle)     ImageButton buttonShuffle;
+    @InjectView(R.id.player_button_repeat)      ImageButton buttonRepeat;
+    @InjectView(R.id.player_button_fullscreen)  ImageButton buttonFullscreen;
+    @InjectView(R.id.player_text_current_track) TextView textCurrentTrack;
 
     @Override
     public void onAttach(Activity activity) {
@@ -35,18 +47,17 @@ public class PlayerFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate():");
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         Log.d(TAG, "onCreateView():");
-        View v = inflater.inflate(R.layout.player_fragment, container, false);
         
-        seekBarPitch = (VerticalSeekBar) v.findViewById(R.id.pitch_bar);
-        seekBarPitch.setOnSeekBarChangeListener(this);
-        seekBarPitch.setProgress(50);
+        View v = inflater.inflate(R.layout.player_fragment, container, false);
+        ButterKnife.inject(this, v);
+
+        pitchControl.setOnSeekBarChangeListener(this);
         return v;
     }
 
@@ -68,7 +79,7 @@ public class PlayerFragment extends Fragment
  	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
  		Log.d(TAG, "onProgressChanged(): SB ID: " + seekBar.getId());
 		
-		if (seekBar.getId() == R.id.pitch_bar) {
+		if (seekBar.getId() == R.id.pitch_control) {
 			Log.i(TAG, "onProgressChanged(): pitch bar value:" + progress);
 
 			int diff = progress - 50;
