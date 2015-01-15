@@ -164,55 +164,83 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_createAudioPlayer(
     result = (*uriPlayerObject)->GetInterface(uriPlayerObject, SL_IID_PLAY,
             &uriPlayerPlay);
     assert(SL_RESULT_SUCCESS == result);
+    if (SL_RESULT_FEATURE_UNSUPPORTED == result) {
+    	LOG_ERR("Feature Unsupported: GetInterface(PLAY)");
+    }
 
     // get the seek interface
     result = (*uriPlayerObject)->GetInterface(uriPlayerObject, SL_IID_SEEK,
             &uriPlayerSeek);
     assert(SL_RESULT_SUCCESS == result);
+    if (SL_RESULT_FEATURE_UNSUPPORTED == result) {
+    	LOG_ERR("Feature Unsupported: GetInterface(SEEK)");
+    }
 
     // get playback rate interface
     result = (*uriPlayerObject)->GetInterface(uriPlayerObject,
             SL_IID_PLAYBACKRATE, &uriPlaybackRate);
     assert(SL_RESULT_SUCCESS == result);
+    if (SL_RESULT_FEATURE_UNSUPPORTED == result) {
+    	LOG_ERR("Feature Unsupported: GetInterface(PLAYBACKRATE)");
+    }
 
     // get playback pitch interface
+    // TODO: not supported
+    /*
     result = (*uriPlayerObject)->GetInterface(uriPlayerObject, SL_IID_PITCH, &uriPlaybackPitch);
     assert(SL_RESULT_SUCCESS == result);
+    if (SL_RESULT_FEATURE_UNSUPPORTED == result) {
+    	LOG_ERR("Feature Unsupported: GetInterface(PITCH)");
+    }
+    */
 
     // register callback function
     result = (*uriPlayerPlay)->RegisterCallback(uriPlayerPlay,
             playStatusCallback, 0);
     assert(SL_RESULT_SUCCESS == result);
+    if (SL_RESULT_FEATURE_UNSUPPORTED == result) {
+    	LOG_ERR("Feature Unsupported: RegisterCallback()");
+    }
+
     result = (*uriPlayerPlay)->SetCallbackEventsMask(uriPlayerPlay,
             SL_PLAYEVENT_HEADATEND); // head at end
     assert(SL_RESULT_SUCCESS == result);
+    if (SL_RESULT_FEATURE_UNSUPPORTED == result) {
+    	LOG_ERR("Feature Unsupported: SetCallbackEventsMask()");
+    }
 
     SLmillisecond msec;
     result = (*uriPlayerPlay)->GetDuration(uriPlayerPlay, &msec);
     assert(SL_RESULT_SUCCESS == result);
+    if (SL_RESULT_FEATURE_UNSUPPORTED == result) {
+    	LOG_ERR("Feature Unsupported: GetDuration():");
+    }
 
     // no loop
     result = (*uriPlayerSeek)->SetLoop(uriPlayerSeek, SL_BOOLEAN_TRUE, 0, msec);
     assert(SL_RESULT_SUCCESS == result);
+    if (SL_RESULT_FEATURE_UNSUPPORTED == result) {
+    	LOG_ERR("Feature Unsupported: SetLoop()");
+    }
 
     SLuint32 capa;
     result = (*uriPlaybackRate)->GetRateRange(uriPlaybackRate, 0,
     		&playbackMinRate, &playbackMaxRate, &playbackRateStepSize, &capa);
-
     assert(SL_RESULT_SUCCESS == result);
+
+    if (SL_RESULT_FEATURE_UNSUPPORTED == result) {
+    	LOG_ERR("Feature Unsupported: GetRateRange()");
+    }
 
     result = (*uriPlaybackRate)->SetPropertyConstraints(uriPlaybackRate,
     		SL_RATEPROP_PITCHCORAUDIO);
+    assert(SL_RESULT_SUCCESS == result);
 
     if (SL_RESULT_PARAMETER_INVALID == result) {
     	LOG_ERR("Parameter Invalid");
     }
     if (SL_RESULT_FEATURE_UNSUPPORTED == result) {
-    	LOG_ERR("Feature Unsupported");
-    }
-    if (SL_RESULT_SUCCESS == result) {
-    	assert(SL_RESULT_SUCCESS == result);
-    	LOG_DBG("Success");
+    	LOG_ERR("Feature Unsupported: SetPropertyConstraints()");
     }
 
     /*
@@ -228,9 +256,11 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_createAudioPlayer(
      */
 
     if (SL_RESULT_SUCCESS == result) {
+        LOG_DBG("createAudioPlayer(): Success");
         return JNI_TRUE;
     } else {
-        return JNI_FALSE;
+        LOG_DBG("createAudioPlayer(): Fail");
+        return JNI_TRUE;
     }
 }
 

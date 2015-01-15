@@ -4,6 +4,9 @@ import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.ui.VerticalSeekBar;
 
 import android.app.Activity;
+import android.content.res.AssetFileDescriptor;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +18,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import java.io.IOException;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -25,7 +30,10 @@ import butterknife.OnClick;
  *
  */
 public class PlayerFragment extends Fragment 
-	implements OnSeekBarChangeListener {
+	implements OnSeekBarChangeListener,
+        MediaPlayer.OnPreparedListener,
+        MediaPlayer.OnErrorListener,
+        MediaPlayer.OnCompletionListener {
 
     private static final String TAG = "PlayerFragment";
 
@@ -38,11 +46,13 @@ public class PlayerFragment extends Fragment
     @InjectView(R.id.player_button_fullscreen)  ImageButton buttonFullscreen;
     @InjectView(R.id.player_text_current_track) TextView textCurrentTrack;
 
-    private QNativeMediaPlayer player;
+    // private QNativeMediaPlayer player;
+    private MediaPlayer        player;
+    private boolean            isPrepared;
 
     @Override
     public void onAttach(Activity activity) {
-        super.onAttach(activity);    //To change body of overridden methods use File | Settings | File Templates.
+        super.onAttach(activity);
         Log.d(TAG, "onAttach():");
     }
 
@@ -51,7 +61,9 @@ public class PlayerFragment extends Fragment
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate():");
 
-        player = QNativeMediaPlayer.getInstance();
+        if (player == null)
+            player = new MediaPlayer();
+        player.reset();
     }
 
     @Override
@@ -72,7 +84,19 @@ public class PlayerFragment extends Fragment
         super.onResume();
         Log.d(TAG, "onResume():");
 
-        setAudioFileUri("file:///android_asset/haijaijai.mp3");
+        // FIXME:
+        try {
+            AssetFileDescriptor afd = getActivity().getAssets().openFd("haijaijai.mp3");
+            player.reset();
+            player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            player.prepare();
+            isPrepared = true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
         textCurrentTrack.setText("Echolozn: haijaijai");
     }
 
@@ -82,12 +106,53 @@ public class PlayerFragment extends Fragment
         Log.d(TAG, "onPause():");
     }
 
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy():");
+        cleanupPlayer();
+    }
+
     //
     //
     //
 
-    public void setAudioFileUri(String uri) {
-        player.setAudioFileUri(uri);
+    public void loadNewAudioFile(String uri) {
+        Log.d(TAG, "loadNewAudioFile():");
+
+        preparePlayer(uri);
+    }
+
+    private void cleanupPlayer() {
+        Log.d(TAG, "cleanupPlayer():");
+
+        if (player != null) {
+//            resetUpdateTimer();
+            player.stop();
+            player.release();
+            player = null;
+            isPrepared = false;
+        }
+    }
+
+    private void preparePlayer(String uri) {
+        Log.d(TAG, "preparePlayer(): " + uri);
+
+        if (player == null) {
+            Log.w(TAG, "preparePlayer(): player null !");
+            return;
+        }
+
+        try {
+            player.setDataSource(uri);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        player.setOnPreparedListener(this);
+        player.setOnCompletionListener(this);
+        player.setOnErrorListener(this);
+        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        player.prepareAsync();
     }
 
     //
@@ -96,15 +161,15 @@ public class PlayerFragment extends Fragment
 
     @OnClick(R.id.player_button_play)
     public void playButtonClicked() {
-        Log.d(TAG, "playButtonClicked()");
+        Log.d(TAG, "playButtonClicked(): ");
 
-        if (!player.isPlayerReady()) return;
+        if (!isPrepared) return;
 
         if (player.isPlaying()) {
             player.pause();
             buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_play));
         } else {
-            player.play();
+            player.start();
             buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_pause));
         }
     }
@@ -126,7 +191,7 @@ public class PlayerFragment extends Fragment
 			//String pitch = String.format("%.02f", currPitch);
 			//Log.i(TAG, "onProgressChanged(): current: " + pitch);
 			
-			//mediaPlayer.setPlaybackRate(1000 + (diff * pitchRange));
+			// player.setPlaybackRate(1000 + (diff * pitchRange));
 			//pitchCurrent.setText(pitch+"%");
 		}
  	}
@@ -137,10 +202,25 @@ public class PlayerFragment extends Fragment
  		
  	}
 
-
  	@Override
  	public void onStopTrackingTouch(SeekBar arg0) {
  		// TODO Auto-generated method stub
  		
  	}
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        Log.d(TAG, "onPrepared():");
+    }
+
+    @Override
+    public boolean onError(MediaPlayer mp, int what, int extra) {
+        Log.d(TAG, "onError():");
+        return false;
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        Log.d(TAG, "onCompletion():");
+    }
 }

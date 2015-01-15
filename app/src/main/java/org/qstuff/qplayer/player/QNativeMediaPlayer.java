@@ -114,7 +114,7 @@ public class QNativeMediaPlayer {
 
         currentAudioUri = uri;
         boolean ret = createAudioPlayer(uri);
-        Log.d(TAG, "setAudioFileUri(): success: " + ret);
+        Log.d(TAG, "loadNewAudioFile(): success: " + ret);
         isPlayerReady = ret;
     }
 }
