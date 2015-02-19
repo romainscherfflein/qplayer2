@@ -1,17 +1,28 @@
 package org.qstuff.qplayer.player;
 
 import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.util.VerticalSeekBar;
+import org.qstuff.qplayer.ui.VerticalSeekBar;
 
 import android.app.Activity;
+import android.content.res.AssetFileDescriptor;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+
+import java.io.IOException;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * 
@@ -19,15 +30,29 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
  *
  */
 public class PlayerFragment extends Fragment 
-	implements OnSeekBarChangeListener {
+	implements OnSeekBarChangeListener,
+        MediaPlayer.OnPreparedListener,
+        MediaPlayer.OnErrorListener,
+        MediaPlayer.OnCompletionListener {
 
     private static final String TAG = "PlayerFragment";
 
-    private VerticalSeekBar seekBarPitch;
+    @InjectView(R.id.pitch_control)             VerticalSeekBar pitchControl;
+    @InjectView(R.id.player_button_previous)    ImageButton buttonPrevious;
+    @InjectView(R.id.player_button_play)        ImageButton buttonPlay;
+    @InjectView(R.id.player_button_next)        ImageButton buttonNext;
+    @InjectView(R.id.player_button_shuffle)     ImageButton buttonShuffle;
+    @InjectView(R.id.player_button_repeat)      ImageButton buttonRepeat;
+    @InjectView(R.id.player_button_fullscreen)  ImageButton buttonFullscreen;
+    @InjectView(R.id.player_text_current_track) TextView textCurrentTrack;
+
+    // private QNativeMediaPlayer player;
+    private MediaPlayer        player;
+    private boolean            isPrepared;
 
     @Override
     public void onAttach(Activity activity) {
-        super.onAttach(activity);    //To change body of overridden methods use File | Settings | File Templates.
+        super.onAttach(activity);
         Log.d(TAG, "onAttach():");
     }
 
@@ -36,17 +61,21 @@ public class PlayerFragment extends Fragment
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate():");
 
+        if (player == null)
+            player = new MediaPlayer();
+        player.reset();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         Log.d(TAG, "onCreateView():");
+
         View v = inflater.inflate(R.layout.player_fragment, container, false);
-        
-        seekBarPitch = (VerticalSeekBar) v.findViewById(R.id.pitch_bar);
-        seekBarPitch.setOnSeekBarChangeListener(this);
-        seekBarPitch.setProgress(50);
+        ButterKnife.inject(this, v);
+
+        pitchControl.setOnSeekBarChangeListener(this);
+
         return v;
     }
 
@@ -54,21 +83,106 @@ public class PlayerFragment extends Fragment
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume():");
+
+        // FIXME:
+        try {
+            AssetFileDescriptor afd = getActivity().getAssets().openFd("haijaijai.mp3");
+            player.reset();
+            player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            player.prepare();
+            isPrepared = true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        textCurrentTrack.setText("Echolozn: haijaijai");
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause():");
     }
-    
-    /////////////////////////////////////////////////////////////////////
-    // OnSeekbarChangeListener
-    
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy():");
+        cleanupPlayer();
+    }
+
+    //
+    //
+    //
+
+    public void loadNewAudioFile(String uri) {
+        Log.d(TAG, "loadNewAudioFile():");
+
+        preparePlayer(uri);
+    }
+
+    private void cleanupPlayer() {
+        Log.d(TAG, "cleanupPlayer():");
+
+        if (player != null) {
+//            resetUpdateTimer();
+            player.stop();
+            player.release();
+            player = null;
+            isPrepared = false;
+        }
+    }
+
+    private void preparePlayer(String uri) {
+        Log.d(TAG, "preparePlayer(): " + uri);
+
+        if (player == null) {
+            Log.w(TAG, "preparePlayer(): player null !");
+            return;
+        }
+
+        try {
+            player.setDataSource(uri);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        player.setOnPreparedListener(this);
+        player.setOnCompletionListener(this);
+        player.setOnErrorListener(this);
+        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        player.prepareAsync();
+    }
+
+    //
+    // Player Buttons
+    //
+
+    @OnClick(R.id.player_button_play)
+    public void playButtonClicked() {
+        Log.d(TAG, "playButtonClicked(): ");
+
+        if (!isPrepared) return;
+
+        if (player.isPlaying()) {
+            player.pause();
+            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_play));
+        } else {
+            player.start();
+            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_pause));
+        }
+    }
+
+    //
+    //  OnSeekbarChangeListener
+    //
+
  	@Override
  	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
  		Log.d(TAG, "onProgressChanged(): SB ID: " + seekBar.getId());
 		
-		if (seekBar.getId() == R.id.pitch_bar) {
+		if (seekBar.getId() == R.id.pitch_control) {
 			Log.i(TAG, "onProgressChanged(): pitch bar value:" + progress);
 
 			int diff = progress - 50;
@@ -77,7 +191,7 @@ public class PlayerFragment extends Fragment
 			//String pitch = String.format("%.02f", currPitch);
 			//Log.i(TAG, "onProgressChanged(): current: " + pitch);
 			
-			//mediaPlayer.setPlaybackRate(1000 + (diff * pitchRange));
+			// player.setPlaybackRate(1000 + (diff * pitchRange));
 			//pitchCurrent.setText(pitch+"%");
 		}
  	}
@@ -88,10 +202,25 @@ public class PlayerFragment extends Fragment
  		
  	}
 
-
  	@Override
  	public void onStopTrackingTouch(SeekBar arg0) {
  		// TODO Auto-generated method stub
  		
  	}
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        Log.d(TAG, "onPrepared():");
+    }
+
+    @Override
+    public boolean onError(MediaPlayer mp, int what, int extra) {
+        Log.d(TAG, "onError():");
+        return false;
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        Log.d(TAG, "onCompletion():");
+    }
 }

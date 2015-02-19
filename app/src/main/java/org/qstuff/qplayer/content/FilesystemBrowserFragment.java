@@ -3,7 +3,6 @@ package org.qstuff.qplayer.content;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import org.qstuff.qplayer.OnSlidingPaneControl;
+
+import org.qstuff.qplayer.ui.OnSlidingPaneControl;
 import org.qstuff.qplayer.R;
 
 import java.io.File;
