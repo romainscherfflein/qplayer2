@@ -1,6 +1,6 @@
 package org.qstuff.qplayer;
 
-import org.qstuff.qplayer.content.ContentFragment;
+import org.qstuff.qplayer.content.ContentPagerFragment;
 import org.qstuff.qplayer.content.FilesystemBrowserFragment;
 import org.qstuff.qplayer.player.PlayerFragment;
 import org.qstuff.qplayer.ui.OnSlidingPaneControl;
@@ -12,17 +12,16 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
 /**
- * 
- * @author claus chierici (cc@codeyard.de)
+ * Created by Claus Chierici (github@antamauna.net) on 2/19/15
  *
+ * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
-public class QPlayerMainActivity extends FragmentActivity
-    implements OnSlidingPaneControl {
+public class QPlayerMainActivity extends FragmentActivity {
 
     private final static String TAG = "QPlayerMainActivity";
 
-    private ContentFragment contentFragment;
-    private PlayerFragment  playerFragment;
+    private ContentPagerFragment contentFragment;
+    private PlayerFragment       playerFragment;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,16 +38,9 @@ public class QPlayerMainActivity extends FragmentActivity
         playerFragment = new PlayerFragment();
         ft.replace(R.id.player_area, playerFragment);
 
-        contentFragment = new ContentFragment();
+        contentFragment = new ContentPagerFragment();
         ft.replace(R.id.content_area, contentFragment);
 
         ft.commitAllowingStateLoss();
-    }
-
-    // OnSlidingPaneControl
-    @Override
-    public void addNewRightPane(FilesystemBrowserFragment fragment, String path) {
-
-        contentFragment.addNewRightPane(fragment, path);
     }
 }
