@@ -9,7 +9,6 @@ import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +61,7 @@ public class PlayerFragment extends AbstractBaseFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate():");
+        Timber.d("onCreate():");
 
         if (player == null)
             player = new MediaPlayer();
@@ -72,7 +71,7 @@ public class PlayerFragment extends AbstractBaseFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        Log.d(TAG, "onCreateView():");
+        Timber.d("onCreateView():");
 
         View v = inflater.inflate(R.layout.player_fragment, container, false);
         ButterKnife.inject(this, v);
@@ -85,7 +84,6 @@ public class PlayerFragment extends AbstractBaseFragment
     @Override
     public void onResume() {
         super.onResume();
-        bus.register(this);
 
         // FIXME:
         try {
@@ -106,7 +104,6 @@ public class PlayerFragment extends AbstractBaseFragment
     @Override
     public void onPause() {
         super.onPause();
-        bus.unregister(this);
     }
 
     @Override
@@ -125,17 +122,17 @@ public class PlayerFragment extends AbstractBaseFragment
     }
 
     //
-    //
+    // Public API
     //
 
     public void loadNewAudioFile(String uri) {
-        Log.d(TAG, "loadNewAudioFile():");
+        Timber.d("loadNewAudioFile():");
 
         preparePlayer(uri);
     }
 
     private void cleanupPlayer() {
-        Log.d(TAG, "cleanupPlayer():");
+        Timber.d("cleanupPlayer():");
 
         if (player != null) {
 //            resetUpdateTimer();
@@ -147,10 +144,10 @@ public class PlayerFragment extends AbstractBaseFragment
     }
 
     private void preparePlayer(String uri) {
-        Log.d(TAG, "preparePlayer(): " + uri);
+        Timber.d("preparePlayer(): " + uri);
 
         if (player == null) {
-            Log.w(TAG, "preparePlayer(): player null !");
+            Timber.w("preparePlayer(): player null !");
             return;
         }
 
@@ -168,12 +165,12 @@ public class PlayerFragment extends AbstractBaseFragment
     }
 
     //
-    // Player Buttons
+    // Click Handlers
     //
 
     @OnClick(R.id.player_button_play)
     public void playButtonClicked() {
-        Log.d(TAG, "playButtonClicked(): ");
+        Timber.d("playButtonClicked(): ");
 
         if (!isPrepared) return;
 
@@ -192,10 +189,10 @@ public class PlayerFragment extends AbstractBaseFragment
 
  	@Override
  	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
- 		Log.d(TAG, "onProgressChanged(): SB ID: " + seekBar.getId());
+ 		Timber.d("onProgressChanged(): SB ID: " + seekBar.getId());
 		
 		if (seekBar.getId() == R.id.pitch_control) {
-			Log.i(TAG, "onProgressChanged(): pitch bar value:" + progress);
+            Timber.d("onProgressChanged(): pitch bar value:" + progress);
 
 			int diff = progress - 50;
 			
@@ -222,17 +219,17 @@ public class PlayerFragment extends AbstractBaseFragment
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        Log.d(TAG, "onPrepared():");
+        Timber.d("onPrepared():");
     }
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        Log.d(TAG, "onError():");
+        Timber.d("onError():");
         return false;
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        Log.d(TAG, "onCompletion():");
+        Timber.d("onCompletion():");
     }
 }

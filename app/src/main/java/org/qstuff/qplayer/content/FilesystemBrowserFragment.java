@@ -60,8 +60,6 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         Timber.d("onCreateView():");
 
-        bus.register(this);
-
         View view = inflater.inflate(R.layout.filesystem_browser_fragment, container, false);
         ButterKnife.inject(this, view);
 
@@ -103,12 +101,12 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        bus.unregister(this);
     }
 
     //
     // Click Handlers
     //
+
     @OnItemClick (R.id.filesystem_listview)
     public void onListItemClicked(int position) {
         Timber.d("onListItemClicked: pos: " + position);
@@ -169,6 +167,10 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         Timber.d("setPaneTag(): "+paneTag);
         this.paneTag = paneTag;
     }
+
+    //
+    // Private
+    //
 
     private void browseTo(final File dir) {
 		Log.i(TAG, "browseTo(): " + dir.getAbsolutePath());

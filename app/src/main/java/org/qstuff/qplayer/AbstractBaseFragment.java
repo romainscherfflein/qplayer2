@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 
 import com.squareup.otto.Bus;
 
+import javax.inject.Inject;
+
 /**
  * Created by Claus Chierici (chierici@karlmax-berlin.com) on 4/16/15
  * for Karlmax Berlin GmbH & Co. KG
@@ -15,7 +17,7 @@ import com.squareup.otto.Bus;
  */
 public class AbstractBaseFragment extends Fragment {
 
-    protected Bus bus;
+    @Inject protected Bus bus;
 
 
     @Override
@@ -23,17 +25,18 @@ public class AbstractBaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         bus = new Bus();
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        bus.register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        bus.unregister(this);
     }
 
     protected void onEvent() {
