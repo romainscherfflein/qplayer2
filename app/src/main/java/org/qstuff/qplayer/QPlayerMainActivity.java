@@ -1,9 +1,7 @@
 package org.qstuff.qplayer;
 
-import org.qstuff.qplayer.content.ContentPagerFragment;
-import org.qstuff.qplayer.content.FilesystemBrowserFragment;
+import org.qstuff.qplayer.content.ContentFragment;
 import org.qstuff.qplayer.player.PlayerFragment;
-import org.qstuff.qplayer.ui.OnSlidingPaneControl;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -20,8 +18,8 @@ public class QPlayerMainActivity extends FragmentActivity {
 
     private final static String TAG = "QPlayerMainActivity";
 
-    private ContentPagerFragment contentFragment;
-    private PlayerFragment       playerFragment;
+    private ContentFragment contentFragment;
+    private PlayerFragment      playerFragment;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,8 +36,8 @@ public class QPlayerMainActivity extends FragmentActivity {
         playerFragment = new PlayerFragment();
         ft.replace(R.id.player_area, playerFragment);
 
-        contentFragment = new ContentPagerFragment();
-        ft.replace(R.id.content_area, contentFragment);
+        contentFragment = new ContentFragment();
+        ft.replace(R.id.browser_area, contentFragment);
 
         ft.commitAllowingStateLoss();
     }

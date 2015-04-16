@@ -1,6 +1,5 @@
 package org.qstuff.qplayer.content;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -11,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.qstuff.qplayer.ui.OnSlidingPaneControl;
 import org.qstuff.qplayer.R;
 
 import java.io.File;
@@ -37,28 +35,6 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     private String rootdir;
 	private File   currentDir;
 
-
-    private OnSlidingPaneControl onSlidingPaneControl;
-
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        Log.d(TAG, "onAttach():");
-
-        if (activity instanceof OnSlidingPaneControl)
-        {
-            onSlidingPaneControl = (OnSlidingPaneControl) activity;
-            if (onSlidingPaneControl == null)
-                throw new ClassCastException(activity.toString()
-                    + " must implement OnSlidingPaneControl");
-        }
-        else
-        {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnSlidingPaneControl");
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -38,13 +38,13 @@ public class PlayerFragment extends Fragment
     private static final String TAG = "PlayerFragment";
 
     @InjectView(R.id.pitch_control)             VerticalSeekBar pitchControl;
-    @InjectView(R.id.player_button_previous)    ImageButton buttonPrevious;
-    @InjectView(R.id.player_button_play)        ImageButton buttonPlay;
-    @InjectView(R.id.player_button_next)        ImageButton buttonNext;
-    @InjectView(R.id.player_button_shuffle)     ImageButton buttonShuffle;
-    @InjectView(R.id.player_button_repeat)      ImageButton buttonRepeat;
-    @InjectView(R.id.player_button_fullscreen)  ImageButton buttonFullscreen;
-    @InjectView(R.id.player_text_current_track) TextView textCurrentTrack;
+    @InjectView(R.id.player_button_previous)    ImageButton     buttonPrevious;
+    @InjectView(R.id.player_button_play)        ImageButton     buttonPlay;
+    @InjectView(R.id.player_button_next)        ImageButton     buttonNext;
+    @InjectView(R.id.player_button_shuffle)     ImageButton     buttonShuffle;
+    @InjectView(R.id.player_button_repeat)      ImageButton     buttonRepeat;
+    @InjectView(R.id.player_button_fullscreen)  ImageButton     buttonFullscreen;
+    @InjectView(R.id.player_text_current_track) TextView        textCurrentTrack;
 
     // private QNativeMediaPlayer player;
     private MediaPlayer        player;
