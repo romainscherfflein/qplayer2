@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,7 +18,7 @@ import butterknife.InjectView;
 /**
  *
  */
-public class ContentPagerFragment extends Fragment {
+public class ContentFragment extends Fragment {
 
     private static final String TAG = "ContentPagerFragment";
 
@@ -27,7 +26,7 @@ public class ContentPagerFragment extends Fragment {
     private static final String TAB_TAG_2 = "FILESYSTEM_TAB";
     private static final String TAB_TAG_3 = "PLAYLIST_TAB";
 
-    private ContentPagerAdapter contentPagerAdapter;
+    private ContentPagerAdapter     contentPagerAdapter;
 
     @InjectView(R.id.content_pager) ViewPager contentPager;
 

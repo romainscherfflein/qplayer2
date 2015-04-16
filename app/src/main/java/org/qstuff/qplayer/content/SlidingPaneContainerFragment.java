@@ -176,29 +176,6 @@ public class SlidingPaneContainerFragment extends Fragment {
             ft.commit();
             fm.executePendingTransactions();
         }
-        /*
-            else if (tag == TAG_FRAG_TWO) {
-
-                fragment_three = new FilesystemBrowserFragment();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("path", path);
-                fragment_three.setArguments(bundle);
-
-                ft.replace(R.id.pane_three, fragment_three, TAG_FRAG_THREE).commit();
-                getActivity().findViewById(R.id.pane_three).setVisibility(View.VISIBLE);
-
-                getActivity().findViewById(R.id.pane_three).setVisibility(View.VISIBLE);
-                getActivity().findViewById(R.id.pane_one).setVisibility(View.GONE);
-                currentRight = TAG_FRAG_THREE;
-                numActive++;
-            }
-            else
-            {
-                Log.e(TAG, "pushInNext(): Only TAG_FRAG_ONE || TAG_FRAG_TWO allowed");
-                assert(null != null);
-            }
-        }
-        */
         else
         {
             Log.e(TAG, "pushInNext(): Only three allowed");
