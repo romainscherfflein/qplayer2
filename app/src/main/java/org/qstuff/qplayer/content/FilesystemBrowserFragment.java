@@ -11,11 +11,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.events.AudioFileSelectedEvent;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import timber.log.Timber;
 
 /**
  *
@@ -24,12 +29,12 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
 
     private final static String TAG = "FilesystemBrowserFragment";
 
-    private ListView     listView;
-	private TextView     headerText;
-	private TextView     browserParentDir;
+    @InjectView(R.id.filesystem_listview)  ListView listView;
+    @InjectView(R.id.filesystem_header)    TextView headerText;
+    @InjectView(R.id.filesystem_parentdir) TextView browserParentDir;
 
     private IndexerArrayAdapter<String> dirListAdapter;
-    private List<String> currentDirEntries;
+    private List<String>                currentDirEntries;
 
     private String paneTag;
     private String rootdir;
@@ -39,35 +44,33 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate():");
+        Timber.d("onCreate():");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        Log.d(TAG, "onCreateView():");
+        Timber.d("onCreateView():");
 
         View view = inflater.inflate(R.layout.filesystem_browser_fragment, container, false);
+        ButterKnife.inject(this, view);
 
         Bundle args = getArguments();
         if (null != args) {
             rootdir = args.getString("path");
             paneTag = args.getString("paneTag");
-            Log.d(TAG, "onCreateView(): rootDir: "+rootdir+", paneTag: "+paneTag);
+            Timber.d("onCreateView(): rootDir: "+rootdir+", paneTag: "+paneTag);
         }
         if(rootdir == null) {
             // FIXME: this is different on different API levels. this is ok for >= 4.2
             rootdir = new String(Environment.getExternalStorageDirectory().getPath() + "/Music");
         }
 
-        headerText = (TextView) view.findViewById(R.id.filesystem_fragment_header);
         headerText.setText(rootdir);
 
-        browserParentDir = (TextView) view.findViewById(R.id.filesystem_parentdir);
         browserParentDir.setVisibility(View.VISIBLE);
 
-        listView = (ListView) view.findViewById(R.id.filesystem_listview);
         listView.setItemsCanFocus(true);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         listView.setFastScrollEnabled(true);
@@ -80,13 +83,12 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int position, long id) {
-                Log.d(TAG, "listView.onItemLongClick(): pos: " + position);
+                Timber.d("listView.onItemLongClick(): pos: " + position);
 
                 String dir = dirListAdapter.getItem(position);
                 final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
 
                 if (item.isDirectory()) {
-
 
                     // TODO: shift in next panel ...
 
@@ -100,26 +102,28 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "listView.onItemClick(): pos: " + position);
+                Timber.d("listView.onItemClick(): pos: " + position);
 
                 String dir = dirListAdapter.getItem(position);
-                Log.d(TAG, "listView.onItemClick(): item: #" + (position) + " dir: " + dir);
+                Timber.d("listView.onItemClick(): item: #" + (position) + " dir: " + dir);
 
                 final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
 
                 if (item.isFile()) {
-                    Log.d(TAG, "listView.onItemClick(): is a file ");
+                    Timber.d("listView.onItemClick(): is a file ");
 
-                    // TODO: open play dialog
+                    bus.post(new AudioFileSelectedEvent(item));
+
                 }
                 else if (item.isDirectory()) {
-                    Log.d(TAG, "listView.onItemClick(): is a directory ");
+                    Timber.d("listView.onItemClick(): is a directory ");
 
-                    ((SlidingPaneContainerFragment)getParentFragment())
-                            .pushInNext(item.getAbsolutePath(), paneTag);
+                    // TODO: FIXME
+//                    ((SlidingPaneContainerFragment)getParentFragment())
+//                            .pushInNext(item.getAbsolutePath(), paneTag);
                 }
                 else {
-                    Log.d(TAG, "listView.onItemClick(): WHAT ?");
+                    Timber.d("listView.onItemClick(): WHAT ?");
                 }
             }
         });
@@ -127,7 +131,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         browserParentDir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "browserParentDir.onItemClick():");
+                Timber.d("browserParentDir.onItemClick():");
 
 
             }
@@ -140,23 +144,24 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume():");
+        bus.register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        bus.unregister(this);
     }
 
     public void setPath(String path) {
-        Log.d(TAG, "setPath()");
+        Timber.d("setPath()");
         currentDir = new File(path);
         browseTo(currentDir);
     }
 
     public void setPaneTag(String paneTag)
     {
-        Log.d(TAG, "setPaneTag(): "+paneTag);
+        Timber.d("setPaneTag(): "+paneTag);
         this.paneTag = paneTag;
     }
 
@@ -164,20 +169,24 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
 		Log.i(TAG, "browseTo(): " + dir.getAbsolutePath());
 
 		if (dir.isDirectory()) {
-			Log.d(TAG, "browseTo(): directory ");
+			Timber.d("browseTo(): directory ");
 			this.currentDir = dir;
-			listDirEntries(dir.listFiles());
-		}
+
+            if (dir.listFiles() != null)
+    			listDirEntries(dir.listFiles());
+            else
+                Timber.w("browseTo(): empty directory ...");
+        }
 		else if (dir.isFile()) {
-			Log.d(TAG, "browseTo(): file");
+			Timber.d("browseTo(): file");
 		}
 		else {
-			Log.d(TAG, "browseTo(): doesn't exist ...");
+			Timber.d("browseTo(): doesn't exist ...");
 		}
 	}
 
     private void listDirEntries(File[] entries) {
-		Log.i(TAG, "listDirEntries(): got "+ entries.length + " entries");
+		Timber.d("listDirEntries(): got "+ entries.length + " entries");
 
 		currentDirEntries = new ArrayList<String>();
 		int i = 0;

@@ -1,6 +1,8 @@
 package org.qstuff.qplayer.player;
 
+import org.qstuff.qplayer.AbstractBaseFragment;
 import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.events.AudioFileSelectedEvent;
 import org.qstuff.qplayer.ui.VerticalSeekBar;
 
 import android.app.Activity;
@@ -18,18 +20,22 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import com.squareup.otto.Subscribe;
+
 import java.io.IOException;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 /**
  * 
  * @author claus chierici (cc@codeyard.de)
  *
  */
-public class PlayerFragment extends Fragment 
+public class PlayerFragment extends AbstractBaseFragment
+
 	implements OnSeekBarChangeListener,
         MediaPlayer.OnPreparedListener,
         MediaPlayer.OnErrorListener,
@@ -50,11 +56,10 @@ public class PlayerFragment extends Fragment
     private MediaPlayer        player;
     private boolean            isPrepared;
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        Log.d(TAG, "onAttach():");
-    }
+
+    //
+    // Fragment Lifecycle
+    //
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,7 +87,7 @@ public class PlayerFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume():");
+        bus.register(this);
 
         // FIXME:
         try {
@@ -103,13 +108,22 @@ public class PlayerFragment extends Fragment
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause():");
+        bus.unregister(this);
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy():");
         cleanupPlayer();
+    }
+
+    //
+    // Event Subscriptions
+    //
+
+    @Subscribe
+    public void onAudioFileSelectedEvent(AudioFileSelectedEvent event) {
+        Timber.d("onAudioFileSelectedEvent():" + event.audioFile.getAbsolutePath());
+        loadNewAudioFile(event.audioFile.getAbsolutePath());
     }
 
     //

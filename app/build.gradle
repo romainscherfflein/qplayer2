@@ -29,7 +29,10 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:21.0.0'
+    // View injection
     compile 'com.jakewharton:butterknife:6.0.0'
     // Event bus
-    compile 'com.squareup:otto:1.3.5'
+    compile 'com.squareup:otto:1.3.6'
+    // Logging
+    compile 'com.jakewharton.timber:timber:2.5.0'
 }
