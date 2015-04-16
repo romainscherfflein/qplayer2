@@ -20,6 +20,9 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
+import butterknife.OnItemClick;
+import butterknife.OnItemLongClick;
 import timber.log.Timber;
 
 /**
@@ -41,6 +44,10 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
 	private File   currentDir;
 
 
+    //
+    // Fragment Lifecycle
+    //
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +59,8 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         Timber.d("onCreateView():");
+
+        bus.register(this);
 
         View view = inflater.inflate(R.layout.filesystem_browser_fragment, container, false);
         ButterKnife.inject(this, view);
@@ -78,80 +87,76 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         currentDir = new File(rootdir);
         browseTo(currentDir);
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
-            @Override
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-                                           int position, long id) {
-                Timber.d("listView.onItemLongClick(): pos: " + position);
-
-                String dir = dirListAdapter.getItem(position);
-                final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
-
-                if (item.isDirectory()) {
-
-                    // TODO: shift in next panel ...
-
-                }
-
-                return false;
-            }
-        });
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Timber.d("listView.onItemClick(): pos: " + position);
-
-                String dir = dirListAdapter.getItem(position);
-                Timber.d("listView.onItemClick(): item: #" + (position) + " dir: " + dir);
-
-                final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
-
-                if (item.isFile()) {
-                    Timber.d("listView.onItemClick(): is a file ");
-
-                    bus.post(new AudioFileSelectedEvent(item));
-
-                }
-                else if (item.isDirectory()) {
-                    Timber.d("listView.onItemClick(): is a directory ");
-
-                    // TODO: FIXME
-//                    ((SlidingPaneContainerFragment)getParentFragment())
-//                            .pushInNext(item.getAbsolutePath(), paneTag);
-                }
-                else {
-                    Timber.d("listView.onItemClick(): WHAT ?");
-                }
-            }
-        });
-
-        browserParentDir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Timber.d("browserParentDir.onItemClick():");
-
-
-            }
-
-        });
-
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        bus.register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         bus.unregister(this);
     }
+
+    //
+    // Click Handlers
+    //
+    @OnItemClick (R.id.filesystem_listview)
+    public void onListItemClicked(int position) {
+        Timber.d("onListItemClicked: pos: " + position);
+
+        String dir = dirListAdapter.getItem(position);
+        Timber.d("onListItemClicked(): item: #" + (position) + " dir: " + dir);
+
+        final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
+
+        if (item.isFile()) {
+            Timber.d("onListItemClicked(): is a file ");
+            bus.post(new AudioFileSelectedEvent(item));
+        }
+        else if (item.isDirectory()) {
+            Timber.d("onListItemClicked(): is a directory ");
+
+            // TODO: FIXME
+//                    ((SlidingPaneContainerFragment)getParentFragment())
+//                            .pushInNext(item.getAbsolutePath(), paneTag);
+        }
+        else {
+            Timber.d("lonListItemClicked(): WHAT ?");
+        }
+    }
+
+    @OnItemLongClick (R.id.filesystem_listview)
+    public boolean onListItemLongClick(int position) {
+        Timber.d("onListItemLongClick(): pos: " + position);
+
+        String dir = dirListAdapter.getItem(position);
+        final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
+
+        if (item.isDirectory()) {
+
+            // TODO: shift in next panel ...
+
+        }
+        return  false;
+    }
+
+    @OnClick (R.id.filesystem_parentdir)
+    public void onParentDirectoryClick() {
+        Timber.d("onParentDirectoryClick():");
+    }
+
+    //
+    // Public API
+    //
 
     public void setPath(String path) {
         Timber.d("setPath()");

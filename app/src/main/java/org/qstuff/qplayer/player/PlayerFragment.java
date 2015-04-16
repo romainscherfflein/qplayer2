@@ -5,12 +5,10 @@ import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.events.AudioFileSelectedEvent;
 import org.qstuff.qplayer.ui.VerticalSeekBar;
 
-import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;

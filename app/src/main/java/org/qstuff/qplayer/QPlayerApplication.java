@@ -15,8 +15,7 @@ public class QPlayerApplication extends Application {
 
     @Override
     public void onCreate() {
-        super.onCreate();
-        Timber.d( "onCreate():");
+        super.onCreate();        Timber.d( "onCreate():");
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
