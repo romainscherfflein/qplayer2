@@ -2,11 +2,11 @@ package org.qstuff.qplayer.content;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+import timber.log.Timber;
 
 /**
  * This class can be used to have the alphabetical fast-scroll display.
@@ -33,10 +35,7 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
      */
     private static final long serialVersionUID = -8402036170262443824L;
 
-	/* Android log tag */
-	static final String TAG = "IndexerArrayAdapter";
-	
-    private HashMap<String, Integer> alphaIndexer;
+	private HashMap<String, Integer> alphaIndexer;
 	private String[] sections;	
 	
 	private Context context;
@@ -58,7 +57,7 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 			List<T> objects,
 			String path) {
 	    super(context, layoutResourceId, textViewId, objects);
-	    Log.d(TAG, "IndexerArrayAdapter():");
+	    Timber.d("IndexerArrayAdapter():");
         	    
 	    this.context = context;
 	    this.layoutResourceId = layoutResourceId;
@@ -90,33 +89,29 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 		View row = convertView;
         ListHolder holder = null;
         
-        if(row == null)
-        {
+        if(row == null) {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
             holder = new ListHolder();
-//            holder.imgIcon 	= (ImageView)row.findViewById(R.id.browserlist_icon);
-            holder.txtTitle = (TextView)row.findViewById(R.id.file_list_item_text);
+            holder.imgIcon 	= (ImageView)row.findViewById(R.id.tracklist_item_icon);
+            holder.txtTitle = (TextView)row.findViewById(R.id.tracklist_item_text);
             row.setTag(holder);
-        }
-        else
-        {
+        } else {
             holder = (ListHolder)row.getTag();
         }
        
         String title = ((T)objects.get(position)).toString();
-        // Log.d(TAG, "TITLE : "+ title);       
+        // Timber.d("TITLE : "+ title);
         holder.txtTitle.setText(title);
         
         File file = new File (path + "/" + title);
-        
-        // TODO: we have no icon yet
-//        if (file.isFile())
-//        	holder.imgIcon.setImageResource(R.drawable.btn_player_note_small);
-//        else if (file.isDirectory())
-//        	holder.imgIcon.setImageResource(R.drawable.btn_player_dir_small);
-//        else
-//        	Log.e(TAG, "WWWWWWWWWWWWWWWWWWWW");
+
+        if (file.isFile())
+			holder.imgIcon.setImageResource(R.drawable.ic_my_library_music_white_18dp);
+        else if (file.isDirectory())
+			holder.imgIcon.setImageResource(R.drawable.ic_folder_open_white_18dp);
+        else
+        	Timber.e("WWWWWWWWWWWWWWWWWWWW");
         
         return row;
     }
@@ -126,9 +121,8 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 	 * @author claus
 	 *
 	 */
-	static class ListHolder
-    {
-//        ImageView imgIcon;
+	static class ListHolder {
+        ImageView imgIcon;
         TextView txtTitle;
     }
 	
@@ -136,9 +130,9 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 	 * 
 	 */
 	public int getPositionForSection(int section) {
-//		Log.d(TAG, "getPositionForSection(): sec: " + section);
+//		Timber.d("getPositionForSection(): sec: " + section);
 		String letter = sections[section];
-//		Log.d(TAG, "getPositionForSection(): pos: " + alphaIndexer.get(letter));
+//		Timber.d("getPositionForSection(): pos: " + alphaIndexer.get(letter));
 		return alphaIndexer.get(letter);
     }
 
@@ -154,7 +148,6 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 	 * 
 	 */
 	public Object[] getSections() {
-		Log.d(TAG, "getSections():");
 	    return sections;
     }
 }

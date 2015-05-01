@@ -211,7 +211,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
 
 		dirListAdapter = new IndexerArrayAdapter<String>(getActivity(),
     			R.layout.tracklist_item,
-    			R.id.file_list_item_text,
+    			R.id.tracklist_item_text,
     			currentDirEntries,
     			currentDir.getPath());
 
