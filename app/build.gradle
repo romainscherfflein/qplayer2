@@ -55,4 +55,6 @@ dependencies {
     apt 'com.squareup.dagger:dagger-compiler:1.2.2'
     // Logging
     compile 'com.jakewharton.timber:timber:2.5.0'
+    // ViewPagerIndicator
+    compile 'fr.avianey.com.viewpagerindicator:library:2.4.1@aar'
 }
