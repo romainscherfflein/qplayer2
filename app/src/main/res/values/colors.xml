@@ -3,7 +3,9 @@
 	
 	<color name="black">#ff000000</color>
 	<color name="white">#ffffff</color>
-	
+
+	<color name="very_light_gray">#f3f3f3</color>
+
 	<color name="translucent_white">#ccffffff</color>
 
 	<color name="standard_text">#ff555555</color>
@@ -14,5 +16,5 @@
 	<color name="blue">#ff0083ff</color>
 	<color name="light_blue">#d2e9fb</color>
 	<color name="light_blue_2">#04cbde</color>
-	
+
 </resources>

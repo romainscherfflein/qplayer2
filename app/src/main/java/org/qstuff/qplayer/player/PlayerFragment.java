@@ -1,15 +1,14 @@
 package org.qstuff.qplayer.player;
 
+import org.qstuff.qplayer.AbstractBaseFragment;
 import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.events.FileSelectedEvent;
 import org.qstuff.qplayer.ui.VerticalSeekBar;
 
-import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,24 +17,31 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+
 import java.io.IOException;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 /**
  * 
  * @author claus chierici (cc@codeyard.de)
  *
  */
-public class PlayerFragment extends Fragment 
+public class PlayerFragment extends AbstractBaseFragment
 	implements OnSeekBarChangeListener,
         MediaPlayer.OnPreparedListener,
         MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
 
-    private static final String TAG = "PlayerFragment";
+
+    @Inject Bus bus;
 
     @InjectView(R.id.pitch_control)             VerticalSeekBar pitchControl;
     @InjectView(R.id.player_button_previous)    ImageButton     buttonPrevious;
@@ -46,20 +52,20 @@ public class PlayerFragment extends Fragment
     @InjectView(R.id.player_button_fullscreen)  ImageButton     buttonFullscreen;
     @InjectView(R.id.player_text_current_track) TextView        textCurrentTrack;
 
+
     // private QNativeMediaPlayer player;
     private MediaPlayer        player;
     private boolean            isPrepared;
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        Log.d(TAG, "onAttach():");
-    }
+
+    //
+    // Fragment Lifecycle
+    //
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate():");
+        Timber.d("onCreate():");
 
         if (player == null)
             player = new MediaPlayer();
@@ -69,7 +75,7 @@ public class PlayerFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        Log.d(TAG, "onCreateView():");
+        Timber.d("onCreateView():");
 
         View v = inflater.inflate(R.layout.player_fragment, container, false);
         ButterKnife.inject(this, v);
@@ -82,9 +88,11 @@ public class PlayerFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume():");
 
-        // FIXME:
+        bus.register(this);
+
+        // FIXME: this is for testing
+        // we will need to remeber the last song that was loaded and restore it
         try {
             AssetFileDescriptor afd = getActivity().getAssets().openFd("haijaijai.mp3");
             player.reset();
@@ -103,27 +111,39 @@ public class PlayerFragment extends Fragment
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause():");
+        bus.unregister(this);
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy():");
         cleanupPlayer();
     }
 
     //
+    // Event Subscriptions
     //
+
+    @Subscribe
+    public void onAudioFileSelectedEvent(FileSelectedEvent event) {
+        Timber.d("onAudioFileSelectedEvent():" + event.audioFile.getAbsolutePath());
+        cleanupPlayer();
+        buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_play));
+        loadNewAudioFile(event.audioFile.getAbsolutePath());
+        textCurrentTrack.setText(event.audioFile.getName());
+    }
+
+    //
+    // Public API
     //
 
     public void loadNewAudioFile(String uri) {
-        Log.d(TAG, "loadNewAudioFile():");
+        Timber.d("loadNewAudioFile():");
 
         preparePlayer(uri);
     }
 
     private void cleanupPlayer() {
-        Log.d(TAG, "cleanupPlayer():");
+        Timber.d("cleanupPlayer():");
 
         if (player != null) {
 //            resetUpdateTimer();
@@ -135,11 +155,10 @@ public class PlayerFragment extends Fragment
     }
 
     private void preparePlayer(String uri) {
-        Log.d(TAG, "preparePlayer(): " + uri);
+        Timber.d("preparePlayer(): " + uri);
 
         if (player == null) {
-            Log.w(TAG, "preparePlayer(): player null !");
-            return;
+            player = new MediaPlayer();
         }
 
         try {
@@ -156,14 +175,12 @@ public class PlayerFragment extends Fragment
     }
 
     //
-    // Player Buttons
+    // Click Handlers
     //
 
     @OnClick(R.id.player_button_play)
     public void playButtonClicked() {
-        Log.d(TAG, "playButtonClicked(): ");
-
-        if (!isPrepared) return;
+        Timber.d("playButtonClicked(): ");
 
         if (player.isPlaying()) {
             player.pause();
@@ -180,10 +197,10 @@ public class PlayerFragment extends Fragment
 
  	@Override
  	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
- 		Log.d(TAG, "onProgressChanged(): SB ID: " + seekBar.getId());
+ 		Timber.d("onProgressChanged(): SB ID: " + seekBar.getId());
 		
 		if (seekBar.getId() == R.id.pitch_control) {
-			Log.i(TAG, "onProgressChanged(): pitch bar value:" + progress);
+            Timber.d("onProgressChanged(): pitch bar value:" + progress);
 
 			int diff = progress - 50;
 			
@@ -210,17 +227,17 @@ public class PlayerFragment extends Fragment
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        Log.d(TAG, "onPrepared():");
+        Timber.d("onPrepared():");
     }
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        Log.d(TAG, "onError():");
+        Timber.d("onError():");
         return false;
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        Log.d(TAG, "onCompletion():");
+        Timber.d("onCompletion():");
     }
 }

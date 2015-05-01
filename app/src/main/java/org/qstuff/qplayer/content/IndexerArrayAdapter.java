@@ -1,13 +1,5 @@
 package org.qstuff.qplayer.content;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
@@ -15,10 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+
 import org.qstuff.qplayer.R;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class can be used to have the alphabetical fast-scroll display.
