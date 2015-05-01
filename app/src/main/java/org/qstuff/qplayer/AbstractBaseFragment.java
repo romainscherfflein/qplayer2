@@ -9,6 +9,8 @@ import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+
 /**
  * Created by Claus Chierici (chierici@karlmax-berlin.com) on 4/16/15
  * for Karlmax Berlin GmbH & Co. KG
@@ -17,30 +19,28 @@ import javax.inject.Inject;
  */
 public class AbstractBaseFragment extends Fragment {
 
-    @Inject protected Bus bus;
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        bus = new Bus();
+        ((QPlayerApplication) getActivity()
+                .getApplication())
+                .inject(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        bus.register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        bus.unregister(this);
     }
 
-    protected void onEvent() {
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
     }
-
 }

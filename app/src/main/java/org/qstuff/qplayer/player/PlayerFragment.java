@@ -17,9 +17,12 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -32,13 +35,13 @@ import timber.log.Timber;
  *
  */
 public class PlayerFragment extends AbstractBaseFragment
-
 	implements OnSeekBarChangeListener,
         MediaPlayer.OnPreparedListener,
         MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
 
-    private static final String TAG = "PlayerFragment";
+
+    @Inject Bus bus;
 
     @InjectView(R.id.pitch_control)             VerticalSeekBar pitchControl;
     @InjectView(R.id.player_button_previous)    ImageButton     buttonPrevious;
@@ -48,6 +51,7 @@ public class PlayerFragment extends AbstractBaseFragment
     @InjectView(R.id.player_button_repeat)      ImageButton     buttonRepeat;
     @InjectView(R.id.player_button_fullscreen)  ImageButton     buttonFullscreen;
     @InjectView(R.id.player_text_current_track) TextView        textCurrentTrack;
+
 
     // private QNativeMediaPlayer player;
     private MediaPlayer        player;
@@ -85,7 +89,10 @@ public class PlayerFragment extends AbstractBaseFragment
     public void onResume() {
         super.onResume();
 
-        // FIXME:
+        bus.register(this);
+
+        // FIXME: this is for testing
+        // we will need to remeber the last song that was loaded and restore it
         try {
             AssetFileDescriptor afd = getActivity().getAssets().openFd("haijaijai.mp3");
             player.reset();
@@ -104,6 +111,7 @@ public class PlayerFragment extends AbstractBaseFragment
     @Override
     public void onPause() {
         super.onPause();
+        bus.unregister(this);
     }
 
     @Override
@@ -118,10 +126,11 @@ public class PlayerFragment extends AbstractBaseFragment
     @Subscribe
     public void onAudioFileSelectedEvent(FileSelectedEvent event) {
         Timber.d("onAudioFileSelectedEvent():" + event.audioFile.getAbsolutePath());
+        cleanupPlayer();
+        buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_play));
         loadNewAudioFile(event.audioFile.getAbsolutePath());
+        textCurrentTrack.setText(event.audioFile.getName());
     }
-
-
 
     //
     // Public API
@@ -149,8 +158,7 @@ public class PlayerFragment extends AbstractBaseFragment
         Timber.d("preparePlayer(): " + uri);
 
         if (player == null) {
-            Timber.w("preparePlayer(): player null !");
-            return;
+            player = new MediaPlayer();
         }
 
         try {
@@ -173,8 +181,6 @@ public class PlayerFragment extends AbstractBaseFragment
     @OnClick(R.id.player_button_play)
     public void playButtonClicked() {
         Timber.d("playButtonClicked(): ");
-
-        if (!isPrepared) return;
 
         if (player.isPlaying()) {
             player.pause();

@@ -2,12 +2,13 @@ package org.qstuff.qplayer.content;
 
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.squareup.otto.Bus;
 
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.events.FileSelectedEvent;
@@ -16,6 +17,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -29,7 +32,7 @@ import timber.log.Timber;
  */
 public class FilesystemBrowserFragment extends BaseBrowserFragment {
 
-    private final static String TAG = "FilesystemBrowserFragment";
+    @Inject Bus bus;
 
     @InjectView(R.id.filesystem_listview)  ListView listView;
     @InjectView(R.id.filesystem_header)    TextView headerText;
@@ -89,11 +92,13 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     @Override
     public void onResume() {
         super.onResume();
+        bus.register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        bus.unregister(this);
     }
 
     @Override
@@ -159,8 +164,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         browseTo(currentDir);
     }
 
-    public void setPaneTag(String paneTag)
-    {
+    public void setPaneTag(String paneTag) {
         Timber.d("setPaneTag(): "+paneTag);
         this.paneTag = paneTag;
     }
