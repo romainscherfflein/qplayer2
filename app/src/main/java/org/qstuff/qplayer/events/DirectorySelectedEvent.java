@@ -8,11 +8,11 @@ import java.io.File;
  * <p/>
  * Copyright (C) 2014 Karlmax Berlin GmbH & Co. KG, All rights reserved.
  */
-public class AudioFileSelectedEvent {
+public class DirectorySelectedEvent {
 
-    public File audioFile;
+    public File directory;
 
-    public AudioFileSelectedEvent(File audioFile) {
-        this.audioFile = audioFile;
+    public DirectorySelectedEvent(File audioFile) {
+        this.directory = directory;
     }
 }

@@ -6,12 +6,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.events.AudioFileSelectedEvent;
+import org.qstuff.qplayer.events.FileSelectedEvent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,14 +74,13 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         }
 
         headerText.setText(rootdir);
-
         browserParentDir.setVisibility(View.VISIBLE);
+        currentDir = new File(rootdir);
 
         listView.setItemsCanFocus(true);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         listView.setFastScrollEnabled(true);
 
-        currentDir = new File(rootdir);
         browseTo(currentDir);
 
         return view;
@@ -118,17 +116,14 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
 
         if (item.isFile()) {
             Timber.d("onListItemClicked(): is a file ");
-            bus.post(new AudioFileSelectedEvent(item));
+            bus.post(new FileSelectedEvent(item));
         }
         else if (item.isDirectory()) {
             Timber.d("onListItemClicked(): is a directory ");
-
-            // TODO: FIXME
-//                    ((SlidingPaneContainerFragment)getParentFragment())
-//                            .pushInNext(item.getAbsolutePath(), paneTag);
+            browseTo(item);
         }
         else {
-            Timber.d("lonListItemClicked(): WHAT ?");
+            Timber.w("lonListItemClicked(): WHAT ?");
         }
     }
 
@@ -140,16 +135,18 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
 
         if (item.isDirectory()) {
-
-            // TODO: shift in next panel ...
-
+            browseTo(item);
         }
+
         return  false;
     }
 
     @OnClick (R.id.filesystem_parentdir)
     public void onParentDirectoryClick() {
         Timber.d("onParentDirectoryClick():");
+
+        if (currentDir.getAbsolutePath().equals(rootdir)) return;
+        browseTo(currentDir.getParentFile());
     }
 
     //
@@ -173,11 +170,11 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     //
 
     private void browseTo(final File dir) {
-		Log.i(TAG, "browseTo(): " + dir.getAbsolutePath());
+		Timber.d("browseTo(): " + dir.getAbsolutePath());
 
 		if (dir.isDirectory()) {
 			Timber.d("browseTo(): directory ");
-			this.currentDir = dir;
+            currentDir = dir;
 
             if (dir.listFiles() != null)
     			listDirEntries(dir.listFiles());
@@ -185,10 +182,10 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
                 Timber.w("browseTo(): empty directory ...");
         }
 		else if (dir.isFile()) {
-			Timber.d("browseTo(): file");
+			Timber.w("browseTo(): file");
 		}
 		else {
-			Timber.d("browseTo(): doesn't exist ...");
+			Timber.w("browseTo(): doesn't exist ...");
 		}
 	}
 
@@ -209,7 +206,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
                 String.CASE_INSENSITIVE_ORDER);
 
 		dirListAdapter = new IndexerArrayAdapter<String>(getActivity(),
-    			R.layout.file_list_item,
+    			R.layout.tracklist_item,
     			R.id.file_list_item_text,
     			currentDirEntries,
     			currentDir.getPath());

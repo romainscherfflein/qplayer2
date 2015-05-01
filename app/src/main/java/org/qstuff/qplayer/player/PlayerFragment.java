@@ -2,7 +2,7 @@ package org.qstuff.qplayer.player;
 
 import org.qstuff.qplayer.AbstractBaseFragment;
 import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.events.AudioFileSelectedEvent;
+import org.qstuff.qplayer.events.FileSelectedEvent;
 import org.qstuff.qplayer.ui.VerticalSeekBar;
 
 import android.content.res.AssetFileDescriptor;
@@ -116,10 +116,12 @@ public class PlayerFragment extends AbstractBaseFragment
     //
 
     @Subscribe
-    public void onAudioFileSelectedEvent(AudioFileSelectedEvent event) {
+    public void onAudioFileSelectedEvent(FileSelectedEvent event) {
         Timber.d("onAudioFileSelectedEvent():" + event.audioFile.getAbsolutePath());
         loadNewAudioFile(event.audioFile.getAbsolutePath());
     }
+
+
 
     //
     // Public API
