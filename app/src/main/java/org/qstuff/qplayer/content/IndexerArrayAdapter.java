@@ -109,7 +109,7 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
         if (file.isFile())
 			holder.imgIcon.setImageResource(R.drawable.ic_my_library_music_white_18dp);
         else if (file.isDirectory())
-			holder.imgIcon.setImageResource(R.drawable.ic_folder_open_white_18dp);
+			holder.imgIcon.setImageResource(R.drawable.ic_folder_white_18dp);
         else
         	Timber.e("WWWWWWWWWWWWWWWWWWWW");
         
