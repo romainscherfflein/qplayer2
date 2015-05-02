@@ -4,4 +4,10 @@
     <string name="app_name">qplayer</string>
     <string name="build_type">Release</string>
 
+
+    <string name="Current">Current</string>
+    <string name="Playlists">Playlists</string>
+    <string name="Filebrowser">Filebrowser</string>
+
+
 </resources>

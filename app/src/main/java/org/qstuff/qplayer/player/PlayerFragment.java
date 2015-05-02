@@ -116,6 +116,7 @@ public class PlayerFragment extends AbstractBaseFragment
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         cleanupPlayer();
     }
 

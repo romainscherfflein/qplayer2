@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.viewpagerindicator.TitlePageIndicator;
+
 import org.qstuff.qplayer.R;
 
 import butterknife.ButterKnife;
@@ -29,7 +31,9 @@ public class ContentFragment extends Fragment {
 
     private ContentPagerAdapter     contentPagerAdapter;
 
-    @InjectView(R.id.content_pager) ViewPager contentPager;
+    @InjectView(R.id.content_pager)         ViewPager          contentPager;
+    @InjectView(R.id.pager_title_indicator) TitlePageIndicator pagerIndicator;
+
 
 
     @Override
@@ -55,7 +59,23 @@ public class ContentFragment extends Fragment {
 
         contentPagerAdapter = new ContentPagerAdapter(getFragmentManager());
         contentPager.setAdapter(contentPagerAdapter);
+        pagerIndicator.setViewPager(contentPager);
+        pagerIndicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         return view;
     }
 
@@ -94,6 +114,7 @@ public class ContentFragment extends Fragment {
             switch (position) {
                 case 0:
                     fragment = new CurrentBrowserFragment();
+
                     break;
                 case 1:
                     fragment = new FilesystemBrowserFragment();
@@ -113,6 +134,14 @@ public class ContentFragment extends Fragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return getString(R.string.Current);
+                case 1:
+                    return getString(R.string.Filebrowser);
+                case 2:
+                    return getString(R.string.Playlists);                 
+            }
             return "OBJECT " + (position + 1);
         }
     }
