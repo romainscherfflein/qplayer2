@@ -1,6 +1,6 @@
 package org.qstuff.qplayer.ui.player;
 
-import android.content.res.AssetFileDescriptor;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -16,10 +16,12 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import org.qstuff.qplayer.AbstractBaseFragment;
+import org.qstuff.qplayer.Constants;
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.events.FileSelectedEvent;
 import org.qstuff.qplayer.ui.util.VerticalSeekBar;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -53,9 +55,10 @@ public class PlayerFragment extends AbstractBaseFragment
     @InjectView(R.id.player_text_current_track) TextView        textCurrentTrack;
 
 
-    // private QNativeMediaPlayer player;
-    private MediaPlayer        player;
-    private boolean            isPrepared;
+    private MediaPlayer player;
+    private boolean     isPrepared;
+    private boolean     isPlaying;
+    private File        currentTrack = null;
 
 
     //
@@ -88,29 +91,24 @@ public class PlayerFragment extends AbstractBaseFragment
     @Override
     public void onResume() {
         super.onResume();
-
         bus.register(this);
 
-        // FIXME: this is for testing
-        // we will need to remeber the last song that was loaded and restore it
-        try {
-            AssetFileDescriptor afd = getActivity().getAssets().openFd("haijaijai.mp3");
-            player.reset();
-            player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-            afd.close();
-            player.prepare();
-            isPrepared = true;
+        currentTrack = restoreCurrentPlayingTrack();
+        isPlaying = restorePlayingState();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-        textCurrentTrack.setText("Echolozn: haijaijai");
+        if (currentTrack == null) return;
+
+        if (!player.isPlaying())
+            loadAudioFile(currentTrack);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+
+        saveCurrentSelectedTrack();
+        savePlayingState();
+
         bus.unregister(this);
     }
 
@@ -120,6 +118,7 @@ public class PlayerFragment extends AbstractBaseFragment
         cleanupPlayer();
     }
 
+
     //
     // Event Subscriptions
     //
@@ -127,20 +126,23 @@ public class PlayerFragment extends AbstractBaseFragment
     @Subscribe
     public void onAudioFileSelectedEvent(FileSelectedEvent event) {
         Timber.d("onAudioFileSelectedEvent():" + event.audioFile.getAbsolutePath());
-        cleanupPlayer();
-        buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_play));
-        loadNewAudioFile(event.audioFile.getAbsolutePath());
-        textCurrentTrack.setText(event.audioFile.getName());
+
+        loadAudioFile(event.audioFile);
     }
 
+
     //
-    // Public API
+    // Private
     //
 
-    public void loadNewAudioFile(String uri) {
-        Timber.d("loadNewAudioFile():");
+    private void loadAudioFile(File file) {
 
-        preparePlayer(uri);
+        cleanupPlayer();
+        preparePlayer(file);
+        currentTrack = file;
+
+        textCurrentTrack.setText(file.getName());
+        buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_play));
     }
 
     private void cleanupPlayer() {
@@ -155,15 +157,15 @@ public class PlayerFragment extends AbstractBaseFragment
         }
     }
 
-    private void preparePlayer(String uri) {
-        Timber.d("preparePlayer(): " + uri);
+    private void preparePlayer(File file) {
+        Timber.d("preparePlayer(): " + file.getAbsolutePath());
 
         if (player == null) {
             player = new MediaPlayer();
         }
 
         try {
-            player.setDataSource(uri);
+            player.setDataSource(file.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -175,13 +177,41 @@ public class PlayerFragment extends AbstractBaseFragment
         player.prepareAsync();
     }
 
+    private void saveCurrentSelectedTrack() {
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Constants.PREFS_KEY_LAST_PLAYED_TRACK_PATH, currentTrack.getAbsolutePath());
+        editor.commit();
+    }
+
+    private void savePlayingState() {
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(Constants.PREFS_KEY_PLAYING_STATE, player.isPlaying());
+        editor.commit();
+    }
+
+    private File restoreCurrentPlayingTrack() {
+
+        String path = preferences.getString(Constants.PREFS_KEY_LAST_PLAYED_TRACK_PATH, null);
+
+        if (path != null)
+            return new File(path);
+        else
+            return null;
+    }
+
+    private boolean restorePlayingState() {
+        return preferences.getBoolean(Constants.PREFS_KEY_PLAYING_STATE, false);
+    }
+
     //
     // Click Handlers
     //
 
     @OnClick(R.id.player_button_play)
-    public void playButtonClicked() {
-        Timber.d("playButtonClicked(): ");
+    public void onPlayButtonClicked() {
+        Timber.d("onPlayButtonClicked(): ");
 
         if (player.isPlaying()) {
             player.pause();

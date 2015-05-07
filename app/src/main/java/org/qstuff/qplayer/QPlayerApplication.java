@@ -2,6 +2,7 @@ package org.qstuff.qplayer;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.squareup.otto.Bus;
 
@@ -55,19 +56,29 @@ public class QPlayerApplication extends Application {
             AbstractBaseFragment.class,
             CurrentBrowserFragment.class,
             PlaylistBrowserFragment.class
-    })
+        },
+        complete = false,
+        library = true
+    )
 
-    static class MyModule {
+    static final class MyModule {
         private final Context appContext;
 
         MyModule(Context appContext) {
             this.appContext = appContext;
         }
+        @Provides @Singleton Application provideApplicationContext() {
+            return (Application)appContext;
+        }
 
-        @Provides
-        @Singleton
+        @Provides @Singleton
         Bus provideBus() {
             return new Bus();
+        }
+
+        @Provides @Singleton
+        SharedPreferences provideSharedPreferences(Application app) {
+            return app.getSharedPreferences("qplayer", Context.MODE_PRIVATE);
         }
     }
 }
