@@ -2,10 +2,9 @@ package org.qstuff.qplayer;
 
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-
-import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
 
@@ -18,6 +17,8 @@ import butterknife.ButterKnife;
  * Copyright (C) 2014 Karlmax Berlin GmbH & Co. KG, All rights reserved.
  */
 public class AbstractBaseFragment extends Fragment {
+
+    @Inject SharedPreferences preferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -1,9 +1,4 @@
-package org.qstuff.qplayer.player;
-
-import org.qstuff.qplayer.AbstractBaseFragment;
-import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.events.FileSelectedEvent;
-import org.qstuff.qplayer.ui.VerticalSeekBar;
+package org.qstuff.qplayer.ui.player;
 
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
@@ -19,6 +14,11 @@ import android.widget.TextView;
 
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
+import org.qstuff.qplayer.AbstractBaseFragment;
+import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.events.FileSelectedEvent;
+import org.qstuff.qplayer.ui.util.VerticalSeekBar;
 
 import java.io.IOException;
 
