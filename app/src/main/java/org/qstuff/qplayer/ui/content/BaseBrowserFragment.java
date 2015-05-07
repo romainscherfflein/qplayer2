@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.content;
+package org.qstuff.qplayer.ui.content;
 
 import android.app.Activity;
 import android.os.Bundle;
