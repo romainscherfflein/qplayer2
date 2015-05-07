@@ -5,10 +5,10 @@ import android.content.Context;
 
 import com.squareup.otto.Bus;
 
-import org.qstuff.qplayer.content.CurrentBrowserFragment;
-import org.qstuff.qplayer.content.FilesystemBrowserFragment;
-import org.qstuff.qplayer.content.PlaylistBrowserFragment;
-import org.qstuff.qplayer.player.PlayerFragment;
+import org.qstuff.qplayer.ui.content.CurrentBrowserFragment;
+import org.qstuff.qplayer.ui.content.FilesystemBrowserFragment;
+import org.qstuff.qplayer.ui.content.PlaylistBrowserFragment;
+import org.qstuff.qplayer.ui.player.PlayerFragment;
 import org.qstuff.qplayer.util.TimberCrashReportingTree;
 
 import javax.inject.Singleton;

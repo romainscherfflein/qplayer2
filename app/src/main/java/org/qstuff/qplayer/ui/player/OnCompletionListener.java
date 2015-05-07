@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.player;
+package org.qstuff.qplayer.ui.player;
 
 /**
  * 
