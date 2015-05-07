@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <!-- The theme in use -->
+
+    <style name="Theme.QPlayer" parent="@style/QPlayerDefault"/>
+
+    <!-- The default Impossible theme -->
+
+    <style name="QPlayerDefault" parent="Theme.HoloAccent.NoActionBar">
+
+        <item name="accentColor">@color/accent_color</item>
+
+    </style>
+
+</resources>

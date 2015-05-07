@@ -12,6 +12,7 @@ import com.squareup.otto.Bus;
 
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.events.FileSelectedEvent;
+import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -115,21 +116,16 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         Timber.d("onListItemClicked: pos: " + position);
 
         String dir = dirListAdapter.getItem(position);
-        Timber.d("onListItemClicked(): item: #" + (position) + " dir: " + dir);
 
         final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
 
-        if (item.isFile()) {
-            Timber.d("onListItemClicked(): is a file ");
+        if (item.isFile())
             bus.post(new FileSelectedEvent(item));
-        }
-        else if (item.isDirectory()) {
-            Timber.d("onListItemClicked(): is a directory ");
+        else if (item.isDirectory())
             browseTo(item);
-        }
-        else {
-            Timber.w("lonListItemClicked(): WHAT ?");
-        }
+        else
+            Timber.w("onListItemClicked(): WHAT ?");
+
     }
 
     @OnItemLongClick (R.id.filesystem_listview)
@@ -139,9 +135,10 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         String dir = dirListAdapter.getItem(position);
         final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
 
-        if (item.isDirectory()) {
+        if (item.isDirectory())
             browseTo(item);
-        }
+        else
+            openAddToPlayListDialog();
 
         return  false;
     }
@@ -218,4 +215,9 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
 		listView.setAdapter(dirListAdapter);
 		dirListAdapter.notifyDataSetChanged();
 	}
+
+    private void openAddToPlayListDialog() {
+        AbstractBaseDialogFragment dialog = new AddToPlayListDialogFragment();
+        dialog.show(getFragmentManager(), getString(R.string.add_track_to_playlist_dialog_tag));
+    }
 }
