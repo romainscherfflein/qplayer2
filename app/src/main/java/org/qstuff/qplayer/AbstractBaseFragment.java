@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
  */
 public class AbstractBaseFragment extends Fragment {
 
-    @Inject SharedPreferences preferences;
+    @Inject protected SharedPreferences preferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
