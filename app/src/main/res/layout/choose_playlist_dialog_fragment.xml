@@ -2,8 +2,28 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
+    android:layout_height="match_parent"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:orientation="vertical">
+    
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_playlist_dialog_add"
+        android:layout_margin="10dp"/>
+    
+    <EditText
+        android:id="@+id/edittext_new_playlist_name"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:imeActionLabel="Create"
+        android:imeOptions="actionDone"    
+        android:hint="@string/choose_playlist_dialog_add_hint" />
+    
     <ListView
         android:id="@+id/choose_dialog_fragment_listview"
         style="@style/ListView.ChoosePlayList" />
