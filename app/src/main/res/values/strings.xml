@@ -21,6 +21,8 @@
     <string name="add_track_to_playlist_dialog_tag">add_track_to_playlist_dialog_tag</string>
     <string name="add_track_to_playlist_dialog_title">Add this track to a playlist ?</string>
 
+    <string name="choose_laylist_dialog_tag">choose_laylist_dialog_tag</string>
+    <string name="choose_playlist_dialog_title">Choose a playlist or create a new one</string>
 
 
 </resources>

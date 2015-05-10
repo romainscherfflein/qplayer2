@@ -8,16 +8,17 @@
     android:gravity="center"
     android:padding="5dp">
 
-    <ImageView android:id="@+id/tracklist_item_icon"
+    <ImageView android:id="@+id/playlist_item_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:src="@drawable/ic_subject_white_24dp"
         android:layout_marginRight="15dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"/>
 
-    <TextView android:id="@+id/tracklist_item_text"
-        style="@style/TracklistItemText"
+    <TextView android:id="@+id/playlist_item_text"
+        style="@style/PlaylistItemText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 	           

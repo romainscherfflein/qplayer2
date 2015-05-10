@@ -57,6 +57,9 @@ dependencies {
     compile 'com.jakewharton.timber:timber:2.5.0'
     // ViewPagerIndicator
     compile 'fr.avianey.com.viewpagerindicator:library:2.4.1@aar'
-    //
+    // Holo styling
     compile 'com.negusoft.holoaccent:library:1.0.1'
+    // Gson
+    compile 'com.google.code.gson:gson:2.2.4'
+
 }
