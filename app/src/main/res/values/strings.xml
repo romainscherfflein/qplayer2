@@ -23,6 +23,9 @@
 
     <string name="choose_laylist_dialog_tag">choose_laylist_dialog_tag</string>
     <string name="choose_playlist_dialog_title">Choose a playlist or create a new one</string>
+    <string name="choose_playlist_dialog_add">Enter a name for new playlist:</string>
+    <string name="choose_playlist_dialog_add_hint">playlist</string>
+
 
 
 </resources>
