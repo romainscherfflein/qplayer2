@@ -29,4 +29,9 @@ public class PlayList implements Serializable {
     public void setTrackList(List<Track> trackList) {
         this.trackList = trackList;
     }
+    
+    @Override
+    public String toString() {
+        return name;
+    }
 }

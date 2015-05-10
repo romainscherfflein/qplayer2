@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import org.qstuff.qplayer.R;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,14 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import timber.log.Timber;
-
 /**
  * This class can be used to have the alphabetical fast-scroll display.
  * 
  * @author claus chierici ((c)2012)
  */
-public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
+public class PlayListIndexerArrayAdapter<T> extends ArrayAdapter<T>
 	implements SectionIndexer, Serializable {
 
 	/**
@@ -41,7 +38,6 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 	private Context context;
 	private int layoutResourceId;
 	List<T> objects;
-	String path;
 	
 	/**
 	 * 
@@ -49,24 +45,22 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 	 * @param layoutResourceId
 	 * @param textViewId
 	 * @param objects
-	 * @param path 
 	 */
-	public IndexerArrayAdapter(Context context, 
-			int layoutResourceId,
-			int textViewId,
-			List<T> objects,
-			String path) {
+	public PlayListIndexerArrayAdapter(Context context,
+									   int layoutResourceId,
+									   int textViewId,
+									   List<T> objects) {
 	    super(context, layoutResourceId, textViewId, objects);
-	    Timber.d("IndexerArrayAdapter():");
+		
         	    
 	    this.context = context;
 	    this.layoutResourceId = layoutResourceId;
 	    this.objects = objects;
-	    this.path = path;
 	    
 	    alphaIndexer = new HashMap<String, Integer>();
 	    
 	    int size = objects.size();    
+		
 	    for (int i = size - 1; i >= 0; i--) {
 	    	T t = (T) objects.get(i);
 	    	String element = t.toString();
@@ -101,18 +95,8 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
         }
        
         String title = ((T)objects.get(position)).toString();
-        // Timber.d("TITLE : "+ title);
         holder.txtTitle.setText(title);
-        
-        File file = new File (path + "/" + title);
-
-        if (file.isFile())
-			holder.imgIcon.setImageResource(R.drawable.ic_my_library_music_white_18dp);
-        else if (file.isDirectory())
-			holder.imgIcon.setImageResource(R.drawable.ic_folder_white_18dp);
-        else
-        	Timber.e("WWWWWWWWWWWWWWWWWWWW");
-        
+                
         return row;
     }
 	
@@ -130,9 +114,7 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 	 * 
 	 */
 	public int getPositionForSection(int section) {
-//		Timber.d("getPositionForSection(): sec: " + section);
 		String letter = sections[section];
-//		Timber.d("getPositionForSection(): pos: " + alphaIndexer.get(letter));
 		return alphaIndexer.get(letter);
     }
 
@@ -140,7 +122,6 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 	 * 
 	 */
 	public int getSectionForPosition(int position) {
-//        Log.d(TAG, "getSectionForPosition(): " + position);
 	    return 0;
     }
 

@@ -17,7 +17,20 @@
 		<item name="android:textColor">@color/very_light_gray</item>
 		<item name="android:textSize">16sp</item>
 		<item name="android:padding">10dp</item>
-
 	</style>
+
+	<style name="ListView.ChoosePlayList">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:divider">#242424</item>
+		<item name="android:dividerHeight">1dp</item>
+	</style>
+
+	<style name="PlaylistItemText">
+		<item name="android:textColor">@color/very_light_gray</item>
+		<item name="android:textSize">16sp</item>
+		<item name="android:padding">10dp</item>
+	</style>
+
 
 </resources>

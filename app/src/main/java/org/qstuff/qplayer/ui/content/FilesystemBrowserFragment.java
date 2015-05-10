@@ -39,7 +39,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     @InjectView(R.id.filesystem_header)    TextView headerText;
     @InjectView(R.id.filesystem_parentdir) TextView browserParentDir;
 
-    private IndexerArrayAdapter<String> dirListAdapter;
+    private FileListIndexerArrayAdapter<String> dirListAdapter;
     private List<String>                currentDirEntries;
 
     private String paneTag;
@@ -206,7 +206,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
 		Collections.sort(this.currentDirEntries,
                 String.CASE_INSENSITIVE_ORDER);
 
-		dirListAdapter = new IndexerArrayAdapter<String>(getActivity(),
+		dirListAdapter = new FileListIndexerArrayAdapter<String>(getActivity(),
     			R.layout.tracklist_item,
     			R.id.tracklist_item_text,
     			currentDirEntries,
@@ -217,7 +217,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
 	}
 
     private void openAddToPlayListDialog() {
-        AbstractBaseDialogFragment dialog = new AddToPlayListDialogFragment();
+        AbstractBaseDialogFragment dialog = new AddTrackToPlayListDialogFragment();
         dialog.show(getFragmentManager(), getString(R.string.add_track_to_playlist_dialog_tag));
     }
 }

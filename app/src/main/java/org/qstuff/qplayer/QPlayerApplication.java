@@ -6,6 +6,10 @@ import android.content.SharedPreferences;
 
 import com.squareup.otto.Bus;
 
+import org.qstuff.qplayer.controller.PlayListController;
+import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
+import org.qstuff.qplayer.ui.content.AddTrackToPlayListDialogFragment;
+import org.qstuff.qplayer.ui.content.ChoosePlayListDialogFragment;
 import org.qstuff.qplayer.ui.content.CurrentBrowserFragment;
 import org.qstuff.qplayer.ui.content.FilesystemBrowserFragment;
 import org.qstuff.qplayer.ui.content.PlaylistBrowserFragment;
@@ -55,7 +59,11 @@ public class QPlayerApplication extends Application {
             FilesystemBrowserFragment.class,
             AbstractBaseFragment.class,
             CurrentBrowserFragment.class,
-            PlaylistBrowserFragment.class
+            PlaylistBrowserFragment.class,
+            PlayListController.class,
+            AbstractBaseDialogFragment.class,
+            ChoosePlayListDialogFragment.class,
+            AddTrackToPlayListDialogFragment.class
         },
         complete = false,
         library = true
@@ -64,6 +72,8 @@ public class QPlayerApplication extends Application {
     static final class MyModule {
         private final Context appContext;
 
+        Bus bus;
+        
         MyModule(Context appContext) {
             this.appContext = appContext;
         }
@@ -73,12 +83,19 @@ public class QPlayerApplication extends Application {
 
         @Provides @Singleton
         Bus provideBus() {
-            return new Bus();
+            bus = new Bus();
+            return bus;
         }
 
         @Provides @Singleton
         SharedPreferences provideSharedPreferences(Application app) {
             return app.getSharedPreferences("qplayer", Context.MODE_PRIVATE);
+        }
+
+        @Provides @Singleton
+        PlayListController providePlayListController(Application app, Bus eventBus, 
+                                                     SharedPreferences sharedPreferences) {
+            return new PlayListController(app.getApplicationContext(), eventBus, sharedPreferences);
         }
     }
 }
