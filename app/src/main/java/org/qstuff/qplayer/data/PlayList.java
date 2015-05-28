@@ -1,6 +1,7 @@
 package org.qstuff.qplayer.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,9 +12,15 @@ import java.util.List;
  */
 public class PlayList implements Serializable {
 
-    private List<Track> trackList;
+    private ArrayList<Track>  trackList;
+    private ArrayList<String> trackListNames;
+
     private String name;
 
+    public PlayList() {
+        trackList = new ArrayList<>();
+    }
+    
     public String getName() {
         return name;
     }
@@ -22,14 +29,37 @@ public class PlayList implements Serializable {
         this.name = name;
     }
 
-    public List<Track> getTrackList() {
+    public ArrayList<Track> getTrackList() {
         return trackList;
     }
-
-    public void setTrackList(List<Track> trackList) {
+    
+    public ArrayList<String> getTrackListNames() {
+        if (trackListNames != null)
+            return trackListNames;
+        trackListNames = new ArrayList<>();
+        for (Track t : trackList) {
+            trackListNames.add(t.getName());
+        }
+        return trackListNames;
+    }
+    
+    public void setTrackList(ArrayList<Track> trackList) {
         this.trackList = trackList;
     }
     
+    public void addTrack(Track track) {
+        if (trackList == null)
+            trackList = new ArrayList<>();
+        trackList.add(track);
+        if (trackListNames == null)
+            trackListNames = new ArrayList<>();
+        trackListNames.add(track.getName());
+    }
+    
+    public void deleteTrack(Track track) {
+        trackList.remove(track);
+        trackListNames.remove(track.getName());
+    }
     @Override
     public String toString() {
         return name;

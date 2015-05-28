@@ -6,7 +6,7 @@
     android:layout_height="match_parent" >
 
     <TextView
-        android:id="@+id/filesystem_header"
+        android:id="@+id/filesystem_fragment_header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -19,10 +19,10 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:background="#dddddd" />
+        android:background="@color/light_gray_2"/>
 
     <TextView
-        android:id="@+id/filesystem_parentdir"
+        android:id="@+id/filesystem_fragment_parentdir"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -37,10 +37,12 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:background="#242424" />
+        android:background="@color/light_gray_2" />
 
     <ListView
-        android:id="@+id/filesystem_listview"
+        android:id="@+id/filesystem_fragment_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         style="@style/ListView.FileList" />
 
 </LinearLayout>

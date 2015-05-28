@@ -38,6 +38,7 @@ public class PlayListIndexerArrayAdapter<T> extends ArrayAdapter<T>
 	private Context context;
 	private int layoutResourceId;
 	List<T> objects;
+	private boolean isPlayListList;
 	
 	/**
 	 * 
@@ -49,31 +50,43 @@ public class PlayListIndexerArrayAdapter<T> extends ArrayAdapter<T>
 	public PlayListIndexerArrayAdapter(Context context,
 									   int layoutResourceId,
 									   int textViewId,
-									   List<T> objects) {
+									   List<T> objects,
+									   boolean isPlayListList) {
 	    super(context, layoutResourceId, textViewId, objects);
 		
         	    
 	    this.context = context;
 	    this.layoutResourceId = layoutResourceId;
 	    this.objects = objects;
+	    this.isPlayListList = isPlayListList;
+		initialize();
 	    
-	    alphaIndexer = new HashMap<String, Integer>();
-	    
-	    int size = objects.size();    
-		
-	    for (int i = size - 1; i >= 0; i--) {
-	    	T t = (T) objects.get(i);
-	    	String element = t.toString();
-	    	alphaIndexer.put(element.substring(0, 1), i);
-	    }
-	    
-	    Set<String> keys = alphaIndexer.keySet();
-	    ArrayList<String> keyList = new ArrayList<String>(keys);
-	    Collections.sort(keyList, String.CASE_INSENSITIVE_ORDER);
-        sections = new String[keyList.size()];
-        keyList.toArray(sections);
     }
 
+	public void setObjects(List<T> objects, boolean isPlayListList) {
+		this.objects = objects;
+		this.isPlayListList = isPlayListList;
+		initialize();
+	}
+	
+	private void initialize() {
+		alphaIndexer = new HashMap<String, Integer>();
+
+		int size = objects.size();
+
+		for (int i = size - 1; i >= 0; i--) {
+			T t = (T) objects.get(i);
+			String element = t.toString();
+			alphaIndexer.put(element.substring(0, 1), i);
+		}
+
+		Set<String> keys = alphaIndexer.keySet();
+		ArrayList<String> keyList = new ArrayList<String>(keys);
+		Collections.sort(keyList, String.CASE_INSENSITIVE_ORDER);
+		sections = new String[keyList.size()];
+		keyList.toArray(sections);
+	}
+	
 	/**
 	 * 
 	 */
@@ -81,19 +94,26 @@ public class PlayListIndexerArrayAdapter<T> extends ArrayAdapter<T>
     public View getView(int position, View convertView, ViewGroup parent) {
 		
 		View row = convertView;
-        ListHolder holder = null;
+        ListHolder holder;
         
         if(row == null) {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
+			
             holder = new ListHolder();
-            holder.imgIcon 	= (ImageView)row.findViewById(R.id.tracklist_item_icon);
-            holder.txtTitle = (TextView)row.findViewById(R.id.tracklist_item_text);
+            holder.imgIcon 	= (ImageView)row.findViewById(R.id.playlist_item_icon);
+            holder.txtTitle = (TextView)row.findViewById(R.id.playlist_item_text);
             row.setTag(holder);
+			
         } else {
             holder = (ListHolder)row.getTag();
         }
-       
+		
+		if (isPlayListList)
+			holder.imgIcon.setImageResource(R.drawable.ic_subject_white_24dp);
+		else 
+			holder.imgIcon.setImageResource(R.drawable.ic_my_library_music_white_18dp);
+		
         String title = ((T)objects.get(position)).toString();
         holder.txtTitle.setText(title);
                 
@@ -105,9 +125,9 @@ public class PlayListIndexerArrayAdapter<T> extends ArrayAdapter<T>
 	 * @author claus
 	 *
 	 */
-	static class ListHolder {
+	private static class ListHolder {
         ImageView imgIcon;
-        TextView txtTitle;
+        TextView  txtTitle;
     }
 	
 	/**

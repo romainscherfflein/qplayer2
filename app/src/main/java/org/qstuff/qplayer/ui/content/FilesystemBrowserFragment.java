@@ -9,9 +9,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.controller.PlayListController;
+import org.qstuff.qplayer.data.PlayList;
+import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.FileSelectedEvent;
+import org.qstuff.qplayer.events.NewPlayListEvent;
 import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
 
 import java.io.File;
@@ -34,17 +39,19 @@ import timber.log.Timber;
 public class FilesystemBrowserFragment extends BaseBrowserFragment {
 
     @Inject Bus bus;
+    @Inject PlayListController playListController;
 
-    @InjectView(R.id.filesystem_listview)  ListView listView;
-    @InjectView(R.id.filesystem_header)    TextView headerText;
-    @InjectView(R.id.filesystem_parentdir) TextView browserParentDir;
+    @InjectView(R.id.filesystem_fragment_listview)  ListView listView;
+    @InjectView(R.id.filesystem_fragment_header)    TextView headerText;
+    @InjectView(R.id.filesystem_fragment_parentdir) TextView browserParentDir;
 
     private FileListIndexerArrayAdapter<String> dirListAdapter;
-    private List<String>                currentDirEntries;
+    private List<String>                        currentDirEntries;
 
     private String paneTag;
     private String rootdir;
 	private File   currentDir;
+    private File   selectedTrack;
 
 
     //
@@ -108,10 +115,26 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     }
 
     //
-    // Click Handlers
+    // Event Subscriptions
     //
 
-    @OnItemClick (R.id.filesystem_listview)
+    @Subscribe
+    public void onNewPlayListEvent(NewPlayListEvent event) {
+        Timber.d("onNewPlayListEvent(): " + event.name);
+
+        PlayList pl = new PlayList();
+        pl.setName(event.name);
+        if (event.addCurrentTrack) {
+            pl.addTrack(new Track(selectedTrack.getName(), selectedTrack.getAbsolutePath()));
+        }
+        playListController.addPlayList(pl);
+    }
+    
+    //
+    // Input Handlers
+    //
+
+    @OnItemClick (R.id.filesystem_fragment_listview)
     public void onListItemClicked(int position) {
         Timber.d("onListItemClicked: pos: " + position);
 
@@ -128,13 +151,14 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
 
     }
 
-    @OnItemLongClick (R.id.filesystem_listview)
+    @OnItemLongClick (R.id.filesystem_fragment_listview)
     public boolean onListItemLongClick(int position) {
         Timber.d("onListItemLongClick(): pos: " + position);
 
         String dir = dirListAdapter.getItem(position);
         final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
-
+        selectedTrack = item;
+        
         if (item.isDirectory())
             browseTo(item);
         else
@@ -143,7 +167,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         return  false;
     }
 
-    @OnClick (R.id.filesystem_parentdir)
+    @OnClick (R.id.filesystem_fragment_parentdir)
     public void onParentDirectoryClick() {
         Timber.d("onParentDirectoryClick():");
 

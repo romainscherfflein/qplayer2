@@ -10,6 +10,8 @@ import org.qstuff.qplayer.QPlayerApplication;
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.ui.content.ChoosePlayListDialogFragment;
 
+import butterknife.ButterKnife;
+
 
 /**
  * 
