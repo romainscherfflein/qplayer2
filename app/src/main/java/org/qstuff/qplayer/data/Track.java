@@ -12,11 +12,24 @@ public class Track  implements Serializable {
 
     private String uri;
 
+
+    private String name;
+    
+    public Track(String name, String uri) {
+        this.uri = uri;
+        this.name = name;
+    }
+
     public String getUri() {
         return uri;
     }
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+
+    public String getName() {
+        return name;
     }
 }

@@ -18,11 +18,17 @@ import com.squareup.otto.Subscribe;
 import org.qstuff.qplayer.AbstractBaseFragment;
 import org.qstuff.qplayer.Constants;
 import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.controller.PlayListController;
+import org.qstuff.qplayer.data.PlayList;
+import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.FileSelectedEvent;
+import org.qstuff.qplayer.events.NewPlayListEvent;
 import org.qstuff.qplayer.ui.util.VerticalSeekBar;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -44,6 +50,7 @@ public class PlayerFragment extends AbstractBaseFragment
 
 
     @Inject Bus bus;
+    @Inject PlayListController playListController;
 
     @InjectView(R.id.pitch_control)             VerticalSeekBar pitchControl;
     @InjectView(R.id.player_button_previous)    ImageButton     buttonPrevious;
@@ -55,12 +62,13 @@ public class PlayerFragment extends AbstractBaseFragment
     @InjectView(R.id.player_text_current_track) TextView        textCurrentTrack;
 
 
-    private MediaPlayer player;
-    private boolean     isPrepared;
-    private boolean     isPlaying;
-    private File        currentTrack = null;
+    private MediaPlayer      player;
+    private boolean          isPrepared;
+    private boolean          isPlaying;
+    private ArrayList<Track> trackList;
 
-
+    private File             currentTrack = null;
+    
     //
     // Fragment Lifecycle
     //
@@ -73,6 +81,8 @@ public class PlayerFragment extends AbstractBaseFragment
         if (player == null)
             player = new MediaPlayer();
         player.reset();
+        
+        trackList = playListController.getLatestTrackList();
     }
 
     @Override
@@ -118,19 +128,16 @@ public class PlayerFragment extends AbstractBaseFragment
         cleanupPlayer();
     }
 
-
     //
     // Event Subscriptions
     //
 
     @Subscribe
     public void onAudioFileSelectedEvent(FileSelectedEvent event) {
-        Timber.d("onAudioFileSelectedEvent():" + event.audioFile.getAbsolutePath());
-
+        Timber.d("onAudioFileSelectedEvent(): " + event.audioFile.getAbsolutePath());
         loadAudioFile(event.audioFile);
     }
-
-
+    
     //
     // Private
     //

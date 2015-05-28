@@ -8,6 +8,8 @@ import android.os.Bundle;
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
 
+import butterknife.ButterKnife;
+
 /**
  *
  */
@@ -15,7 +17,9 @@ public class AddTrackToPlayListDialogFragment extends AbstractBaseDialogFragment
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new AlertDialog.Builder(getActivity())
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        Dialog dialog = builder
             .setCancelable(false)
             .setTitle(getString(R.string.add_track_to_playlist_dialog_title))
             .setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
@@ -27,5 +31,9 @@ public class AddTrackToPlayListDialogFragment extends AbstractBaseDialogFragment
             })
             .setNegativeButton(getString(R.string.dialog_cancel), null)
             .create();
+
+        ButterKnife.inject(dialog);
+        
+        return dialog;
     }
 }
