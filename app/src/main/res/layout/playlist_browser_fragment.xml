@@ -7,11 +7,43 @@
 
     <TextView
         android:id="@+id/playlist_fragment_header"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:background="@color/blue"
-        android:text="PLAYLIST AREA"/>
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textStyle="bold"
+        android:textSize="18dp"
+        android:textColor="@android:color/black"
+        android:padding="5dp"
+        android:background="@android:color/background_light"
+        android:text="Playlists"/>
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray_2" />
+    
+    <TextView
+        android:id="@+id/playlist_fragment_backnavigation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textStyle="bold"
+        android:textSize="18dp"
+        android:text="  Back to Playlists"
+        android:textColor="@android:color/white"
+        android:padding="5dp"
+        android:background="@android:color/black"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray_2" />
+    
+    <ListView
+        android:id="@+id/playlist_fragment_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/ListView.FileList" />
+    
 </LinearLayout>
 

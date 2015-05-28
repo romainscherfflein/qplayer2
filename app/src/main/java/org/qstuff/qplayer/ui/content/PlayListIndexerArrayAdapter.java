@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import org.qstuff.qplayer.R;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,14 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import timber.log.Timber;
-
 /**
  * This class can be used to have the alphabetical fast-scroll display.
  * 
  * @author claus chierici ((c)2012)
  */
-public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
+public class PlayListIndexerArrayAdapter<T> extends ArrayAdapter<T>
 	implements SectionIndexer, Serializable {
 
 	/**
@@ -41,7 +38,7 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 	private Context context;
 	private int layoutResourceId;
 	List<T> objects;
-	String path;
+	private boolean isPlayListList;
 	
 	/**
 	 * 
@@ -49,37 +46,47 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 	 * @param layoutResourceId
 	 * @param textViewId
 	 * @param objects
-	 * @param path 
 	 */
-	public IndexerArrayAdapter(Context context, 
-			int layoutResourceId,
-			int textViewId,
-			List<T> objects,
-			String path) {
+	public PlayListIndexerArrayAdapter(Context context,
+									   int layoutResourceId,
+									   int textViewId,
+									   List<T> objects,
+									   boolean isPlayListList) {
 	    super(context, layoutResourceId, textViewId, objects);
-	    Timber.d("IndexerArrayAdapter():");
+		
         	    
 	    this.context = context;
 	    this.layoutResourceId = layoutResourceId;
 	    this.objects = objects;
-	    this.path = path;
+	    this.isPlayListList = isPlayListList;
+		initialize();
 	    
-	    alphaIndexer = new HashMap<String, Integer>();
-	    
-	    int size = objects.size();    
-	    for (int i = size - 1; i >= 0; i--) {
-	    	T t = (T) objects.get(i);
-	    	String element = t.toString();
-	    	alphaIndexer.put(element.substring(0, 1), i);
-	    }
-	    
-	    Set<String> keys = alphaIndexer.keySet();
-	    ArrayList<String> keyList = new ArrayList<String>(keys);
-	    Collections.sort(keyList, String.CASE_INSENSITIVE_ORDER);
-        sections = new String[keyList.size()];
-        keyList.toArray(sections);
     }
 
+	public void setObjects(List<T> objects, boolean isPlayListList) {
+		this.objects = objects;
+		this.isPlayListList = isPlayListList;
+		initialize();
+	}
+	
+	private void initialize() {
+		alphaIndexer = new HashMap<String, Integer>();
+
+		int size = objects.size();
+
+		for (int i = size - 1; i >= 0; i--) {
+			T t = (T) objects.get(i);
+			String element = t.toString();
+			alphaIndexer.put(element.substring(0, 1), i);
+		}
+
+		Set<String> keys = alphaIndexer.keySet();
+		ArrayList<String> keyList = new ArrayList<String>(keys);
+		Collections.sort(keyList, String.CASE_INSENSITIVE_ORDER);
+		sections = new String[keyList.size()];
+		keyList.toArray(sections);
+	}
+	
 	/**
 	 * 
 	 */
@@ -87,32 +94,29 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
     public View getView(int position, View convertView, ViewGroup parent) {
 		
 		View row = convertView;
-        ListHolder holder = null;
+        ListHolder holder;
         
         if(row == null) {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
+			
             holder = new ListHolder();
-            holder.imgIcon 	= (ImageView)row.findViewById(R.id.tracklist_item_icon);
-            holder.txtTitle = (TextView)row.findViewById(R.id.tracklist_item_text);
+            holder.imgIcon 	= (ImageView)row.findViewById(R.id.playlist_item_icon);
+            holder.txtTitle = (TextView)row.findViewById(R.id.playlist_item_text);
             row.setTag(holder);
+			
         } else {
             holder = (ListHolder)row.getTag();
         }
-       
-        String title = ((T)objects.get(position)).toString();
-        // Timber.d("TITLE : "+ title);
-        holder.txtTitle.setText(title);
-        
-        File file = new File (path + "/" + title);
-
-        if (file.isFile())
+		
+		if (isPlayListList)
+			holder.imgIcon.setImageResource(R.drawable.ic_subject_white_24dp);
+		else 
 			holder.imgIcon.setImageResource(R.drawable.ic_my_library_music_white_18dp);
-        else if (file.isDirectory())
-			holder.imgIcon.setImageResource(R.drawable.ic_folder_white_18dp);
-        else
-        	Timber.e("WWWWWWWWWWWWWWWWWWWW");
-        
+		
+        String title = ((T)objects.get(position)).toString();
+        holder.txtTitle.setText(title);
+                
         return row;
     }
 	
@@ -121,18 +125,16 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 	 * @author claus
 	 *
 	 */
-	static class ListHolder {
+	private static class ListHolder {
         ImageView imgIcon;
-        TextView txtTitle;
+        TextView  txtTitle;
     }
 	
 	/**
 	 * 
 	 */
 	public int getPositionForSection(int section) {
-//		Timber.d("getPositionForSection(): sec: " + section);
 		String letter = sections[section];
-//		Timber.d("getPositionForSection(): pos: " + alphaIndexer.get(letter));
 		return alphaIndexer.get(letter);
     }
 
@@ -140,7 +142,6 @@ public class IndexerArrayAdapter<T> extends ArrayAdapter<T>
 	 * 
 	 */
 	public int getSectionForPosition(int position) {
-//        Log.d(TAG, "getSectionForPosition(): " + position);
 	    return 0;
     }
 
