@@ -1,8 +1,6 @@
 package org.qstuff.qplayer.ui.content;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +40,7 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     @InjectView(R.id.playlist_fragment_listview) ListView listView;
     @InjectView(R.id.playlist_fragment_header)   TextView headerText;
 
-    private PlayListIndexerArrayAdapter<String> dirListAdapter;
+    private PlayListIndexerArrayAdapter<String> playListAdapter;
     private PlayList                            currentPlayList;
     private ArrayList<PlayList>                 playLists;
     private boolean                             isPlayListList;
@@ -74,14 +72,14 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
         playLists = playListController.getPlayLists();
         isPlayListList = true;
         
-        dirListAdapter = new PlayListIndexerArrayAdapter<>(
+        playListAdapter = new PlayListIndexerArrayAdapter<>(
             getActivity(),
             R.layout.playlist_item,
             R.id.playlist_item_text,
             playListController.getPlayListNames(),
             isPlayListList);
 
-        listView.setAdapter(dirListAdapter);
+        listView.setAdapter(playListAdapter);
                 
         return view;
     }
@@ -104,7 +102,7 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     public void onNewPlayListEvent(NewPlayListEvent event) {
         Timber.d("onNewPlayListEvent(): " + event.name);
         
-        dirListAdapter.notifyDataSetChanged();
+        playListAdapter.notifyDataSetChanged();
     }
 
     //
@@ -154,17 +152,17 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
         }
         isPlayListList = true;
         
-        dirListAdapter = new PlayListIndexerArrayAdapter<>(
+        playListAdapter = new PlayListIndexerArrayAdapter<>(
             getActivity(),
             R.layout.playlist_item,
             R.id.playlist_item_text,
             playListController.getPlayListNames(),
             isPlayListList);
 
-        listView.setAdapter(dirListAdapter);
+        listView.setAdapter(playListAdapter);
         
-//        dirListAdapter.setObjects(playListController.getPlayListNames(), true);
-//        dirListAdapter.notifyDataSetChanged();
+//        playListAdapter.setObjects(playListController.getPlayListNames(), true);
+//        playListAdapter.notifyDataSetChanged();
     }
     
     private void showTrackList(PlayList pl) {
@@ -176,16 +174,16 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
         }
         isPlayListList = false;
         
-        dirListAdapter = new PlayListIndexerArrayAdapter<>(
+        playListAdapter = new PlayListIndexerArrayAdapter<>(
             getActivity(),
             R.layout.playlist_item,
             R.id.playlist_item_text,
             pl.getTrackListNames(),
             isPlayListList);
         
-        listView.setAdapter(dirListAdapter);
+        listView.setAdapter(playListAdapter);
         
-//        dirListAdapter.setObjects(pl.getTrackListNames(), false);
-//        dirListAdapter.notifyDataSetChanged();
+//        playListAdapter.setObjects(pl.getTrackListNames(), false);
+//        playListAdapter.notifyDataSetChanged();
     }
 }

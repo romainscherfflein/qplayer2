@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"/>
         
     <EditText
-        android:id="@+id/edittext_new_playlist_name"
+        android:id="@+id/choose_dialog_fragment_edittext"
         android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
