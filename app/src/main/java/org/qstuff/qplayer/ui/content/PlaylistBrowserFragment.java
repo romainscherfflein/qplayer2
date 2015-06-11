@@ -92,11 +92,13 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     @Override
     public void onResume() {
         super.onResume();
+        bus.register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        bus.unregister(this);
     }
     
     //
@@ -107,37 +109,36 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     public void onNewPlayListEvent(NewPlayListEvent event) {
         Timber.d("onNewPlayListEvent(): " + event.name);
         
-        playListAdapter.notifyDataSetChanged();
+        updateListView();
     }
 
     @Subscribe
     public void onAddTrackToPlayListEvent(AddTrackToPlayListEvent event) {
         Timber.d("onAddTrackToPlayListEvent(): " + event.playList.getName());
 
-        playListAdapter.notifyDataSetChanged();
+        updateListView();
     }
     
     @Subscribe
     public void onEditPlayListEvent(EditPlayListEvent event) {
+        Timber.d("onEditPlayListEvent(): " + event.playList.getName());
         
         if (event.nameChanged) {
             playListController.renamePlayList(event.playList, event.newName);
+            updateListView();
         }
-        else if (event.deleted) {
+        if (event.deleted) {
             playListController.deletePlaylist(event.playList);
+            updateListView();
         }
-        else
-            return;
-        
-        playListAdapter.notifyDataSetChanged();
     }
     
     @Subscribe
     public void onDeleteTrackFromPlayListEvent(DeleteTrackFromPlayListEvent event) {
         event.playList.deleteTrack(event.track);
         playListController.updatePlayList(event.playList);
-        
-        playListAdapter.notifyDataSetChanged();
+
+        updateListView();
     }
     
     //
@@ -179,6 +180,15 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     //
     // Private
     //
+    
+    private void updateListView() {
+        Timber.d("updateListView():");
+        
+        if (isPlayListList)
+            showPlayListList();
+        else
+            showTrackList(currentPlayList);
+    }
     
     private void showPlayListList() {
         Timber.d("showPlayListList():");

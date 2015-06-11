@@ -58,7 +58,19 @@ public class EditPlayListDialogFragment extends AbstractBaseDialogFragment {
 
         return v;
     }
-        
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        bus.register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        bus.unregister(this);
+    }
+    
     //
     // Input Handlers
     //

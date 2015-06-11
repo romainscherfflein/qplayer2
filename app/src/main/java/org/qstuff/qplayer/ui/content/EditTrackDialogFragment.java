@@ -40,6 +40,10 @@ public class EditTrackDialogFragment extends AbstractBaseDialogFragment {
     private PlayList playList;
 
 
+    //
+    // Fragment Lifecycle
+    //
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.edit_track_dialog_fragment, container, false);
@@ -60,7 +64,19 @@ public class EditTrackDialogFragment extends AbstractBaseDialogFragment {
         }
         return v;
     }
-        
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        bus.register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        bus.unregister(this);
+    }
+    
     //
     // Input Handlers
     //

@@ -48,6 +48,10 @@ public class ChoosePlayListDialogFragment extends AbstractBaseDialogFragment {
     private boolean                             isPlayListList;
     private Track                               selectedTrack;
 
+
+    //
+    // Fragment Lifecycle
+    //
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,7 +74,19 @@ public class ChoosePlayListDialogFragment extends AbstractBaseDialogFragment {
         
         return v;
     }
-        
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        bus.register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        bus.unregister(this);
+    }
+    
     //
     // Input Handlers
     //
