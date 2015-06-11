@@ -173,7 +173,8 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     @OnClick(R.id.playlist_fragment_backnavigation)
     public void onBackNavigationClick() {
         Timber.d("onBackNavigationClick():");
-
+        
+        headerText.setText("");
         showPlayListList();
     }
 
