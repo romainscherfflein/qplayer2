@@ -49,6 +49,17 @@ public class PlayListController {
         playListNames.add(playlist.getName());
         savePlayLists();
     }
+
+    public void updatePlayList(PlayList playlist) {
+        
+        if (playLists.contains(playlist)) {
+            int index = playLists.lastIndexOf(playlist);
+            playLists.remove(index);
+        }
+        playLists.add(playlist);
+        playListNames.add(playlist.getName());
+        savePlayLists();
+    }
     
     public void deletePlaylist(PlayList playlist) {
         playLists.remove(playlist);

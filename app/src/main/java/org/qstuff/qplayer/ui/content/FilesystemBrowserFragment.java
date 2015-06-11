@@ -15,6 +15,7 @@ import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.controller.PlayListController;
 import org.qstuff.qplayer.data.PlayList;
 import org.qstuff.qplayer.data.Track;
+import org.qstuff.qplayer.events.AddTrackToPlayListEvent;
 import org.qstuff.qplayer.events.FileSelectedEvent;
 import org.qstuff.qplayer.events.NewPlayListEvent;
 import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
@@ -128,6 +129,17 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
             pl.addTrack(new Track(selectedTrack.getName(), selectedTrack.getAbsolutePath()));
         }
         playListController.addPlayList(pl);
+    }
+
+    @Subscribe
+    public void onAddTrackToPlayListEvent(AddTrackToPlayListEvent event) {
+        Timber.d("onAddTrackToPlayListEvent(): " + event.playList.getName());
+
+        if (event.playList == null) return;
+        PlayList pl = event.playList;
+        pl.addTrack(new Track(selectedTrack.getName(), selectedTrack.getAbsolutePath()));
+
+        playListController.updatePlayList(pl);
     }
     
     //
