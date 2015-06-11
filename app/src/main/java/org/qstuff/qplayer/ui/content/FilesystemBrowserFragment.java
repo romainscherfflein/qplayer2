@@ -176,7 +176,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         else
             openAddToPlayListDialog();
 
-        return  false;
+        return true;
     }
 
     @OnClick (R.id.filesystem_fragment_parentdir)

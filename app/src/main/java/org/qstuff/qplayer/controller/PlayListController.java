@@ -61,6 +61,19 @@ public class PlayListController {
         savePlayLists();
     }
     
+    public void renamePlayList(PlayList playList, String newName) {
+        
+         if (!playLists.contains(playList)) {
+             return;
+         }
+        
+        PlayList pl = playLists.get(playLists.lastIndexOf(playList));
+        playListNames.remove(playListNames.lastIndexOf(pl.getName()));
+        pl.setName(newName);
+        playListNames.add(newName);
+        savePlayLists();
+    }
+    
     public void deletePlaylist(PlayList playlist) {
         playLists.remove(playlist);
         playListNames.remove(playlist.getName());

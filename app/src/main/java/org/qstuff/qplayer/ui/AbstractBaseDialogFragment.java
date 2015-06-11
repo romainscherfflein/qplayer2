@@ -3,6 +3,7 @@ package org.qstuff.qplayer.ui;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.view.View;
 
 import com.negusoft.holoaccent.dialog.DividerPainter;
 
@@ -11,6 +12,8 @@ import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.ui.content.ChoosePlayListDialogFragment;
 
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import timber.log.Timber;
 
 
 /**
@@ -38,7 +41,13 @@ public class AbstractBaseDialogFragment extends DialogFragment {
         if (d != null)
             new DividerPainter(getActivity()).paint(d.getWindow());
     }
-        
+    
+    @OnClick(R.id.dialog_cancel)
+    public void onDialogCancel(View view) {
+        Timber.d("onDialogCancel():");
+        getDialog().dismiss();
+    }
+    
     public void openChoosePlayListDialog() {
         ChoosePlayListDialogFragment dialog = new ChoosePlayListDialogFragment();
         dialog.show(getFragmentManager(), getString(R.string.choose_laylist_dialog_tag));

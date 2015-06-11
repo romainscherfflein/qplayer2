@@ -10,12 +10,17 @@ import android.widget.TextView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import org.qstuff.qplayer.Constants;
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.controller.PlayListController;
 import org.qstuff.qplayer.data.PlayList;
 import org.qstuff.qplayer.data.Track;
+import org.qstuff.qplayer.events.AddTrackToPlayListEvent;
+import org.qstuff.qplayer.events.DeleteTrackFromPlayListEvent;
+import org.qstuff.qplayer.events.EditPlayListEvent;
 import org.qstuff.qplayer.events.FileSelectedEvent;
 import org.qstuff.qplayer.events.NewPlayListEvent;
+import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,7 +73,7 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
         listView.setItemsCanFocus(true);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         listView.setFastScrollEnabled(true);
-        
+                
         playLists = playListController.getPlayLists();
         isPlayListList = true;
         
@@ -105,6 +110,36 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
         playListAdapter.notifyDataSetChanged();
     }
 
+    @Subscribe
+    public void onAddTrackToPlayListEvent(AddTrackToPlayListEvent event) {
+        Timber.d("onAddTrackToPlayListEvent(): " + event.playList.getName());
+
+        playListAdapter.notifyDataSetChanged();
+    }
+    
+    @Subscribe
+    public void onEditPlayListEvent(EditPlayListEvent event) {
+        
+        if (event.nameChanged) {
+            playListController.renamePlayList(event.playList, event.newName);
+        }
+        else if (event.deleted) {
+            playListController.deletePlaylist(event.playList);
+        }
+        else
+            return;
+        
+        playListAdapter.notifyDataSetChanged();
+    }
+    
+    @Subscribe
+    public void onDeleteTrackFromPlayListEvent(DeleteTrackFromPlayListEvent event) {
+        event.playList.deleteTrack(event.track);
+        playListController.updatePlayList(event.playList);
+        
+        playListAdapter.notifyDataSetChanged();
+    }
+    
     //
     // Input Handlers
     //
@@ -127,9 +162,11 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     public boolean onListItemLongClick(int position) {
         Timber.d("onListItemLongClick(): pos: " + position);
     
-        // TODO: PlayList / Track edit dialog
-        
-        return  false;
+        if (isPlayListList)
+            openEditPlayListDialog(playLists.get(position));
+        else
+            openEditTrackInPlayListDialog(currentPlayList.getTrackList().get(position));
+        return true;
     }
     
     @OnClick(R.id.playlist_fragment_backnavigation)
@@ -150,6 +187,7 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
             // TODO: Toast
             return;
         }
+        
         isPlayListList = true;
         
         playListAdapter = new PlayListIndexerArrayAdapter<>(
@@ -160,9 +198,6 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
             isPlayListList);
 
         listView.setAdapter(playListAdapter);
-        
-//        playListAdapter.setObjects(playListController.getPlayListNames(), true);
-//        playListAdapter.notifyDataSetChanged();
     }
     
     private void showTrackList(PlayList pl) {
@@ -172,6 +207,7 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
             // TODO: Toast
             return;
         }
+        
         isPlayListList = false;
         
         playListAdapter = new PlayListIndexerArrayAdapter<>(
@@ -181,9 +217,29 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
             pl.getTrackListNames(),
             isPlayListList);
         
-        listView.setAdapter(playListAdapter);
+        listView.setAdapter(playListAdapter);        
+    }
+
+    private void openEditPlayListDialog(PlayList pl) {
+        Timber.d("openEditPlayListDialog(): " + pl.getName());
         
-//        playListAdapter.setObjects(pl.getTrackListNames(), false);
-//        playListAdapter.notifyDataSetChanged();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constants.EXTRA_PLAYLIST, pl);
+        
+        AbstractBaseDialogFragment dialog = new EditPlayListDialogFragment();
+        dialog.setArguments(bundle);
+        dialog.show(getFragmentManager(), getString(R.string.edit_playlist_dialog_tag));
+    }
+    
+    private void openEditTrackInPlayListDialog(Track track) {
+        Timber.d("openEditTrackInPlayListDialog(): " + track.getName());
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constants.EXTRA_PLAYLIST, currentPlayList);
+        bundle.putSerializable(Constants.EXTRA_TRACK, track);
+
+        AbstractBaseDialogFragment dialog = new EditTrackDialogFragment();
+        dialog.setArguments(bundle);
+        dialog.show(getFragmentManager(), getString(R.string.edit_track_dialog_tag));
     }
 }
