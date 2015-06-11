@@ -10,9 +10,14 @@
     <!-- Browser -->
 
     <string name="Current">Current</string>
-    <string name="Playlists">Playlists</string>
     <string name="Filebrowser">Filebrowser</string>
 
+    <string name="Playlists">Playlists</string>
+
+    <string name="playlist_browser_back">  Back to Playlists</string>
+    <string name="playlist_browser_add_playlist">  New Playlist</string>
+
+    
     <!-- Dialogs -->
 
     <string name="dialog_ok">OK</string>

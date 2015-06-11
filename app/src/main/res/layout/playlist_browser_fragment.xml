@@ -11,11 +11,11 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:textStyle="bold"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:textColor="@android:color/black"
         android:padding="5dp"
         android:background="@android:color/background_light"
-        android:text="Playlists"/>
+        android:text="@string/Playlists"/>
 
     <View
         android:layout_width="fill_parent"
@@ -28,8 +28,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:textStyle="bold"
-        android:textSize="18dp"
-        android:text="  Back to Playlists"
+        android:textSize="18sp"
+        android:text="@string/playlist_browser_add_playlist"
         android:textColor="@android:color/white"
         android:padding="5dp"
         android:background="@android:color/black"/>

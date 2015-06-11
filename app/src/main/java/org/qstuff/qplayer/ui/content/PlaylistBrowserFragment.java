@@ -42,9 +42,10 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     @Inject Bus bus;
     @Inject PlayListController playListController;
     
-    @InjectView(R.id.playlist_fragment_listview) ListView listView;
-    @InjectView(R.id.playlist_fragment_header)   TextView headerText;
-
+    @InjectView(R.id.playlist_fragment_listview)       ListView listView;
+    @InjectView(R.id.playlist_fragment_header)         TextView headerText;
+    @InjectView(R.id.playlist_fragment_backnavigation) TextView backText;
+    
     private PlayListIndexerArrayAdapter<String> playListAdapter;
     private PlayList                            currentPlayList;
     private ArrayList<PlayList>                 playLists;
@@ -152,6 +153,7 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
         if (isPlayListList) {
             currentPlayList = playLists.get(position);
             headerText.setText("Playlist: " + currentPlayList.getName());
+            backText.setText(getString(R.string.playlist_browser_back));
             showTrackList(currentPlayList);            
         } else {
             Track track = currentPlayList.getTrackList().get(position);
@@ -174,8 +176,14 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     public void onBackNavigationClick() {
         Timber.d("onBackNavigationClick():");
         
-        headerText.setText("");
-        showPlayListList();
+        headerText.setText(getString(R.string.Playlists));
+        if(!isPlayListList) {
+            backText.setText(getString(R.string.playlist_browser_add_playlist));
+            isPlayListList = true;
+            updateListView();
+        } else {
+            // TODO: open add playlist dialog
+        }
     }
 
     //
