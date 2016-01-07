@@ -2,13 +2,21 @@ package org.qstuff.qplayer;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.squareup.otto.Bus;
 
-import org.qstuff.qplayer.content.CurrentBrowserFragment;
-import org.qstuff.qplayer.content.FilesystemBrowserFragment;
-import org.qstuff.qplayer.content.PlaylistBrowserFragment;
-import org.qstuff.qplayer.player.PlayerFragment;
+import org.qstuff.qplayer.controller.PlayListController;
+import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
+import org.qstuff.qplayer.ui.content.AddTrackToPlayListDialogFragment;
+import org.qstuff.qplayer.ui.content.ChoosePlayListDialogFragment;
+import org.qstuff.qplayer.ui.content.CurrentBrowserFragment;
+import org.qstuff.qplayer.ui.content.EditPlayListDialogFragment;
+import org.qstuff.qplayer.ui.content.EditTrackDialogFragment;
+import org.qstuff.qplayer.ui.content.FilesystemBrowserFragment;
+import org.qstuff.qplayer.ui.content.NewPlayListDialogFragment;
+import org.qstuff.qplayer.ui.content.PlaylistBrowserFragment;
+import org.qstuff.qplayer.ui.player.PlayerFragment;
 import org.qstuff.qplayer.util.TimberCrashReportingTree;
 
 import javax.inject.Singleton;
@@ -54,20 +62,47 @@ public class QPlayerApplication extends Application {
             FilesystemBrowserFragment.class,
             AbstractBaseFragment.class,
             CurrentBrowserFragment.class,
-            PlaylistBrowserFragment.class
-    })
+            PlaylistBrowserFragment.class,
+            PlayListController.class,
+            AbstractBaseDialogFragment.class,
+            ChoosePlayListDialogFragment.class,
+            AddTrackToPlayListDialogFragment.class,
+            EditPlayListDialogFragment.class,
+            NewPlayListDialogFragment.class,
+            EditTrackDialogFragment.class
+        
+        },
+        complete = false,
+        library = true
+    )
 
-    static class MyModule {
+    static final class MyModule {
         private final Context appContext;
 
+        Bus bus;
+        
         MyModule(Context appContext) {
             this.appContext = appContext;
         }
+        @Provides @Singleton Application provideApplicationContext() {
+            return (Application)appContext;
+        }
 
-        @Provides
-        @Singleton
+        @Provides @Singleton
         Bus provideBus() {
-            return new Bus();
+            bus = new Bus();
+            return bus;
+        }
+
+        @Provides @Singleton
+        SharedPreferences provideSharedPreferences(Application app) {
+            return app.getSharedPreferences("qplayer", Context.MODE_PRIVATE);
+        }
+
+        @Provides @Singleton
+        PlayListController providePlayListController(Application app, Bus eventBus, 
+                                                     SharedPreferences sharedPreferences) {
+            return new PlayListController(app.getApplicationContext(), eventBus, sharedPreferences);
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.content;
+package org.qstuff.qplayer.ui.content;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -104,7 +104,7 @@ public class ContentFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return 3;
+            return 2;
         }
 
         @Override
@@ -112,14 +112,13 @@ public class ContentFragment extends Fragment {
             Fragment fragment;
 
             switch (position) {
+              //  case 0:
+              //      fragment = new CurrentBrowserFragment();
+              //      break;
                 case 0:
-                    fragment = new CurrentBrowserFragment();
-
-                    break;
-                case 1:
                     fragment = new FilesystemBrowserFragment();
                     break;
-                case 2:
+                case 1:
                     fragment = new PlaylistBrowserFragment();
                     break;
                 default:
@@ -135,11 +134,11 @@ public class ContentFragment extends Fragment {
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
+                //case 0:
+                //    return getString(R.string.Current);
                 case 0:
-                    return getString(R.string.Current);
-                case 1:
                     return getString(R.string.Filebrowser);
-                case 2:
+                case 1:
                     return getString(R.string.Playlists);                 
             }
             return "OBJECT " + (position + 1);

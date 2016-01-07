@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.content;
+package org.qstuff.qplayer.ui.content;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,14 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.AbstractBaseFragment;
 
 /**
  *
  */
-public class PlaylistBrowserFragment extends BaseBrowserFragment {
+public class BaseBrowserFragment extends AbstractBaseFragment {
 
-    private final static String TAG = "PlaylistBrowserFragment";
+    private final static String TAG = "BaseBrowserFragment";
 
     @Override
     public void onAttach(Activity activity) {
@@ -26,17 +26,13 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate():");
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
         Log.d(TAG, "onCreateView():");
 
-        View v = inflater.inflate(R.layout.playlist_browser_fragment, container, false);
-
-        return v;
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -48,6 +44,7 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause():");
     }
 
 }

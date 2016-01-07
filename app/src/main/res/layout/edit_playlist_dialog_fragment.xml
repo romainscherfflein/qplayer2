@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:orientation="vertical">
+    
+    <TextView
+        android:id="@+id/edit_playlist_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_playlist_dialog_enter"
+        android:layout_margin="10dp"
+        android:layout_alignParentTop="true"/>
+        
+    <EditText
+        android:id="@+id/edit_playlist_dialog_fragment_edittext"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:imeActionLabel="Create"
+        android:imeOptions="actionDone"
+        android:hint="@string/choose_playlist_dialog_add_hint"
+        android:layout_below="@+id/edit_playlist_dialog_title"/>
+    
+    <LinearLayout
+        android:id="@+id/edit_playlist_dialog_button_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/dialog_cancel"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/dialog_cancel" />
+
+        <Button
+            android:id="@+id/dialog_delete"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_delete" />
+
+        <Button
+            android:id="@+id/dialog_rename"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_rename" />
+        
+    </LinearLayout>
+    
+</RelativeLayout>
+
