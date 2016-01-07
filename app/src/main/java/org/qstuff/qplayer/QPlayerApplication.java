@@ -14,6 +14,7 @@ import org.qstuff.qplayer.ui.content.CurrentBrowserFragment;
 import org.qstuff.qplayer.ui.content.EditPlayListDialogFragment;
 import org.qstuff.qplayer.ui.content.EditTrackDialogFragment;
 import org.qstuff.qplayer.ui.content.FilesystemBrowserFragment;
+import org.qstuff.qplayer.ui.content.NewPlayListDialogFragment;
 import org.qstuff.qplayer.ui.content.PlaylistBrowserFragment;
 import org.qstuff.qplayer.ui.player.PlayerFragment;
 import org.qstuff.qplayer.util.TimberCrashReportingTree;
@@ -67,7 +68,9 @@ public class QPlayerApplication extends Application {
             ChoosePlayListDialogFragment.class,
             AddTrackToPlayListDialogFragment.class,
             EditPlayListDialogFragment.class,
+            NewPlayListDialogFragment.class,
             EditTrackDialogFragment.class
+        
         },
         complete = false,
         library = true

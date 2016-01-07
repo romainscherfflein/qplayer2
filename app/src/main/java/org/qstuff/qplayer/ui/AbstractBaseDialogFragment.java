@@ -43,7 +43,7 @@ public class AbstractBaseDialogFragment extends DialogFragment {
     }
     
     @OnClick(R.id.dialog_cancel)
-    public void onDialogCancel(View view) {
+    protected void onDialogCancel(View view) {
         Timber.d("onDialogCancel():");
         getDialog().dismiss();
     }

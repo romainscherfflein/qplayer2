@@ -177,12 +177,13 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
         Timber.d("onBackNavigationClick():");
         
         headerText.setText(getString(R.string.Playlists));
+        
         if(!isPlayListList) {
             backText.setText(getString(R.string.playlist_browser_add_playlist));
             isPlayListList = true;
             updateListView();
         } else {
-            // TODO: open add playlist dialog
+            openNewPlayListDialog();
         }
     }
 
@@ -249,7 +250,18 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
         dialog.setArguments(bundle);
         dialog.show(getFragmentManager(), getString(R.string.edit_playlist_dialog_tag));
     }
-    
+
+    private void openNewPlayListDialog() {
+        Timber.d("openNewPlayListDialog(): ");
+
+        Bundle bundle = new Bundle();
+
+        AbstractBaseDialogFragment dialog = new NewPlayListDialogFragment();
+        dialog.setArguments(bundle);
+        dialog.show(getFragmentManager(), getString(R.string.new_playlist_dialog_tag));
+    }
+
+
     private void openEditTrackInPlayListDialog(Track track) {
         Timber.d("openEditTrackInPlayListDialog(): " + track.getName());
 

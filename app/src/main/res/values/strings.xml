@@ -34,6 +34,10 @@
     <string name="edit_playlist_dialog_rename">Rename this playlist</string>
     <string name="edit_playlist_dialog_enter">Enter a new name for the playlist:</string>
 
+    <string name="new_playlist_dialog_tag">new_playlist_dialog_tag</string>
+    <string name="new_playlist_dialog_title">Create a new playlist: </string>
+    <string name="new_playlist_dialog_enter">Enter a name for the new playlist:</string>
+    
     <string name="edit_track_dialog_tag">edit_track_dialog_tag</string>
     <string name="edit_track_dialog_title">Delete this track ? </string>
     <string name="edit_track_dialog_delete">Remove track from playlist</string>
