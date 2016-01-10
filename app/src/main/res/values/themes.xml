@@ -10,7 +10,7 @@
 
     <style name="QPlayerDefault" parent="Theme.HoloAccent.NoActionBar">
 
-        <item name="accentColor">@color/accent_color</item>
+        <item name="accentColor">@color/q_orange</item>
 
     </style>
 

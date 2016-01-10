@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/red" >
+    android:background="@color/white" >
 
     <LinearLayout
         android:id="@+id/player_top_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="5" >
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal" >
 
         <LinearLayout
             android:id="@+id/player_pitch_area"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/red"
             android:orientation="vertical" >
 
             <org.qstuff.qplayer.ui.util.VerticalSeekBar
@@ -40,7 +39,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/blue"
             android:layout_weight="2" >
 
             <TextView
@@ -57,48 +55,35 @@
     
     <LinearLayout 
         android:id="@+id/player_buttons_row_one"
-        android:orientation="horizontal"
     	android:layout_width="match_parent"
-    	android:layout_height="0dp"
-    	android:layout_weight="1">
+    	android:layout_height="wrap_content"
+        android:layout_below="@+id/player_top_area"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
    	
    		<ImageButton
    		    android:id="@+id/player_button_previous"
-	   	    android:layout_width="match_parent"
-	   	    android:layout_height="wrap_content"
-	   	    android:layout_marginLeft="15dp"
-	   	    android:layout_marginRight="15dp"
-	   	    android:layout_marginBottom="5dp"
-	   	    android:layout_marginTop="5dp"
-	   	    android:gravity="center"
+            style="@style/PlayerButtonStyle"
+	   	    android:layout_width="0dp"
+	   	    android:layout_height="60dp"
 	   	    android:src="@drawable/av_previous"
-	   	    android:background="@color/white"
     		android:layout_weight="1" />
    	
    		<ImageButton
    		    android:id="@+id/player_button_play"
-	   	    android:layout_width="match_parent"
-	   	    android:layout_height="wrap_content"
-	   	    android:layout_marginLeft="15dp"
-	   	    android:layout_marginRight="15dp"
-	   	    android:layout_marginBottom="5dp"
-	   	    android:layout_marginTop="5dp"
-	   	    android:gravity="center"
+            style="@style/PlayerButtonStyle"
+			android:layout_width="0dp"
+			android:layout_height="60dp"
 	   	    android:src="@drawable/av_play"
-	   	    android:background="@color/white"
     		android:layout_weight="1" />
    		
    		<ImageButton
    		    android:id="@+id/player_button_next"
-	   	    android:layout_width="match_parent"
-	   	    android:layout_height="wrap_content"
-	   	    android:layout_marginLeft="15dp"
-	   	    android:layout_marginRight="15dp"
-	   	    android:layout_marginBottom="5dp"
-	   	    android:layout_marginTop="5dp"
-	   	    android:gravity="center"
+            style="@style/PlayerButtonStyle"
+			android:layout_width="0dp"
+			android:layout_height="60dp"
 	   	    android:src="@drawable/av_next"
-	   	    android:background="@color/white"
     		android:layout_weight="1" />
    		
    	</LinearLayout>
@@ -106,47 +91,34 @@
     <LinearLayout
         android:id="@+id/player_buttons_row_two"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"        
+        android:layout_below="@+id/player_buttons_row_one"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal" >
 
     	<ImageButton
    		    android:id="@+id/player_button_shuffle"
-	   	    android:layout_width="match_parent"
-	   	    android:layout_height="wrap_content"
-	   	    android:layout_marginLeft="15dp"
-	   	    android:layout_marginRight="15dp"
-	   	    android:layout_marginBottom="5dp"
-	   	    android:layout_marginTop="5dp"
-	   	    android:gravity="center"
+            style="@style/PlayerButtonStyle"
+	   	    android:layout_width="0dp"
+			android:layout_height="60dp"
 	   	    android:src="@drawable/av_shuffle"
-	   	    android:background="@color/white"
     		android:layout_weight="1" />
    	
    		<ImageButton
    		    android:id="@+id/player_button_repeat"
-	   	    android:layout_width="match_parent"
-	   	    android:layout_height="wrap_content"
-	   	    android:layout_marginLeft="15dp"
-	   	    android:layout_marginRight="15dp"
-	   	    android:layout_marginBottom="5dp"
-	   	    android:layout_marginTop="5dp"
-	   	    android:gravity="center"
+            style="@style/PlayerButtonStyle"
+	   	    android:layout_width="0dp"
+			android:layout_height="60dp"
 	   	    android:src="@drawable/av_repeat"
-	   	    android:background="@color/white"
     		android:layout_weight="1" />
    		
    		<ImageButton
    		    android:id="@+id/player_button_fullscreen"
-	   	    android:layout_width="match_parent"
-	   	    android:layout_height="wrap_content"
-	   	    android:layout_marginLeft="15dp"
-	   	    android:layout_marginRight="15dp"
-	   	    android:layout_marginBottom="5dp"
-	   	    android:layout_marginTop="5dp"
-	   	    android:gravity="center"
+            style="@style/PlayerButtonStyle"
+	   	    android:layout_width="0dp"
+			android:layout_height="60dp"
 	   	    android:src="@drawable/av_full_screen"
-	   	    android:background="@color/white"
     		android:layout_weight="1" />
     
     </LinearLayout>
@@ -155,8 +127,8 @@
         android:id="@+id/player_current_track"
         android:orientation="horizontal"
     	android:layout_width="match_parent"
-    	android:layout_height="0dp"
-    	android:layout_weight="1">
+    	android:layout_height="wrap_content"
+        android:layout_below="@+id/player_buttons_row_two">
 	    	
 	   	<TextView
             android:id="@+id/player_text_current_track"
@@ -174,5 +146,5 @@
 	
 	</LinearLayout>
    	
-</LinearLayout>
+</RelativeLayout>
 
