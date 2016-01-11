@@ -146,7 +146,18 @@
         android:progressDrawable="@drawable/seekbar_progress_blue"
         android:thumb="@drawable/seekbar_thumb" />
 
-    <!-- Jog Wheel (Mockup)  -->
+    <!-- Jog Wheel (Real)  -->
+    <org.qstuff.qplayer.ui.player.JogWheelImageView
+        android:id="@+id/jog_wheel"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center"/>
+
+    <!-- Jog Wheel (Mockup)
     <View
         android:layout_width="250dp"
         android:layout_height="250dp"
@@ -155,6 +166,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:background="@drawable/black_circle_white_border_shape"/>
+    -->
     
 </RelativeLayout>
 

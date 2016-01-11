@@ -19,16 +19,13 @@ import org.qstuff.qplayer.AbstractBaseFragment;
 import org.qstuff.qplayer.Constants;
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.controller.PlayListController;
-import org.qstuff.qplayer.data.PlayList;
 import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.FileSelectedEvent;
-import org.qstuff.qplayer.events.NewPlayListEvent;
 import org.qstuff.qplayer.ui.util.VerticalSeekBar;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -52,15 +49,32 @@ public class PlayerFragment extends AbstractBaseFragment
     @Inject Bus bus;
     @Inject PlayListController playListController;
 
-    @InjectView(R.id.pitch_control)             VerticalSeekBar pitchControl;
-    @InjectView(R.id.player_button_previous)    ImageButton     buttonPrevious;
-    @InjectView(R.id.player_button_play)        ImageButton     buttonPlay;
-    @InjectView(R.id.player_button_next)        ImageButton     buttonNext;
-    @InjectView(R.id.player_button_shuffle)     ImageButton     buttonShuffle;
-    @InjectView(R.id.player_button_repeat)      ImageButton     buttonRepeat;
-    @InjectView(R.id.player_button_fullscreen)  ImageButton     buttonFullscreen;
-    @InjectView(R.id.player_text_current_track) TextView        textCurrentTrack;
-
+    @InjectView(R.id.pitch_control)             
+    VerticalSeekBar pitchControl;
+    
+    @InjectView(R.id.player_button_previous)    
+    ImageButton buttonPrevious;
+    
+    @InjectView(R.id.player_button_play)       
+    ImageButton buttonPlay;
+    
+    @InjectView(R.id.player_button_next)        
+    ImageButton buttonNext;
+    
+    @InjectView(R.id.player_button_shuffle)     
+    ImageButton buttonShuffle;
+    
+    @InjectView(R.id.player_button_repeat)      
+    ImageButton buttonRepeat;
+    
+    @InjectView(R.id.player_button_fullscreen)  
+    ImageButton buttonFullscreen;
+    
+    @InjectView(R.id.player_text_current_track) 
+    TextView textCurrentTrack;
+    
+    @InjectView(R.id.jog_wheel)                 
+    JogWheelImageView jogView;
 
     private MediaPlayer      player;
     private boolean          isPrepared;
@@ -94,11 +108,23 @@ public class PlayerFragment extends AbstractBaseFragment
         ButterKnife.inject(this, v);
 
         pitchControl.setOnSeekBarChangeListener(this);
+        
+        jogView.setWheelListener(new JogWheelImageView.JogWheelListener() {
+            
+                @Override
+                public void onWheelChanged(int arg) {
+                    Timber.d("onWheelChanged(): " + arg);
+    
+                    if (arg > 0)
+                        ;
+                    else
+                        ;
+                }
+            });
+            return v;
+        }
 
-        return v;
-    }
-
-    @Override
+        @Override
     public void onResume() {
         super.onResume();
         bus.register(this);
