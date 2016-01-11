@@ -117,19 +117,6 @@
         style="@style/PlayerTextStyle"
         android:text="no track loaded" />
 
-    <!-- Pitch Range -->
-    <TextView
-        android:id="@+id/pitch_control_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="-10dp"
-        android:layout_alignTop="@+id/pitch_control"
-        android:layout_toRightOf="@+id/pitch_control"
-        style="@style/PlayerTextStyle"
-        android:text="  + 10,00 % " />
-
     <!-- Pitch Control -->
     <org.qstuff.qplayer.ui.util.VerticalSeekBar
         android:id="@+id/pitch_control"
@@ -156,6 +143,22 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="center"/>
+
+    <!-- Pitch Range -->
+    <TextView
+        android:id="@+id/pitch_control_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="-12dp"
+        android:layout_marginRight="-5dp"
+
+        android:layout_alignTop="@+id/pitch_control"
+        android:layout_toRightOf="@+id/pitch_control"
+        android:layout_toLeftOf="@+id/jog_wheel"
+        style="@style/PlayerTextStyle"
+        android:text="    00,00 %" />
 
     <!-- Jog Wheel (Mockup)
     <View

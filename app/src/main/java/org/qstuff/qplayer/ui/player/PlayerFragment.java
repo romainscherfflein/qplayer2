@@ -35,9 +35,9 @@ import butterknife.OnClick;
 import timber.log.Timber;
 
 /**
- * 
- * @author claus chierici (cc@codeyard.de)
+ * Created by Claus Chierici (github@antamauna.net) on 2/19/15
  *
+ * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
 public class PlayerFragment extends AbstractBaseFragment
 	implements OnSeekBarChangeListener,
@@ -72,7 +72,10 @@ public class PlayerFragment extends AbstractBaseFragment
     
     @InjectView(R.id.player_text_current_track) 
     TextView textCurrentTrack;
-    
+
+    @InjectView(R.id.pitch_control_value)
+    TextView pitchControlValue;
+
     @InjectView(R.id.jog_wheel)                 
     JogWheelImageView jogView;
 
@@ -268,12 +271,11 @@ public class PlayerFragment extends AbstractBaseFragment
 
 			int diff = progress - 50;
 			
-			// float currPitch = (float) (((float)diff / ((float)pitchRange) * 2.0f * pitchFaktor));
-			//String pitch = String.format("%.02f", currPitch);
-			//Log.i(TAG, "onProgressChanged(): current: " + pitch);
+			// float currPitch = (float) (((float)diff / ((float)100) * 2.0f * pitchFaktor));
+			String pitch = String.format("%.02f", (float) diff);
 			
 			// player.setPlaybackRate(1000 + (diff * pitchRange));
-			//pitchCurrent.setText(pitch+"%");
+			pitchControlValue.setText("    " +  pitch + " %");
 		}
  	}
 

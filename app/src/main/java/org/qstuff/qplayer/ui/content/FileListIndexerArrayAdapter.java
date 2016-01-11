@@ -23,9 +23,9 @@ import java.util.Set;
 import timber.log.Timber;
 
 /**
- * This class can be used to have the alphabetical fast-scroll display.
- * 
- * @author claus chierici ((c)2012)
+ * Created by Claus Chierici (github@antamauna.net) on 2/19/15
+ *
+ * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
 public class FileListIndexerArrayAdapter<T> extends ArrayAdapter<T>
 	implements SectionIndexer, Serializable {

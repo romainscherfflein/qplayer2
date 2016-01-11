@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import org.qstuff.qplayer.AbstractBaseFragment;
 
 /**
+ * Created by Claus Chierici (github@antamauna.net) on 2/19/15
  *
+ * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
 public class BaseBrowserFragment extends AbstractBaseFragment {
 
