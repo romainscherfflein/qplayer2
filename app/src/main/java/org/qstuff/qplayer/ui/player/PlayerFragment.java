@@ -201,7 +201,7 @@ public class PlayerFragment extends AbstractBaseFragment
         currentTrack = file;
 
         textCurrentTrack.setText(file.getName());
-        buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_play));
+        buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play));
     }
 
     private void cleanupPlayer() {
@@ -274,7 +274,7 @@ public class PlayerFragment extends AbstractBaseFragment
 
         if (player.isPlaying()) {
             player.pause();
-            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_play));
+            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play));
         } else {
             player.start();
             buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_pause));

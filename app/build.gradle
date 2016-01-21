@@ -19,6 +19,8 @@ android {
             ldLibs "OpenSLES", "log"
             stl "stlport_shared"
         }
+        
+        generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']
     }
 
     android {

@@ -31,7 +31,7 @@
 	</style>
 
 	<style name="PlayerButtonStyle">
-		<item name="android:background">@drawable/black_white_border_shape</item>
+		<item name="android:background">@drawable/black_rounded_shape</item>
 		<item name="android:gravity">center</item>
 		<item name="android:layout_marginLeft">5dp</item>
 		<item name="android:layout_marginRight">5dp</item>
