@@ -1,15 +1,20 @@
 package org.qstuff.qplayer.ui.player;
 
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.squareup.otto.Bus;
@@ -40,7 +45,8 @@ import timber.log.Timber;
  * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
 public class PlayerFragment extends AbstractBaseFragment
-	implements OnSeekBarChangeListener,
+	implements AdapterView.OnItemSelectedListener,
+        OnSeekBarChangeListener,
         MediaPlayer.OnPreparedListener,
         MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
@@ -79,6 +85,12 @@ public class PlayerFragment extends AbstractBaseFragment
     @InjectView(R.id.jog_wheel)                 
     JogWheelImageView jogView;
 
+    @InjectView(R.id.jog_wheel_frame)
+    FrameLayout jogViewFrame;
+
+    @InjectView(R.id.pitch_range_setting)
+    Spinner pitchRangeSetting;
+    
     private MediaPlayer      player;
     private boolean          isPrepared;
     private boolean          isPlaying;
@@ -113,21 +125,32 @@ public class PlayerFragment extends AbstractBaseFragment
         pitchControl.setOnSeekBarChangeListener(this);
         
         jogView.setWheelListener(new JogWheelImageView.JogWheelListener() {
-            
-                @Override
-                public void onWheelChanged(int arg) {
-                    Timber.d("onWheelChanged(): " + arg);
-    
-                    if (arg > 0)
-                        ;
-                    else
-                        ;
-                }
-            });
-            return v;
-        }
 
-        @Override
+            @Override
+            public void onWheelChanged(int arg) {
+                Timber.d("onWheelChanged(): " + arg);
+
+                if (arg > 0)
+                    ;
+                else
+                    ;
+            }
+        });
+
+        ArrayAdapter<String> spinnerAdapter = 
+            new ArrayAdapter<String>(getActivity(), 
+                android.R.layout.simple_spinner_item, 
+                getResources().getStringArray(R.array.pitch_range_values));
+
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_pitch_range);
+        pitchRangeSetting.setAdapter(spinnerAdapter);
+        pitchRangeSetting.setOnItemSelectedListener(this);
+
+        jogViewFrame.bringToFront();
+        return v;
+    }
+        
+    @Override
     public void onResume() {
         super.onResume();
         bus.register(this);
@@ -267,15 +290,23 @@ public class PlayerFragment extends AbstractBaseFragment
  		Timber.d("onProgressChanged(): SB ID: " + seekBar.getId());
 		
 		if (seekBar.getId() == R.id.pitch_control) {
-            Timber.d("onProgressChanged(): pitch bar value:" + progress);
 
 			int diff = progress - 50;
-			
+            Timber.d("onProgressChanged(): pitch bar value:" + diff);
+            
 			// float currPitch = (float) (((float)diff / ((float)100) * 2.0f * pitchFaktor));
-			String pitch = String.format("%.02f", (float) diff);
+            String pre = diff > 0 ? "+":"";
+			if (diff == 0)
+                pre = "   ";
+            if (diff < 10 && diff > 0)
+                pre = "  +";
+            if (diff > -10 && diff < 0)
+                pre = "  ";
+
+            String pitch = String.format(" " + pre + "%02.01f", (float) diff);
 			
 			// player.setPlaybackRate(1000 + (diff * pitchRange));
-			pitchControlValue.setText("    " +  pitch + " %");
+			pitchControlValue.setText(pitch + " %");
 		}
  	}
 
@@ -305,5 +336,27 @@ public class PlayerFragment extends AbstractBaseFragment
     @Override
     public void onCompletion(MediaPlayer mp) {
         Timber.d("onCompletion():");
+    }
+    //
+    //  OnItemSelectedListener
+    //
+    
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Timber.d("onItemSelected(): " + position);
+
+        String item = (String) parent.getItemAtPosition(position);
+
+        /*
+        TextView selected = ((TextView) parent.getChildAt(0));
+        selected.setTextSize(getResources().getDimension(R.dimen.font_size_version_title));
+        selected.setTypeface(Typeface.DEFAULT_BOLD);
+        selected.setTextColor(getResources().getColor(R.color.q_orange));
+        */
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

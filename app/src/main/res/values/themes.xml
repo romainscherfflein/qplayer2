@@ -11,7 +11,16 @@
     <style name="QPlayerDefault" parent="Theme.HoloAccent.NoActionBar">
 
         <item name="accentColor">@color/q_orange</item>
+        <item name="android:spinnerStyle">@style/SpinnerAppTheme</item>
 
     </style>
 
+    <style name="SpinnerAppTheme" parent="android:Widget.Spinner">
+        <item name="android:background">@color/black</item>
+    </style>
+
+    <style name="SpinnerDropDownItemAppTheme" parent="android:Widget.DropDownItem.Spinner">
+        <item name="android:checkMark">@color/q_orange</item>
+    </style>
+    
 </resources>

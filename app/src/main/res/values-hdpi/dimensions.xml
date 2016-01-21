@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Player screen dimensions-->
+    <dimen name="height_player_area">300dp</dimen>
+    <dimen name="height_content_area">300dp</dimen>
+
+    <dimen name="font_size_version_title">15sp</dimen>
+
+    <dimen name="textview_heigth">30dp</dimen>
+
+    <dimen name="jogwheel_frame_diameter">150dp</dimen>
+    <dimen name="jogwheel_diameter">130dp</dimen>
+
+    <dimen name="right_top_black_bg_height">180dp</dimen>
+    <dimen name="right_top_black_bg_width">75dp</dimen>
+    
+    <dimen name="pitch_text_width">70dp</dimen>
+
+</resources>

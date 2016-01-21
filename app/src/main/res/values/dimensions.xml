@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <!-- Player screen dimensions-->
-    <dimen name="height_player_area">300dp</dimen>
-    <dimen name="height_content_area">300dp</dimen>
-
-</resources>
