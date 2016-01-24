@@ -7,13 +7,13 @@
 
     <dimen name="font_size_version_title">15sp</dimen>
 
-    <dimen name="textview_heigth">30dp</dimen>
+    <dimen name="textview_height">30dp</dimen>
 
     <dimen name="jogwheel_frame_diameter">150dp</dimen>
     <dimen name="jogwheel_diameter">130dp</dimen>
 
     <dimen name="right_top_black_bg_height">180dp</dimen>
-    <dimen name="right_top_black_bg_width">75dp</dimen>
+    <dimen name="right_top_black_bg_width">70dp</dimen>
     
     <dimen name="pitch_text_width">70dp</dimen>
 
@@ -21,5 +21,7 @@
     <dimen name="player_button_overshoot">110dp</dimen>
 
     <dimen name="pitchbar_width">36dp</dimen>
+
+    <dimen name="waveform_height">50dp</dimen>
     
 </resources>

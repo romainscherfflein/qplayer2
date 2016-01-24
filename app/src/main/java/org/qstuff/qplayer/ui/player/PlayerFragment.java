@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
@@ -58,24 +59,21 @@ public class PlayerFragment extends AbstractBaseFragment
     @InjectView(R.id.pitch_control)             
     VerticalSeekBar pitchControl;
     
-    @InjectView(R.id.player_button_previous)    
-    ImageButton buttonPrevious;
+    @InjectView(R.id.player_button_previous)
+    ImageView buttonPrevious;
     
-    @InjectView(R.id.player_button_play)       
-    ImageButton buttonPlay;
+    @InjectView(R.id.player_button_play)
+    ImageView buttonPlay;
     
-    @InjectView(R.id.player_button_next)        
-    ImageButton buttonNext;
+    @InjectView(R.id.player_button_next)
+    ImageView buttonNext;
     
-    @InjectView(R.id.player_button_shuffle)     
-    ImageButton buttonShuffle;
+    @InjectView(R.id.player_button_shuffle)
+    ImageView buttonShuffle;
     
-    @InjectView(R.id.player_button_repeat)      
-    ImageButton buttonRepeat;
-    
-    @InjectView(R.id.player_button_fullscreen)  
-    ImageButton buttonFullscreen;
-    
+    @InjectView(R.id.player_button_repeat)
+    ImageView buttonRepeat;
+        
     @InjectView(R.id.player_text_current_track) 
     TextView textCurrentTrack;
 
@@ -240,14 +238,14 @@ public class PlayerFragment extends AbstractBaseFragment
 
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.PREFS_KEY_LAST_PLAYED_TRACK_PATH, currentTrack.getAbsolutePath());
-        editor.commit();
+        editor.apply();
     }
 
     private void savePlayingState() {
 
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(Constants.PREFS_KEY_PLAYING_STATE, player.isPlaying());
-        editor.commit();
+        editor.apply();
     }
 
     private File restoreCurrentPlayingTrack() {
