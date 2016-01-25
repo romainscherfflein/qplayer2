@@ -9,9 +9,9 @@
 
     <!-- Browser -->
 
-    <string name="Current">Current</string>
-    <string name="Playlists">Playlists</string>
-    <string name="Filebrowser">Filebrowser</string>
+    <string name="Queue">queue</string>
+    <string name="Playlists">playlists</string>
+    <string name="Filebrowser">filebrowser</string>
 
     <!-- Dialogs -->
 

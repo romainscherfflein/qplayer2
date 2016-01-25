@@ -10,7 +10,7 @@ import org.qstuff.qplayer.controller.PlayListController;
 import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
 import org.qstuff.qplayer.ui.content.AddTrackToPlayListDialogFragment;
 import org.qstuff.qplayer.ui.content.ChoosePlayListDialogFragment;
-import org.qstuff.qplayer.ui.content.CurrentBrowserFragment;
+import org.qstuff.qplayer.ui.content.QueueBrowserFragment;
 import org.qstuff.qplayer.ui.content.FilesystemBrowserFragment;
 import org.qstuff.qplayer.ui.content.PlaylistBrowserFragment;
 import org.qstuff.qplayer.ui.player.PlayerFragment;
@@ -58,7 +58,7 @@ public class QPlayerApplication extends Application {
             PlayerFragment.class,
             FilesystemBrowserFragment.class,
             AbstractBaseFragment.class,
-            CurrentBrowserFragment.class,
+            QueueBrowserFragment.class,
             PlaylistBrowserFragment.class,
             PlayListController.class,
             AbstractBaseDialogFragment.class,

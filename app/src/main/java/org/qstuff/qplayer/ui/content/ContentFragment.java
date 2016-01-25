@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.viewpagerindicator.TitlePageIndicator;
+import com.astuetz.PagerSlidingTabStrip;
 
 import org.qstuff.qplayer.R;
 
@@ -23,7 +23,7 @@ import butterknife.InjectView;
  *
  * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
-public class ContentFragment extends Fragment {
+public class ContentFragment extends Fragment implements ViewPager.OnPageChangeListener {
 
     private static final String TAG = "ContentPagerFragment";
 
@@ -33,8 +33,11 @@ public class ContentFragment extends Fragment {
 
     private ContentPagerAdapter     contentPagerAdapter;
 
-    @InjectView(R.id.content_pager)         ViewPager          contentPager;
-    @InjectView(R.id.pager_title_indicator) TitlePageIndicator pagerIndicator;
+    @InjectView(R.id.content_pager)         
+    ViewPager contentPager;
+    
+    @InjectView(R.id.pager_tabs)
+    PagerSlidingTabStrip pagerTabs;
 
 
 
@@ -61,23 +64,10 @@ public class ContentFragment extends Fragment {
 
         contentPagerAdapter = new ContentPagerAdapter(getFragmentManager());
         contentPager.setAdapter(contentPagerAdapter);
-        pagerIndicator.setViewPager(contentPager);
-        pagerIndicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        
+        pagerTabs.setViewPager(contentPager);
+        pagerTabs.setOnPageChangeListener(this);
+        
         return view;
     }
 
@@ -93,6 +83,26 @@ public class ContentFragment extends Fragment {
         Log.d(TAG, "onPause():");
     }
 
+    //
+    // OnPageChangeListener
+    // 
+    
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        Log.d(TAG, "onPageSelected(): " + position);
+        
+        pagerTabs.setTextColor();
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 
     //
     // PagerAdapter
@@ -106,7 +116,7 @@ public class ContentFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -114,13 +124,13 @@ public class ContentFragment extends Fragment {
             Fragment fragment;
 
             switch (position) {
-              //  case 0:
-              //      fragment = new CurrentBrowserFragment();
-              //      break;
                 case 0:
-                    fragment = new FilesystemBrowserFragment();
+                    fragment = new QueueBrowserFragment();
                     break;
                 case 1:
+                    fragment = new FilesystemBrowserFragment();
+                    break;
+                case 2:
                     fragment = new PlaylistBrowserFragment();
                     break;
                 default:
@@ -136,11 +146,11 @@ public class ContentFragment extends Fragment {
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                //case 0:
-                //    return getString(R.string.Current);
                 case 0:
-                    return getString(R.string.Filebrowser);
+                    return getString(R.string.Queue);
                 case 1:
+                    return getString(R.string.Filebrowser);
+                case 2:
                     return getString(R.string.Playlists);                 
             }
             return "OBJECT " + (position + 1);

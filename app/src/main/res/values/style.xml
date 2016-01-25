@@ -46,5 +46,13 @@
 		<item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/font_size_version_title</item>
     </style>
+
+	<style name="ContetTextStyle">
+		<item name="android:background">@drawable/black_rounded_shape</item>
+		<item name="android:gravity">center</item>
+		<item name="android:textColor">@color/white</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textSize">@dimen/font_size_version_title</item>
+	</style>
 	
 </resources>

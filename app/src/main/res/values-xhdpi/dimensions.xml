@@ -8,6 +8,7 @@
     <dimen name="font_size_version_title">18sp</dimen>
 
     <dimen name="textview_height">35dp</dimen>
+    <dimen name="tabbar_height">45dp</dimen>
 
     <dimen name="jogwheel_frame_diameter">220dp</dimen>
     <dimen name="jogwheel_diameter">200dp</dimen>

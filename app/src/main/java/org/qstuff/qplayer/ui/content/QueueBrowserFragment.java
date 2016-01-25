@@ -14,7 +14,7 @@ import org.qstuff.qplayer.R;
  *
  * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
-public class CurrentBrowserFragment extends BaseBrowserFragment {
+public class QueueBrowserFragment extends BaseBrowserFragment {
 
     private final static String TAG = "CurrentBrowserFragment";
 
@@ -36,7 +36,7 @@ public class CurrentBrowserFragment extends BaseBrowserFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         Log.d(TAG, "onCreateView():");
 
-        View v = inflater.inflate(R.layout.current_browser_fragment, container, false);
+        View v = inflater.inflate(R.layout.queue_browser_fragment, container, false);
 
         return v;
     }
