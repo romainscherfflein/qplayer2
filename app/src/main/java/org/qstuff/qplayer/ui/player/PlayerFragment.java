@@ -197,7 +197,7 @@ public class PlayerFragment extends AbstractBaseFragment
         currentTrack = file;
 
         textCurrentTrack.setText(file.getName());
-        buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play));
+        buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play_selected));
     }
 
     private void cleanupPlayer() {
@@ -273,7 +273,7 @@ public class PlayerFragment extends AbstractBaseFragment
             buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play_selected));
         } else {
             player.start();
-            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_pause));
+            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_pause_selected));
         }
     }
 

@@ -107,7 +107,7 @@ public class FileListIndexerArrayAdapter<T> extends ArrayAdapter<T>
         if (file.isFile())
 			holder.imgIcon.setImageResource(R.drawable.icon_note);
         else if (file.isDirectory())
-			holder.imgIcon.setImageResource(R.drawable.ic_folder_white_18dp);
+			holder.imgIcon.setImageResource(R.drawable.icon_directory);
         else
         	Timber.e("WWWWWWWWWWWWWWWWWWWW");
         

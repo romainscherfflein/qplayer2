@@ -218,9 +218,8 @@
             style="@style/PlayerButtonStyle"
             android:layout_width="@dimen/player_button_overshoot"
             android:layout_height="@dimen/player_button_size"
-            android:paddingTop="20dp"
             android:scaleType="fitStart"
-            android:src="@drawable/button_pause"/>
+            android:src="@drawable/button_play_selected"/>
 
     </LinearLayout>
 

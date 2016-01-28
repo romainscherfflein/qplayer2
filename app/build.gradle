@@ -47,7 +47,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:22.0.0'
+    compile 'com.android.support:support-v4:22.1.1'
     // View injection
     compile 'com.jakewharton:butterknife:6.0.0'
     // Event bus
@@ -60,6 +60,5 @@ dependencies {
     // Holo styling
     compile 'com.negusoft.holoaccent:library:1.0.1'
     // Gson
-    compile 'com.google.code.gson:gson:2.2.4'
-
+    compile 'com.google.code.gson:gson:2.4'
 }
