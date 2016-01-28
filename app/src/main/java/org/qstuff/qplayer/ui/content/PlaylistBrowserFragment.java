@@ -40,7 +40,6 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     @Inject PlayListController playListController;
     
     @InjectView(R.id.playlist_fragment_listview) ListView listView;
-    @InjectView(R.id.playlist_fragment_header)   TextView headerText;
 
     private PlayListIndexerArrayAdapter<String> playListAdapter;
     private PlayList                            currentPlayList;
@@ -117,7 +116,6 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
         
         if (isPlayListList) {
             currentPlayList = playLists.get(position);
-            headerText.setText("Playlist: " + currentPlayList.getName());
             showTrackList(currentPlayList);            
         } else {
             Track track = currentPlayList.getTrackList().get(position);
