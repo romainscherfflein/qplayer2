@@ -1,7 +1,6 @@
 package org.qstuff.qplayer.ui.player;
 
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -272,10 +270,10 @@ public class PlayerFragment extends AbstractBaseFragment
 
         if (player.isPlaying()) {
             player.pause();
-            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play));
+            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play_selected));
         } else {
             player.start();
-            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_pause));
+            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_pause));
         }
     }
 
