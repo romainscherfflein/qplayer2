@@ -11,9 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.astuetz.PagerSlidingTabStrip;
-
 import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.util.SlidingTabLayout;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -37,7 +36,7 @@ public class ContentFragment extends Fragment implements ViewPager.OnPageChangeL
     ViewPager contentPager;
     
     @InjectView(R.id.pager_tabs)
-    PagerSlidingTabStrip pagerTabs;
+    SlidingTabLayout pagerTabs;
 
 
 
@@ -64,10 +63,12 @@ public class ContentFragment extends Fragment implements ViewPager.OnPageChangeL
 
         contentPagerAdapter = new ContentPagerAdapter(getFragmentManager());
         contentPager.setAdapter(contentPagerAdapter);
+
         
         pagerTabs.setViewPager(contentPager);
         pagerTabs.setOnPageChangeListener(this);
-        
+        pagerTabs.setSelectedIndicatorColors(getResources().getColor(R.color.q_orange));
+        pagerTabs.setDividerColors(getResources().getColor(R.color.q_orange));
         return view;
     }
 
@@ -96,7 +97,7 @@ public class ContentFragment extends Fragment implements ViewPager.OnPageChangeL
     public void onPageSelected(int position) {
         Log.d(TAG, "onPageSelected(): " + position);
         
-        pagerTabs.setTextColor();
+//        pagerTabs.setTextColor();
     }
 
     @Override

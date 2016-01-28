@@ -105,7 +105,7 @@ public class FileListIndexerArrayAdapter<T> extends ArrayAdapter<T>
         File file = new File (path + "/" + title);
 
         if (file.isFile())
-			holder.imgIcon.setImageResource(R.drawable.ic_my_library_music_white_18dp);
+			holder.imgIcon.setImageResource(R.drawable.icon_note);
         else if (file.isDirectory())
 			holder.imgIcon.setImageResource(R.drawable.ic_folder_white_18dp);
         else

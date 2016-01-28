@@ -16,7 +16,6 @@
 	<style name="TracklistItemText">
 		<item name="android:textColor">@color/very_light_gray</item>
 		<item name="android:textSize">16sp</item>
-		<item name="android:padding">10dp</item>
 	</style>
 
 	<style name="ListView.ChoosePlayList">
@@ -47,7 +46,7 @@
         <item name="android:textSize">@dimen/font_size_version_title</item>
     </style>
 
-	<style name="ContetTextStyle">
+	<style name="ContentTextStyle">
 		<item name="android:background">@drawable/black_rounded_shape</item>
 		<item name="android:gravity">center</item>
 		<item name="android:textColor">@color/white</item>
