@@ -28,8 +28,8 @@ import android.widget.LinearLayout;
 
 public class SlidingTabStrip extends LinearLayout {
 
-    private static final int SELECTED_INDICATOR_THICKNESS_DIPS = 3;
-    private static final int DEFAULT_SELECTED_INDICATOR_COLOR = 0xFC7614;
+    private static final int SELECTED_INDICATOR_THICKNESS_DIPS = 10;
+    private static final int DEFAULT_SELECTED_INDICATOR_COLOR = 0x000000;
 
     private static final int DEFAULT_DIVIDER_THICKNESS_DIPS = 10;
     private static final byte DEFAULT_DIVIDER_COLOR_ALPHA = 0x20;
@@ -53,18 +53,18 @@ public class SlidingTabStrip extends LinearLayout {
 
     SlidingTabStrip(Context context, AttributeSet attrs) {
         super(context, attrs);
+        
         setWillNotDraw(false);
 
         final float density = getResources().getDisplayMetrics().density;
 
         TypedValue outValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.colorForeground, outValue, true);
-        final int themeForegroundColor =  outValue.data;
 
         mDefaultTabColorizer = new SimpleTabColorizer();
         mDefaultTabColorizer.setIndicatorColors(DEFAULT_SELECTED_INDICATOR_COLOR);
-        mDefaultTabColorizer.setDividerColors(setColorAlpha(themeForegroundColor,
-                DEFAULT_DIVIDER_COLOR_ALPHA));
+        mDefaultTabColorizer.setDividerColors(setColorAlpha(outValue.data,
+            DEFAULT_DIVIDER_COLOR_ALPHA));
 
         mSelectedIndicatorThickness = (int) (SELECTED_INDICATOR_THICKNESS_DIPS * density);
         mSelectedIndicatorPaint = new Paint();
@@ -128,6 +128,7 @@ public class SlidingTabStrip extends LinearLayout {
 
                 // Draw the selection partway between the tabs
                 View nextTitle = getChildAt(mSelectedPosition + 1);
+                
                 left = (int) (mSelectionOffset * nextTitle.getLeft() +
                         (1.0f - mSelectionOffset) * left);
                 right = (int) (mSelectionOffset * nextTitle.getRight() +
