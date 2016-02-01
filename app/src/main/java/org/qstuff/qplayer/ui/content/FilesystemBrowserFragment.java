@@ -52,8 +52,10 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     private List<String>                        currentDirEntries;
 
     private String paneTag;
+
     private String rootdir;
-	private File   currentDir;
+
+    private File   currentDir;
     private File   selectedTrack;
 
 
@@ -77,17 +79,20 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         ButterKnife.inject(this, view);
 
         Bundle args = getArguments();
+        
         if (null != args) {
             rootdir = args.getString("path");
             paneTag = args.getString("paneTag");
-            Timber.d("onCreateView(): rootDir: "+rootdir+", paneTag: "+paneTag);
+            Timber.d("onCreateView(): rootDir: " + rootdir + ", paneTag: " + paneTag);
         }
-        if(rootdir == null) {
-            // FIXME: this is different on different API levels. this is ok for >= 4.2
-            rootdir = new String(Environment.getExternalStorageDirectory().getPath() + "/Music");
+        
+        if (rootdir == null) {
+            // FIXME: this is different on different API levels. OK for >= 4.2
+            rootdir = Environment.getExternalStorageDirectory().getPath() + "/Music";
         }
 
         headerText.setText(rootdir);
+        
         browserParentDir.setVisibility(View.VISIBLE);
         currentDir = new File(rootdir);
 

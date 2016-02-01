@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/black" >
 
     <TextView
         android:id="@+id/filesystem_fragment_header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:textStyle="bold"
-        android:textSize="18dp"
-        android:textColor="@android:color/black"
-        android:padding="5dp"
-        android:background="@android:color/background_light" />
+        style="@style/PlayerTextStyle"
+        android:gravity="left"
+        android:layout_marginLeft="10dp"
+        android:padding="5dp" />
 
     <View
         android:layout_width="fill_parent"
@@ -25,13 +23,11 @@
         android:id="@+id/filesystem_fragment_parentdir"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:textStyle="bold"
-        android:textSize="18dp"
+        style="@style/PlayerTextStyle"
+        android:layout_marginLeft="10dp"
+        android:gravity="left"
         android:text=".."
-        android:textColor="@android:color/white"
         android:padding="5dp"
-        android:background="@android:color/black"
         android:visibility="gone" />
 
     <View

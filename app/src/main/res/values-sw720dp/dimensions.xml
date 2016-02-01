@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Player screen dimensions-->
+    <dimen name="height_player_area">300dp</dimen>
+    <dimen name="height_content_area">300dp</dimen>
+
+    <dimen name="font_size_version_title">25sp</dimen>
+
+    <dimen name="textview_height">55dp</dimen>
+    <dimen name="tabbar_height">65dp</dimen>
+
+    <dimen name="jogwheel_frame_diameter">480dp</dimen>
+    <dimen name="jogwheel_diameter">460dp</dimen>
+
+    <dimen name="right_top_black_bg_height">260dp</dimen>
+    <dimen name="right_top_black_bg_width">100dp</dimen>
+
+    <dimen name="pitch_text_width">160dp</dimen>
+
+    <dimen name="player_button_size">96dp</dimen>
+    <dimen name="player_button_overshoot">280dp</dimen>
+
+    <dimen name="pitchbar_width">96dp</dimen>
+
+    <dimen name="waveform_height">60dp</dimen>
+
+</resources>

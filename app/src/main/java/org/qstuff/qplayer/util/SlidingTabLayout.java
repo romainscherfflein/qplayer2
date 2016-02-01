@@ -22,8 +22,10 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -71,9 +73,12 @@ public class SlidingTabLayout extends HorizontalScrollView {
     private static final int TAB_VIEW_PADDING_BOTTOM_DIPS     = 15;
     private static final int TAB_VIEW_PADDING_TOP_DIPS        = 5;
 
-    private static final int TAB_VIEW_PADDING_LEFT_RIGHT_DIPS = 10;
+    private static final int TAB_VIEW_PADDING_LEFT_RIGHT_DIPS = 0;
+    
     private static final int TAB_VIEW_MARGIN_RIGHT_DIPS       = 10;
     private static final int TAB_VIEW_MARGIN_LEFT_DIPS        = 10;
+
+    private static final int TAB_VIEW_MARGIN_BOttom_DIPS      = 10;
 
     private int mTitleOffset;
     private int numTabs;
@@ -101,9 +106,18 @@ public class SlidingTabLayout extends HorizontalScrollView {
         setFillViewport(true);
 
         mTitleOffset = (int) (TITLE_OFFSET_DIPS * getResources().getDisplayMetrics().density);
-
+        setBackgroundColor(getResources().getColor(R.color.white));
+        
         mTabStrip = new SlidingTabStrip(context);
-        addView(mTabStrip, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+
+        FrameLayout.LayoutParams layoutParams =
+            new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+       
+        
+        addView(mTabStrip, layoutParams);
+        mTabStrip.bringToFront();
     }
 
     /**
@@ -173,7 +187,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
         textView.setTextColor(getResources().getColorStateList(R.color.white));
         textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-
+        textView.setBackgroundDrawable(getResources().getDrawable(R.drawable.black_rounded_top_shape));
+        
         int paddingBottom = (int) (TAB_VIEW_PADDING_BOTTOM_DIPS 
             * getResources().getDisplayMetrics().density);
         int paddingTop = (int) (TAB_VIEW_PADDING_TOP_DIPS
@@ -181,8 +196,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
         int paddingLeftRight = (int) (TAB_VIEW_PADDING_LEFT_RIGHT_DIPS 
             * getResources().getDisplayMetrics().density);
 
-        textView.setPadding(paddingLeftRight, paddingTop, 
-                            paddingLeftRight, paddingBottom);
+        textView.setPadding(paddingLeftRight, paddingTop,
+            paddingLeftRight, paddingBottom);
         
         return textView;
     }
@@ -194,6 +209,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
         numTabs = adapter.getCount();
         for (int i = 0; i < numTabs; i++) {
+            
             TextView tabTitleView = createDefaultTabView(getContext());
 
             tabTitleView.setText(adapter.getPageTitle(i));
@@ -205,9 +221,15 @@ public class SlidingTabLayout extends HorizontalScrollView {
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
             
-            layoutParams.setMargins(TAB_VIEW_MARGIN_LEFT_DIPS, 0,
-                TAB_VIEW_MARGIN_RIGHT_DIPS, 0);    
-            
+            if (i == 1)
+                layoutParams.setMargins(TAB_VIEW_MARGIN_LEFT_DIPS, 0,
+                    TAB_VIEW_MARGIN_RIGHT_DIPS, 0);
+            else
+                layoutParams.setMargins(0, 0, 0, 0);
+
+            tabTitleView.setText(adapter.getPageTitle(i));
+            tabTitleView.setOnClickListener(tabClickListener);
+
             mTabStrip.addView(tabTitleView, layoutParams);
         }
     }

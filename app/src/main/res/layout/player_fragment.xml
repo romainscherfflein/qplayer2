@@ -35,29 +35,55 @@
         android:id="@+id/player_text_current_track"
         android:layout_width="match_parent"
         android:layout_height="@dimen/textview_height"
+        style="@style/PlayerTextStyle"
+        android:textColor="@color/q_orange"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="4dp"
         android:gravity="left"
         android:layout_below="@+id/jog_wheel_frame"
         android:layout_toRightOf="@+id/pitch_control"
-        style="@style/PlayerTextStyle"
         android:text="no track loaded" />
 
-    <!-- Current Track Time -->
-    <TextView
-        android:id="@+id/player_text_current_time"
+    <!-- Background -->
+    <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/textview_height"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="4dp"
-        android:gravity="left"
+        android:layout_marginRight="5dp"
+        android:layout_below="@+id/player_text_current_track"
+        android:layout_toRightOf="@+id/pitch_control"
+        android:background="@drawable/black_rounded_shape"/>
+
+    <!-- Total Track Time -->
+    <TextView
+        android:id="@+id/player_text_total_time"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/textview_height"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
         android:layout_below="@+id/player_text_current_track"
         android:layout_toRightOf="@+id/pitch_control"
         style="@style/PlayerTextStyle"
-        android:text="00:00:00" />
+        android:text="total: 00:00:00" />
+
+    <!-- Dynamic Track Time (Elapsed or Remain)-->
+    <TextView
+        android:id="@+id/player_text_dynamic_time"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/textview_height"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="4dp"
+        android:textColor="@color/q_orange"
+        android:layout_below="@+id/player_text_current_track"
+        android:layout_toRightOf="@+id/player_text_total_time"
+        style="@style/PlayerTextStyle"
+        android:text="remain: 00:00:00" />
 
     <!-- Waveform Progress View -->
     <View
@@ -68,7 +94,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:layout_below="@+id/player_text_current_time"
+        android:layout_below="@+id/player_text_total_time"
         android:layout_alignParentBottom="true"
         style="@style/PlayerTextStyle" />
     
@@ -76,7 +102,7 @@
     <org.qstuff.qplayer.ui.util.VerticalSeekBar
         android:id="@+id/pitch_control"
         android:layout_width="@dimen/pitchbar_width"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/player_text_version"
         android:layout_above="@+id/player_waveform"
         android:layout_marginBottom="5dp"
@@ -85,7 +111,7 @@
         android:background="@drawable/black_not_rounded_top_right_shape"
         android:max="100"
         android:progress="50"
-        android:progressDrawable="@color/black"
+        android:progressDrawable="@android:color/transparent"
         android:thumb="@drawable/pitchbar_progress_white" />
 
     <!-- Jog Wheel (Real) -->
@@ -172,25 +198,19 @@
         android:orientation="horizontal" >
 
         <ImageButton
-            android:id="@+id/player_button_shuffle"
-            style="@style/PlayerButtonStyle"
-            android:layout_width="@dimen/player_button_size"
-            android:layout_height="@dimen/player_button_size"
-            android:src="@drawable/button_play"/>
-
-        <ImageButton
             android:id="@+id/player_button_repeat"
             style="@style/PlayerButtonStyle"
             android:layout_width="@dimen/player_button_size"
             android:layout_height="@dimen/player_button_size"
-            android:src="@drawable/button_play"/>
+            android:src="@drawable/button_loop"/>
 
         <ImageButton
-            android:id="@+id/player_button_options"
+            android:id="@+id/player_button_shuffle"
             style="@style/PlayerButtonStyle"
             android:layout_width="@dimen/player_button_size"
             android:layout_height="@dimen/player_button_size"
-            android:src="@drawable/button_play"/>
+            android:src="@drawable/button_shuffle"/>
+
 
     </LinearLayout>
 
@@ -210,14 +230,14 @@
             style="@style/PlayerButtonStyle"
             android:layout_width="@dimen/player_button_size"
             android:layout_height="@dimen/player_button_size"
-            android:src="@drawable/button_play" />
+            android:src="@drawable/button_previous" />
 
         <ImageView
             android:id="@+id/player_button_next"
             style="@style/PlayerButtonStyle"
             android:layout_width="@dimen/player_button_size"
             android:layout_height="@dimen/player_button_size"
-            android:src="@drawable/button_play"/>
+            android:src="@drawable/button_next"/>
 
         <ImageView
             android:id="@+id/player_button_play"
@@ -225,7 +245,7 @@
             android:layout_width="@dimen/player_button_overshoot"
             android:layout_height="@dimen/player_button_size"
             android:scaleType="fitStart"
-            android:src="@drawable/button_play"/>
+            android:src="@drawable/button_play_selected"/>
 
     </LinearLayout>
 

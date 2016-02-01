@@ -112,7 +112,7 @@ public class PlayListIndexerArrayAdapter<T> extends ArrayAdapter<T>
 		if (isPlayListList)
 			holder.imgIcon.setImageResource(R.drawable.ic_subject_white_24dp);
 		else 
-			holder.imgIcon.setImageResource(R.drawable.ic_my_library_music_white_18dp);
+			holder.imgIcon.setImageResource(R.drawable.icon_note);
 		
         String title = ((T)objects.get(position)).toString();
         holder.txtTitle.setText(title);

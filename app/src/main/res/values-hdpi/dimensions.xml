@@ -9,10 +9,10 @@
 
     <dimen name="textview_height">30dp</dimen>
 
-    <dimen name="jogwheel_frame_diameter">150dp</dimen>
-    <dimen name="jogwheel_diameter">130dp</dimen>
+    <dimen name="jogwheel_frame_diameter">170dp</dimen>
+    <dimen name="jogwheel_diameter">150dp</dimen>
 
-    <dimen name="right_top_black_bg_height">180dp</dimen>
+    <dimen name="right_top_black_bg_height">200dp</dimen>
     <dimen name="right_top_black_bg_width">70dp</dimen>
     
     <dimen name="pitch_text_width">70dp</dimen>

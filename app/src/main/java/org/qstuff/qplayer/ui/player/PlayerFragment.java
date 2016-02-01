@@ -1,17 +1,16 @@
 package org.qstuff.qplayer.ui.player;
 
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -32,6 +31,9 @@ import org.qstuff.qplayer.ui.util.VerticalSeekBar;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -52,10 +54,14 @@ public class PlayerFragment extends AbstractBaseFragment
         MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
 
-
+    
     @Inject Bus bus;
     @Inject PlayListController playListController;
 
+    //
+    // UI Elements
+    //
+    
     @InjectView(R.id.pitch_control)             
     VerticalSeekBar pitchControl;
     
@@ -77,6 +83,12 @@ public class PlayerFragment extends AbstractBaseFragment
     @InjectView(R.id.player_text_current_track) 
     TextView textCurrentTrack;
 
+    @InjectView(R.id.player_text_total_time)
+    TextView textTotalTime;
+
+    @InjectView(R.id.player_text_dynamic_time)
+    TextView textDynamicTime;
+
     @InjectView(R.id.pitch_control_value)
     TextView pitchControlValue;
 
@@ -95,6 +107,8 @@ public class PlayerFragment extends AbstractBaseFragment
     private ArrayList<Track> trackList;
 
     private File             currentTrack = null;
+
+    private Handler          updateHandler = new Handler();
     
     //
     // Fragment Lifecycle
@@ -105,10 +119,12 @@ public class PlayerFragment extends AbstractBaseFragment
         super.onCreate(savedInstanceState);
         Timber.d("onCreate():");
 
+        isPrepared = false;
+
         if (player == null)
             player = new MediaPlayer();
         player.reset();
-        
+
         trackList = playListController.getLatestTrackList();
     }
 
@@ -126,7 +142,7 @@ public class PlayerFragment extends AbstractBaseFragment
 
             @Override
             public void onWheelChanged(int arg) {
-                Timber.d("onWheelChanged(): " + arg);
+                //Timber.d("onWheelChanged(): " + arg);
 
                 if (arg > 0)
                     ;
@@ -197,16 +213,18 @@ public class PlayerFragment extends AbstractBaseFragment
         cleanupPlayer();
         preparePlayer(file);
         currentTrack = file;
-
-        textCurrentTrack.setText(file.getName());
-        buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play));
+        
+        textDynamicTime.setText("remain: " + milisecondsToTimeFormattedString(0));
+        textTotalTime.setText("total: " + milisecondsToTimeFormattedString(0));
+        textCurrentTrack.setText(file.getName().replaceFirst("[.][^.]+$", ""));
+        buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play_selected));
     }
 
     private void cleanupPlayer() {
         Timber.d("cleanupPlayer():");
 
         if (player != null) {
-//            resetUpdateTimer();
+            resetUpdateTimer();
             player.stop();
             player.release();
             player = null;
@@ -214,9 +232,15 @@ public class PlayerFragment extends AbstractBaseFragment
         }
     }
 
+    private void resetUpdateTimer () {
+        
+    }
+    
     private void preparePlayer(File file) {
         Timber.d("preparePlayer(): " + file.getAbsolutePath());
-
+        
+        isPrepared = false;
+        
         if (player == null) {
             player = new MediaPlayer();
         }
@@ -270,12 +294,19 @@ public class PlayerFragment extends AbstractBaseFragment
     public void onPlayButtonClicked() {
         Timber.d("onPlayButtonClicked(): ");
 
-        if (player.isPlaying()) {
-            player.pause();
-            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play));
-        } else {
-            player.start();
-            buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.av_pause));
+        if (isPrepared) {
+            if (player.isPlaying()) {
+                player.pause();
+                buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play_selected));
+
+                isPlaying = false;
+
+            } else {
+                player.start();
+                buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_pause_selected));
+
+                isPlaying = true;
+            }
         }
     }
 
@@ -323,6 +354,16 @@ public class PlayerFragment extends AbstractBaseFragment
     @Override
     public void onPrepared(MediaPlayer mp) {
         Timber.d("onPrepared():");
+        
+        isPrepared = true;
+        
+        int duration = mp.getDuration();
+        
+        textTotalTime.setText("total: " + milisecondsToTimeFormattedString(duration));
+        textDynamicTime.setText("remain: " + milisecondsToTimeFormattedString(duration));
+        UpdateRunnable ur = new UpdateRunnable();
+        ur.setDuration(duration);
+        updateHandler.post(ur);
     }
 
     @Override
@@ -335,6 +376,7 @@ public class PlayerFragment extends AbstractBaseFragment
     public void onCompletion(MediaPlayer mp) {
         Timber.d("onCompletion():");
     }
+    
     //
     //  OnItemSelectedListener
     //
@@ -357,4 +399,34 @@ public class PlayerFragment extends AbstractBaseFragment
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+    
+    
+    private String milisecondsToTimeFormattedString(int millis) {
+        return String.format("%02d:%02d:%02d",
+            TimeUnit.MILLISECONDS.toHours(millis),
+            TimeUnit.MILLISECONDS.toMinutes(millis) -
+                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
+            TimeUnit.MILLISECONDS.toSeconds(millis) -
+                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+    }
+
+    
+    private class UpdateRunnable implements Runnable {
+        
+        int duration;
+        
+        public void setDuration(int duration) {
+            this.duration = duration;
+        }
+        
+        @Override
+        public void run() {
+                        
+            if (isPlaying) {
+                textDynamicTime.setText("remain: " +
+                    (milisecondsToTimeFormattedString(duration - player.getCurrentPosition())));
+            }
+            updateHandler.postDelayed(this, 100);
+        }
+    };
 }
