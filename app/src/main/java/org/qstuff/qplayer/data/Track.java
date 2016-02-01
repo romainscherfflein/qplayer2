@@ -11,7 +11,6 @@ public class Track  implements Serializable {
 
     private String uri;
 
-
     private String name;
     
     public Track(String name, String uri) {

@@ -167,7 +167,6 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
             browseTo(item);
         else
             Timber.w("onListItemClicked(): WHAT ?");
-
     }
 
     @OnItemLongClick (R.id.filesystem_fragment_listview)
@@ -179,7 +178,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         selectedTrack = item;
         
         if (item.isDirectory())
-            browseTo(item);
+            openAddToQueueDialog(item);
         else
             openAddToPlayListDialog();
 
@@ -193,7 +192,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         if (currentDir.getAbsolutePath().equals(rootdir)) return;
         browseTo(currentDir.getParentFile());
     }
-
+    
     //
     // Public API
     //
@@ -262,5 +261,10 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     private void openAddToPlayListDialog() {
         AbstractBaseDialogFragment dialog = new AddTrackToPlayListDialogFragment();
         dialog.show(getFragmentManager(), getString(R.string.add_track_to_playlist_dialog_tag));
+    }
+
+    private void openAddToQueueDialog(File directory) {
+        AbstractBaseDialogFragment dialog = AddTracksToQueueDialogFragment.newInstance(directory);
+        dialog.show(getFragmentManager(), getString(R.string.add_tracks_to_queue_dialog_tag));
     }
 }

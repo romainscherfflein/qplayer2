@@ -9,6 +9,7 @@ import com.squareup.otto.Bus;
 import org.qstuff.qplayer.controller.PlayListController;
 import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
 import org.qstuff.qplayer.ui.content.AddTrackToPlayListDialogFragment;
+import org.qstuff.qplayer.ui.content.AddTracksToQueueDialogFragment;
 import org.qstuff.qplayer.ui.content.ChoosePlayListDialogFragment;
 import org.qstuff.qplayer.ui.content.QueueBrowserFragment;
 import org.qstuff.qplayer.ui.content.FilesystemBrowserFragment;
@@ -63,7 +64,9 @@ public class QPlayerApplication extends Application {
             PlayListController.class,
             AbstractBaseDialogFragment.class,
             ChoosePlayListDialogFragment.class,
-            AddTrackToPlayListDialogFragment.class
+            AddTrackToPlayListDialogFragment.class,
+            AddTracksToQueueDialogFragment.class
+       
         },
         complete = false,
         library = true

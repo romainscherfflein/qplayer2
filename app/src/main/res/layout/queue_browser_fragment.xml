@@ -5,6 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" 
     android:background="@color/black">
+
+    <TextView
+        android:id="@+id/queue_empty_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/PlayerTextStyle"
+        android:text="queue is empty" />
     
     <View
         android:layout_width="fill_parent"
@@ -12,7 +19,7 @@
         android:background="@color/light_gray_2" />
 
     <ListView
-        android:id="@+id/queuet_fragment_listview"
+        android:id="@+id/queue_fragment_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/ListView.FileList" />
