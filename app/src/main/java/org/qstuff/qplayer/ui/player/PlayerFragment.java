@@ -31,8 +31,6 @@ import org.qstuff.qplayer.ui.util.VerticalSeekBar;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -109,6 +107,7 @@ public class PlayerFragment extends AbstractBaseFragment
     private File             currentTrack = null;
 
     private Handler          updateHandler = new Handler();
+    private UpdateRunnable updateRunnable;
     
     //
     // Fragment Lifecycle
@@ -233,7 +232,10 @@ public class PlayerFragment extends AbstractBaseFragment
     }
 
     private void resetUpdateTimer () {
-        
+        if (updateHandler != null && updateRunnable != null) {
+            updateHandler.removeCallbacks(updateRunnable);
+            updateRunnable = null;
+        }
     }
     
     private void preparePlayer(File file) {
@@ -361,9 +363,10 @@ public class PlayerFragment extends AbstractBaseFragment
         
         textTotalTime.setText("total: " + milisecondsToTimeFormattedString(duration));
         textDynamicTime.setText("remain: " + milisecondsToTimeFormattedString(duration));
-        UpdateRunnable ur = new UpdateRunnable();
-        ur.setDuration(duration);
-        updateHandler.post(ur);
+        
+        updateRunnable = new UpdateRunnable();
+        updateRunnable.setDuration(duration);
+        updateHandler.post(updateRunnable);
     }
 
     @Override
@@ -414,7 +417,11 @@ public class PlayerFragment extends AbstractBaseFragment
     private class UpdateRunnable implements Runnable {
         
         int duration;
-        
+
+        public UpdateRunnable() {
+            
+        }
+
         public void setDuration(int duration) {
             this.duration = duration;
         }
