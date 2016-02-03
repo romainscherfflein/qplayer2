@@ -16,7 +16,7 @@ import org.qstuff.qplayer.controller.PlayListController;
 import org.qstuff.qplayer.data.PlayList;
 import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.AddTrackToPlayListEvent;
-import org.qstuff.qplayer.events.FileSelectedEvent;
+import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
 import org.qstuff.qplayer.events.NewPlayListEvent;
 import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
 
@@ -162,7 +162,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
 
         if (item.isFile())
-            bus.post(new FileSelectedEvent(item));
+            bus.post(new TrackSelectedFromFilesEvent(new Track(item)));
         else if (item.isDirectory())
             browseTo(item);
         else

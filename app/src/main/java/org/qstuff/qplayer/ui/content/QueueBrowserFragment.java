@@ -1,7 +1,6 @@
 package org.qstuff.qplayer.ui.content;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +11,11 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.data.PlayList;
 import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.AddTracksToQueueEvent;
-import org.qstuff.qplayer.events.FileSelectedEvent;
+import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
+import org.qstuff.qplayer.events.TrackSelectedFromQueueEvent;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -100,7 +98,7 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         Timber.d("onListItemClicked: pos: " + position);
 
         Track track = tracks.get(position);
-        bus.post(new FileSelectedEvent(new File(track.getUri())));
+        bus.post(new TrackSelectedFromQueueEvent(track));
     }
     
     //
@@ -117,6 +115,28 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         // add to local (and adapter)
         tracks.addAll(event.tracks);
         trackNames.addAll(getTrackNames(event.tracks));
+        
+        // notify to adapter
+        queueListAdapter.notifyDataSetChanged();
+        
+        // TODO notify player of updated queue, but not here !!!
+        // bus.post(new PlayQueueUpdateEvent(tracks));
+    }
+
+    // FIXME: we need a policy on how to add tracks to the queue
+    // for now a single track from frilebrowser is added to the top
+    
+    @Subscribe
+    public void onTrackSelectedEvent(TrackSelectedFromFilesEvent event) {
+        Timber.d("onTrackSelectedEvent(): " + event.track.getName());
+        if (tracks == null)
+            tracks = new ArrayList<>();
+        tracks.add(0, event.track);
+        
+        if (trackNames == null)
+            trackNames = new ArrayList<>();
+        
+        trackNames.add(0, event.track.getName());
         
         // notify to adapter
         queueListAdapter.notifyDataSetChanged();

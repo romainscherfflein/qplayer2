@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -14,10 +13,9 @@ import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.controller.PlayListController;
 import org.qstuff.qplayer.data.PlayList;
 import org.qstuff.qplayer.data.Track;
-import org.qstuff.qplayer.events.FileSelectedEvent;
+import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
 import org.qstuff.qplayer.events.NewPlayListEvent;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -118,7 +116,7 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
             showTrackList(currentPlayList);            
         } else {
             Track track = currentPlayList.getTrackList().get(position);
-            bus.post(new FileSelectedEvent(new File(track.getUri())));
+            bus.post(new TrackSelectedFromFilesEvent(track));
         }        
     }
 
