@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import org.qstuff.qplayer.Constants;
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.AddTracksToQueueEvent;
@@ -57,11 +58,18 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         View v = inflater.inflate(R.layout.queue_browser_fragment, container, false);
         ButterKnife.inject(this, v);
 
-        // TODO: restore queue from args
-        
-        tracks = new ArrayList<Track>();
+        return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        tracks = restoreTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST);
+        if (tracks == null)
+            tracks = new ArrayList<Track>();
         trackNames = getTrackNames(tracks);
-        
+
         listView.setItemsCanFocus(true);
         listView.setFastScrollEnabled(true);
 
@@ -70,14 +78,8 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
             R.layout.tracklist_item,
             R.id.tracklist_item_text,
             trackNames);
-                    
-        listView.setAdapter(queueListAdapter);
-        return v;
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+        listView.setAdapter(queueListAdapter);
         
         bus.register(this);
     }
@@ -85,7 +87,8 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
     @Override
     public void onPause() {
         super.onPause();
-    
+        
+        saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, tracks);
         bus.unregister(this);
     }
 

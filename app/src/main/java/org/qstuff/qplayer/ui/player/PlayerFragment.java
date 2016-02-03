@@ -1,6 +1,5 @@
 package org.qstuff.qplayer.ui.player;
 
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -177,8 +176,8 @@ public class PlayerFragment extends AbstractBaseFragment
         super.onResume();
         bus.register(this);
 
-        currentTrack = restoreTrack();
-        isPlaying = restorePlayingState();
+        currentTrack = restoreTrack(Constants.PREFS_KEY_PLAYER_CURRENT_TRACK);
+        isPlaying = restoreState(Constants.PREFS_KEY_PLAYER_IS_PLAYING);
 
         if (currentTrack == null) return;
 
@@ -190,8 +189,8 @@ public class PlayerFragment extends AbstractBaseFragment
     public void onPause() {
         super.onPause();
 
-        saveTrack();
-        savePlayingState();
+        saveTrack(Constants.PREFS_KEY_PLAYER_CURRENT_TRACK, currentTrack);
+        saveState(Constants.PREFS_KEY_PLAYER_IS_PLAYING, player.isPlaying());
 
         bus.unregister(this);
     }
@@ -283,36 +282,6 @@ public class PlayerFragment extends AbstractBaseFragment
         player.setOnErrorListener(this);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.prepareAsync();
-    }
-
-    private void saveTrack() {
-
-        SharedPreferences.Editor editor = preferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(currentTrack);
-        editor.putString(Constants.PREFS_KEY_LAST_PLAYED_TRACK_PATH, json);
-        editor.apply();
-    }
-
-    private void savePlayingState() {
-
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(Constants.PREFS_KEY_PLAYING_STATE, player.isPlaying());
-        editor.apply();
-    }
-
-    private Track restoreTrack() {
-
-        Gson gson = new Gson();
-        String json = preferences.getString(Constants.PREFS_KEY_LAST_PLAYED_TRACK_PATH, "");
-        if (json.isEmpty()) return null;
-
-        Timber.d("JSON: " + json);
-        return gson.fromJson(json, Track.class);
-    }
-
-    private boolean restorePlayingState() {
-        return preferences.getBoolean(Constants.PREFS_KEY_PLAYING_STATE, false);
     }
 
     //
