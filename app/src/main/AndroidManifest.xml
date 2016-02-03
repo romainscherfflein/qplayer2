@@ -9,11 +9,10 @@
         android:name=".QPlayerApplication"
         android:label="@string/app_name"
         android:allowBackup="true"
-        android:icon="@drawable/iqon">
+        android:icon="@drawable/qplayer_launcher">
         
         <activity android:name=".QPlayerMainActivity"
             android:label="@string/app_name"
-            android:icon="@drawable/iqon"
             android:theme="@style/Theme.QPlayer"
             android:screenOrientation="portrait">
 

@@ -5,23 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black" >
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_gray_2" />
     
     <TextView
         android:id="@+id/playlist_fragment_backnavigation"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/PlayerTextStyle"
+        android:layout_marginLeft="5dp"
         android:gravity="left"
-        android:text="Back to Playlists"
+        android:text="all playlists"
         android:padding="5dp"/>
-
+    
+    <TextView
+        android:id="@+id/playlist_empty_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/PlayerTextStyle"
+        android:text="no playlists"
+        android:visibility="gone"/>
+    
     <View
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/light_gray_2" />
     

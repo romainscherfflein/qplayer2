@@ -16,7 +16,7 @@ import org.qstuff.qplayer.controller.PlayListController;
 import org.qstuff.qplayer.data.PlayList;
 import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.AddTrackToPlayListEvent;
-import org.qstuff.qplayer.events.FileSelectedEvent;
+import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
 import org.qstuff.qplayer.events.NewPlayListEvent;
 import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
 
@@ -162,12 +162,11 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
 
         if (item.isFile())
-            bus.post(new FileSelectedEvent(item));
+            bus.post(new TrackSelectedFromFilesEvent(new Track(item)));
         else if (item.isDirectory())
             browseTo(item);
         else
             Timber.w("onListItemClicked(): WHAT ?");
-
     }
 
     @OnItemLongClick (R.id.filesystem_fragment_listview)
@@ -179,7 +178,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         selectedTrack = item;
         
         if (item.isDirectory())
-            browseTo(item);
+            openAddToQueueDialog(item);
         else
             openAddToPlayListDialog();
 
@@ -193,7 +192,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
         if (currentDir.getAbsolutePath().equals(rootdir)) return;
         browseTo(currentDir.getParentFile());
     }
-
+    
     //
     // Public API
     //
@@ -262,5 +261,10 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     private void openAddToPlayListDialog() {
         AbstractBaseDialogFragment dialog = new AddTrackToPlayListDialogFragment();
         dialog.show(getFragmentManager(), getString(R.string.add_track_to_playlist_dialog_tag));
+    }
+
+    private void openAddToQueueDialog(File directory) {
+        AbstractBaseDialogFragment dialog = AddTracksToQueueDialogFragment.newInstance(directory);
+        dialog.show(getFragmentManager(), getString(R.string.add_tracks_to_queue_dialog_tag));
     }
 }

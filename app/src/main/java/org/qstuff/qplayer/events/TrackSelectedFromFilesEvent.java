@@ -1,5 +1,7 @@
 package org.qstuff.qplayer.events;
 
+import org.qstuff.qplayer.data.Track;
+
 import java.io.File;
 
 /**
@@ -7,11 +9,11 @@ import java.io.File;
  *
  * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
-public class FileSelectedEvent {
+public class TrackSelectedFromFilesEvent {
 
-    public File audioFile;
+    public Track track;
 
-    public FileSelectedEvent(File audioFile) {
-        this.audioFile = audioFile;
+    public TrackSelectedFromFilesEvent(Track track) {
+        this.track = track;
     }
 }
