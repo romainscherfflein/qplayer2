@@ -9,11 +9,12 @@ import android.support.annotation.NonNull;
 import com.squareup.otto.Bus;
 
 import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.events.AddFilesToQueueEvent;
-import org.qstuff.qplayer.events.DirectorySelectedEvent;
+import org.qstuff.qplayer.data.Track;
+import org.qstuff.qplayer.events.AddTracksToQueueEvent;
 import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -63,7 +64,7 @@ public class AddTracksToQueueDialogFragment extends AbstractBaseDialogFragment {
             .setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    bus.post(new AddFilesToQueueEvent(files));
+                    bus.post(new AddTracksToQueueEvent(createTrackList(files)));
                     dismiss();
                 }
             })
@@ -85,5 +86,13 @@ public class AddTracksToQueueDialogFragment extends AbstractBaseDialogFragment {
     public void onPause() {
         super.onPause();
         bus.unregister(this);
+    }
+    
+    private ArrayList<Track> createTrackList(File files[]) {
+        
+        ArrayList<Track> ret = new ArrayList<>();
+        for (File f : files) 
+            ret.add(new Track(f));
+        return ret;
     }
 }

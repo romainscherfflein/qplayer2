@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         style="@style/PlayerTextStyle"
-        android:text="queue is empty" />
+        android:text="queue is empty"
+        android:visibility="gone"/>
     
     <View
         android:layout_width="fill_parent"
@@ -21,7 +22,7 @@
     <ListView
         android:id="@+id/queue_fragment_listview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         style="@style/ListView.FileList" />
     
 </LinearLayout>

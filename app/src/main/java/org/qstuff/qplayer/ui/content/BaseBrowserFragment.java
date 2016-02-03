@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import org.qstuff.qplayer.AbstractBaseFragment;
 
@@ -16,6 +17,16 @@ import org.qstuff.qplayer.AbstractBaseFragment;
  */
 public class BaseBrowserFragment extends AbstractBaseFragment {
 
-    private final static String TAG = "BaseBrowserFragment";
-    
+    protected View getViewByPosition(int pos, ListView listView) {
+        
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
+    }
 }

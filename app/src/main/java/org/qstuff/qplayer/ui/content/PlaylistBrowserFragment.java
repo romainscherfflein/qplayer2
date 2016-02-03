@@ -39,7 +39,8 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     @Inject Bus bus;
     @Inject PlayListController playListController;
     
-    @InjectView(R.id.playlist_fragment_listview) ListView listView;
+    @InjectView(R.id.playlist_fragment_listview) 
+    ListView listView;
 
     private PlayListIndexerArrayAdapter<String> playListAdapter;
     private PlayList                            currentPlayList;
@@ -53,8 +54,6 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Timber.d("onCreate():");
-
     }
 
     @Override

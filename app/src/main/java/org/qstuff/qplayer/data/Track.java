@@ -1,5 +1,6 @@
 package org.qstuff.qplayer.data;
 
+import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -12,6 +13,11 @@ public class Track  implements Serializable {
     private String uri;
 
     private String name;
+    
+    public Track(File file) {
+        this.uri = file.getAbsolutePath();
+        this.name = file.getName();
+    }
     
     public Track(String name, String uri) {
         this.uri = uri;
