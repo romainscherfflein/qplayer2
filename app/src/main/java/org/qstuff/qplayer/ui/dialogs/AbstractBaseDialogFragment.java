@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.ui;
+package org.qstuff.qplayer.ui.dialogs;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -8,9 +8,6 @@ import com.negusoft.holoaccent.dialog.DividerPainter;
 
 import org.qstuff.qplayer.QPlayerApplication;
 import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.ui.content.ChoosePlayListDialogFragment;
-
-import butterknife.ButterKnife;
 
 
 /**

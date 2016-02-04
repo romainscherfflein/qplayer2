@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.ui.content;
+package org.qstuff.qplayer.ui.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -6,7 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
+import org.qstuff.qplayer.ui.dialogs.AbstractBaseDialogFragment;
 
 import butterknife.ButterKnife;
 

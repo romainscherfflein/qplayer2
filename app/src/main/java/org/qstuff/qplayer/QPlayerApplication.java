@@ -7,10 +7,10 @@ import android.content.SharedPreferences;
 import com.squareup.otto.Bus;
 
 import org.qstuff.qplayer.controller.PlayListController;
-import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
-import org.qstuff.qplayer.ui.content.AddTrackToPlayListDialogFragment;
-import org.qstuff.qplayer.ui.content.AddTracksToQueueDialogFragment;
-import org.qstuff.qplayer.ui.content.ChoosePlayListDialogFragment;
+import org.qstuff.qplayer.ui.dialogs.AbstractBaseDialogFragment;
+import org.qstuff.qplayer.ui.dialogs.AddTrackToPlayListDialogFragment;
+import org.qstuff.qplayer.ui.dialogs.AddTracksToQueueDialogFragment;
+import org.qstuff.qplayer.ui.dialogs.ChoosePlayListDialogFragment;
 import org.qstuff.qplayer.ui.content.QueueBrowserFragment;
 import org.qstuff.qplayer.ui.content.FilesystemBrowserFragment;
 import org.qstuff.qplayer.ui.content.PlaylistBrowserFragment;

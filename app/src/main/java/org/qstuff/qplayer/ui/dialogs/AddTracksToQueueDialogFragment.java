@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.ui.content;
+package org.qstuff.qplayer.ui.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -11,7 +11,6 @@ import com.squareup.otto.Bus;
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.AddTracksToQueueEvent;
-import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
 
 import java.io.File;
 import java.util.ArrayList;

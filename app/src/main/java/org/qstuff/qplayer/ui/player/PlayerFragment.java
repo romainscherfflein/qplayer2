@@ -349,7 +349,7 @@ public class PlayerFragment extends AbstractBaseFragment
         }
     }
 
-    // Repeat All / Repeat One
+    // Repeat All / Repeat One (disables Shuffle)
 
     @OnClick(R.id.player_button_repeat)
     public void onRepeatButtonClicked() {
@@ -357,6 +357,7 @@ public class PlayerFragment extends AbstractBaseFragment
         Timber.d("onRepeatButtonClicked(): one: " + isRepeatOneEnabled);
 
         if (isRepeatAllEnabled) {
+            
             if (isRepeatOneEnabled) {
                 buttonRepeat.setImageDrawable(getResources().getDrawable(R.drawable.button_loop));
                 isRepeatAllEnabled = false;
@@ -366,14 +367,18 @@ public class PlayerFragment extends AbstractBaseFragment
                 isRepeatAllEnabled = true;
                 isRepeatOneEnabled = true;
             }
+        
         } else {
             buttonRepeat.setImageDrawable(getResources().getDrawable(R.drawable.button_loop_selected));
             isRepeatAllEnabled = true;
             isRepeatOneEnabled = false;
+            
+            buttonShuffle.setImageDrawable(getResources().getDrawable(R.drawable.button_shuffle));
+            isShufflePlayEnabled = false;
         }
     }
 
-    // Shuffle
+    // Shuffle  (disables Repeat)
     
     @OnClick(R.id.player_button_shuffle)
     public void onShuffleButtonClicked() {
@@ -385,6 +390,10 @@ public class PlayerFragment extends AbstractBaseFragment
         } else {
             buttonShuffle.setImageDrawable(getResources().getDrawable(R.drawable.button_shuffle_selected));
             isShufflePlayEnabled = true;
+
+            buttonRepeat.setImageDrawable(getResources().getDrawable(R.drawable.button_loop));
+            isRepeatAllEnabled = false;
+            isRepeatOneEnabled = false;    
         }
     }
 
@@ -535,8 +544,11 @@ public class PlayerFragment extends AbstractBaseFragment
                 nextIndex = currentTrackIndex +1;
             }
             shallPlayImmediately = true;
-        // If SHUFFLE is enabled choose a random track from the tracklist    
-        } else if (isShufflePlayEnabled) {
+        }
+        
+        // If SHUFFLE is enabled choose a random track from the tracklist
+        // this overrides the selection from random
+        if (isShufflePlayEnabled) {
             Random rand = new Random();
             nextIndex = rand.nextInt(trackList.size() -1);
             shallPlayImmediately = true;

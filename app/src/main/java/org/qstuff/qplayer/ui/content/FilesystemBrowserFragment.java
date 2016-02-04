@@ -18,7 +18,9 @@ import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.AddTrackToPlayListEvent;
 import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
 import org.qstuff.qplayer.events.NewPlayListEvent;
-import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
+import org.qstuff.qplayer.ui.dialogs.AbstractBaseDialogFragment;
+import org.qstuff.qplayer.ui.dialogs.AddTrackToPlayListDialogFragment;
+import org.qstuff.qplayer.ui.dialogs.AddTracksToQueueDialogFragment;
 
 import java.io.File;
 import java.util.ArrayList;

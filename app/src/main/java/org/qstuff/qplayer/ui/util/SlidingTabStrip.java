@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.qstuff.qplayer.util;
+package org.qstuff.qplayer.ui.util;
 import android.R;
 import android.content.Context;
 import android.graphics.Canvas;

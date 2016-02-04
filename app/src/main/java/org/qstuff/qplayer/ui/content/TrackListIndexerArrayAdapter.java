@@ -13,6 +13,7 @@ import android.widget.TextView;
 import org.qstuff.qplayer.R;
 
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,9 +38,10 @@ public class TrackListIndexerArrayAdapter<T> extends ArrayAdapter<T>
 	private HashMap<String, Integer> alphaIndexer;
 	private String[]                 sections;	
 	
-	private Context context;
-	private int     layoutResourceId;
-	List<T>         objects;
+	private WeakReference<Context>   contextRef;
+	private int                      layoutResourceId;
+	private List<T>                  objects;
+    private int                      selectedItemIndex;
 	
 	/**
 	 * 
@@ -52,30 +54,29 @@ public class TrackListIndexerArrayAdapter<T> extends ArrayAdapter<T>
 										int layoutResourceId,
 										int textViewId,
 										List<T> objects) {
-	    super(context, layoutResourceId, textViewId, objects);
 
-        Timber.d("addObjects(1): add num: " + objects.size());
-	    this.context = context;
+	    super(context, layoutResourceId, textViewId, objects);
+	    this.contextRef = new WeakReference<Context>(context);
 	    this.layoutResourceId = layoutResourceId;
 	    this.objects = objects;
+        selectedItemIndex = -1;
 		initialize();
-        Timber.d("addObjects(2): add num: " + objects.size());
     }
 
 	public void addObjects(List<T> newObjects) {
-        Timber.d("addObjects(): add num: " + newObjects.size());
-        Timber.d("addObjects(): to num:  " + objects.size());
 
         objects.addAll(newObjects);
 		initialize();
 	}
 
     public void swapObjects(List<T> objects) {
+
         this.objects = objects;
         initialize();
     }
     
 	private void initialize() {
+
 		alphaIndexer = new HashMap<String, Integer>();
 
 		int size = objects.size();
@@ -101,6 +102,7 @@ public class TrackListIndexerArrayAdapter<T> extends ArrayAdapter<T>
 		
 		View row = convertView;
         ListHolder holder;
+        Context context = contextRef.get();
         
         if (row == null) {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
@@ -114,15 +116,25 @@ public class TrackListIndexerArrayAdapter<T> extends ArrayAdapter<T>
         } else {
             holder = (ListHolder)row.getTag();
         }
-		
-		holder.imgIcon.setImageResource(R.drawable.icon_note);
-		
+
+        if (selectedItemIndex == position) {
+            holder.imgIcon.setImageResource(R.drawable.icon_note_selected);
+            holder.txtTitle.setTextColor(context.getResources().getColor(R.color.q_orange));
+        } else {
+            holder.imgIcon.setImageResource(R.drawable.icon_note);
+            holder.txtTitle.setTextColor(context.getResources().getColor(R.color.white));
+        }	
         String title = ((T)objects.get(position)).toString();
         holder.txtTitle.setText(title);
                 
         return row;
     }
 	
+    public void setSelectedItemIndex(int index) {
+        selectedItemIndex = index;
+        notifyDataSetChanged();
+    }
+    
 	/**
 	 * 
 	 * @author claus
@@ -132,7 +144,9 @@ public class TrackListIndexerArrayAdapter<T> extends ArrayAdapter<T>
         ImageView imgIcon;
         TextView  txtTitle;
     }
-	
+
+    
+    
 	/**
 	 * 
 	 */

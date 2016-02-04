@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.ui.content;
+package org.qstuff.qplayer.ui.dialogs;
 
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -18,7 +18,8 @@ import org.qstuff.qplayer.data.PlayList;
 import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.AddTrackToPlayListEvent;
 import org.qstuff.qplayer.events.NewPlayListEvent;
-import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
+import org.qstuff.qplayer.ui.content.PlayListIndexerArrayAdapter;
+import org.qstuff.qplayer.ui.dialogs.AbstractBaseDialogFragment;
 
 import java.util.ArrayList;
 
@@ -29,7 +30,6 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import butterknife.OnItemClick;
-import butterknife.OnItemLongClick;
 import timber.log.Timber;
 
 /**

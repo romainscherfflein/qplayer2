@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.util.SlidingTabLayout;
+import org.qstuff.qplayer.ui.util.SlidingTabLayout;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;

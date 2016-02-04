@@ -17,6 +17,7 @@ import org.qstuff.qplayer.events.AddTracksToQueueEvent;
 import org.qstuff.qplayer.events.PlayQueueUpdateEvent;
 import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
 import org.qstuff.qplayer.events.TrackSelectedFromQueueEvent;
+import org.qstuff.qplayer.events.TrackSelectedToPlayEvent;
 import org.qstuff.qplayer.util.TrackUtils;
 
 import java.util.ArrayList;
@@ -148,8 +149,15 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         // notify to adapter
         queueListAdapter.notifyDataSetChanged();
     }
-    
-    //
+
+    @Subscribe
+    public void onTrackSelectedToPlayEvent(TrackSelectedToPlayEvent event) {
+        Timber.d("onTrackSelectedToPlayEvent(): " + event.track.getName());
+        
+        queueListAdapter.setSelectedItemIndex(event.queueIndex);
+    }
+
+        //
     // private helpers
     //
     
