@@ -14,8 +14,10 @@ import org.qstuff.qplayer.Constants;
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.AddTracksToQueueEvent;
+import org.qstuff.qplayer.events.PlayQueueUpdateEvent;
 import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
 import org.qstuff.qplayer.events.TrackSelectedFromQueueEvent;
+import org.qstuff.qplayer.util.TrackUtils;
 
 import java.util.ArrayList;
 
@@ -82,6 +84,8 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         listView.setAdapter(queueListAdapter);
         
         bus.register(this);
+        // for those who want to know ...
+        bus.post(new PlayQueueUpdateEvent(tracks));
     }
 
     @Override
@@ -132,14 +136,14 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
     @Subscribe
     public void onTrackSelectedEvent(TrackSelectedFromFilesEvent event) {
         Timber.d("onTrackSelectedEvent(): " + event.track.getName());
+        
         if (tracks == null)
             tracks = new ArrayList<>();
-        tracks.add(0, event.track);
-        
-        if (trackNames == null)
-            trackNames = new ArrayList<>();
-        
-        trackNames.add(0, event.track.getName());
+
+        if (!TrackUtils.trackListContainsTrack(tracks, event.track)) {
+            tracks.add(0, event.track);
+            trackNames.add(0, event.track.getName());
+        }
         
         // notify to adapter
         queueListAdapter.notifyDataSetChanged();

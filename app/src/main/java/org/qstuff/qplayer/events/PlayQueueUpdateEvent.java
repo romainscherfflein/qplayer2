@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class PlayQueueUpdateEvent {
 
     public ArrayList<Track> tracks;
-
+    
     public PlayQueueUpdateEvent(ArrayList<Track> tracks) {
         this.tracks = tracks;
     }

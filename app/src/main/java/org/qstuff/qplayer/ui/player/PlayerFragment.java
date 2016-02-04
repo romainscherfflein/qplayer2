@@ -16,7 +16,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -27,11 +26,15 @@ import org.qstuff.qplayer.controller.PlayListController;
 import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
 import org.qstuff.qplayer.events.PlayQueueUpdateEvent;
+import org.qstuff.qplayer.events.TrackSelectedFromQueueEvent;
+import org.qstuff.qplayer.events.TrackSelectedToPlayEvent;
 import org.qstuff.qplayer.ui.util.VerticalSeekBar;
+import org.qstuff.qplayer.util.TrackUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -48,11 +51,10 @@ import timber.log.Timber;
  */
 public class PlayerFragment extends AbstractBaseFragment
 	implements AdapterView.OnItemSelectedListener,
-        OnSeekBarChangeListener,
-        MediaPlayer.OnPreparedListener,
-        MediaPlayer.OnErrorListener,
-        MediaPlayer.OnCompletionListener {
-
+               OnSeekBarChangeListener,
+               MediaPlayer.OnPreparedListener,
+               MediaPlayer.OnErrorListener,
+               MediaPlayer.OnCompletionListener {
     
     @Inject Bus bus;
     @Inject PlayListController playListController;
@@ -112,9 +114,10 @@ public class PlayerFragment extends AbstractBaseFragment
     private Handler          updateHandler = new Handler();
     private UpdateRunnable   updateRunnable;
 
-    private boolean          isContinousPlayEnabled;
-    private boolean          isRepeatPlayEnabled;
-    private boolean          isRepeatPlayOnceEnabled;
+    private boolean          isContinousPlayEnabled = false; // TODO: need a button to toggle
+    private boolean isRepeatAllEnabled;
+    private boolean isRepeatOneEnabled;
+    private boolean          isShufflePlayEnabled;
 
 
     //
@@ -176,19 +179,24 @@ public class PlayerFragment extends AbstractBaseFragment
         super.onResume();
         bus.register(this);
 
+        trackList    = restoreTrackList(Constants.PREFS_KEY_PLAYER_CURRENT_TRACKLIST);
         currentTrack = restoreTrack(Constants.PREFS_KEY_PLAYER_CURRENT_TRACK);
-        isPlaying = restoreState(Constants.PREFS_KEY_PLAYER_IS_PLAYING);
+        isPlaying    = restoreState(Constants.PREFS_KEY_PLAYER_IS_PLAYING);
 
+        if (trackList == null)
+            trackList = new ArrayList<>();
+        
         if (currentTrack == null) return;
 
         if (!player.isPlaying())
-            loadTrack(currentTrack);
+            loadTrack(trackList.indexOf(currentTrack));
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
+        saveTrackList(Constants.PREFS_KEY_PLAYER_CURRENT_TRACKLIST, trackList);
         saveTrack(Constants.PREFS_KEY_PLAYER_CURRENT_TRACK, currentTrack);
         saveState(Constants.PREFS_KEY_PLAYER_IS_PLAYING, player.isPlaying());
 
@@ -209,31 +217,62 @@ public class PlayerFragment extends AbstractBaseFragment
     @Subscribe
     public void onTrackSelectedEvent(TrackSelectedFromFilesEvent event) {
         Timber.d("onTrackSelectedEvent(): " + event.track.getName());
-        trackList.add(0, event.track);
-        loadTrack(event.track);
-        shallPlayImmediately = false;
         
+        int trackIndex;
+        if (!TrackUtils.trackListContainsTrack(trackList, event.track)) {
+            trackList.add(0, event.track);
+            trackIndex = 0;
+        } else {
+            trackIndex = trackList.indexOf(event.track);
+        }
+
+        loadTrack(trackIndex);
+        shallPlayImmediately = false;
+    }
+
+    @Subscribe
+    public void onTrackSelectedFromQueueEvent(TrackSelectedFromQueueEvent event) {
+        Timber.d("onTrackSelectedFromQueueEvent(): " + event.track.getName());
+
+        int trackIndex;
+        if (!TrackUtils.trackListContainsTrack(trackList, event.track)) {
+            trackList.add(0, event.track);
+            trackIndex = 0;
+        } else {
+            trackIndex = trackList.indexOf(event.track);
+        }
+
+        loadTrack(trackIndex);
+        shallPlayImmediately = false;
     }
 
     @Subscribe
     public void onPlayQueueUpdateEvent(PlayQueueUpdateEvent event) {
         Timber.d("onPlayQueueUpdateEvent(): ");
+
+        // For now we only fill the tracklist if it's empty
+        // to get the latest queue on resume
+        if (trackList.isEmpty())
+            trackList = event.tracks;
         
-        // Tracklist will completely exchanged by new list
-        // current track keeps playing
-       
-        trackList = event.tracks;
+        // TODO: add before/after/swap
     }
     
     //
     // Private
     //
 
-    private void loadTrack(Track track) {
-
+    private void loadTrack(int index) {
+        Timber.d("loadTrack(): index: " + index);
+        
+        if (index < 0) return;
+        
         cleanupPlayer();
-        preparePlayer(new File(track.getUri()));
-        currentTrack = track;
+        
+        currentTrack = trackList.get(index);
+        preparePlayer(new File(currentTrack.getUri()));
+        
+        bus.post(new TrackSelectedToPlayEvent(index, currentTrack));
         
         textCurrentTrack.setText(currentTrack.getName().replaceFirst("[.][^.]+$", ""));
         buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play_selected));
@@ -285,7 +324,7 @@ public class PlayerFragment extends AbstractBaseFragment
     }
 
     //
-    // Click Handlers
+    // Click Handlers for Player Buttons
     //
 
     // Play / Pause
@@ -310,18 +349,27 @@ public class PlayerFragment extends AbstractBaseFragment
         }
     }
 
-    // Repeat / Repeat 1 (TODO)
+    // Repeat All / Repeat One
 
     @OnClick(R.id.player_button_repeat)
     public void onRepeatButtonClicked() {
-        Timber.d("onRepeatButtonClicked(): ");
+        Timber.d("onRepeatButtonClicked(): all: " + isRepeatAllEnabled);
+        Timber.d("onRepeatButtonClicked(): one: " + isRepeatOneEnabled);
 
-        if (isRepeatPlayEnabled) {
-            buttonRepeat.setImageDrawable(getResources().getDrawable(R.drawable.button_loop));
-            isRepeatPlayEnabled = false;
+        if (isRepeatAllEnabled) {
+            if (isRepeatOneEnabled) {
+                buttonRepeat.setImageDrawable(getResources().getDrawable(R.drawable.button_loop));
+                isRepeatAllEnabled = false;
+                isRepeatOneEnabled = false;
+            } else {
+                buttonRepeat.setImageDrawable(getResources().getDrawable(R.drawable.button_loop1_selected));
+                isRepeatAllEnabled = true;
+                isRepeatOneEnabled = true;
+            }
         } else {
             buttonRepeat.setImageDrawable(getResources().getDrawable(R.drawable.button_loop_selected));
-            isRepeatPlayEnabled = true;
+            isRepeatAllEnabled = true;
+            isRepeatOneEnabled = false;
         }
     }
 
@@ -331,12 +379,12 @@ public class PlayerFragment extends AbstractBaseFragment
     public void onShuffleButtonClicked() {
         Timber.d("onShuffleButtonClicked(): ");
 
-        if (isContinousPlayEnabled) {
+        if (isShufflePlayEnabled) {
             buttonShuffle.setImageDrawable(getResources().getDrawable(R.drawable.button_shuffle));
-            isContinousPlayEnabled = false;
+            isShufflePlayEnabled = false;
         } else {
             buttonShuffle.setImageDrawable(getResources().getDrawable(R.drawable.button_shuffle_selected));
-            isContinousPlayEnabled = true;
+            isShufflePlayEnabled = true;
         }
     }
 
@@ -347,16 +395,21 @@ public class PlayerFragment extends AbstractBaseFragment
         Timber.d("onPreviousButtonClicked(): " + trackList.size());
         
         int currentTrackIndex = trackList.indexOf(currentTrack);
+        int nextIndex;
         
-        // If list is empty or the current track is the first in the list: 
-        // just return ...
-        if (! (!trackList.isEmpty() && !(currentTrackIndex == 0))) {
-            Timber.d("onPreviousButtonClicked(): is first track ");
-            return;
+        // If list is empty return;
+        if (trackList.isEmpty()) {
+            return;        
+        }
+        // If first track jump back to the end 
+        if (currentTrackIndex == 0) {
+            nextIndex = trackList.size() - 1 ;
+        } else {
+            nextIndex = currentTrackIndex -1;
         }
 
-        loadTrack(trackList.get(currentTrackIndex - 1));
-        shallPlayImmediately = true;
+        loadTrack(nextIndex);
+        shallPlayImmediately = false;
     }
 
     // Next
@@ -366,19 +419,22 @@ public class PlayerFragment extends AbstractBaseFragment
         Timber.d("onNextButtonClicked(): " + trackList.size());
 
         int currentTrackIndex = trackList.indexOf(currentTrack);
+        int nextIndex;
 
-        // If list is empty or the current track is the last in the list: 
-        // just return ...
-        if (! (!trackList.isEmpty() && !(currentTrackIndex == trackList.size() - 1))) {
-            Timber.d("onNextButtonClicked(): is last track");
+        // If list is empty return;
+        if (trackList.isEmpty()) {
             return;
         }
+        // If last track jump back to the top
+        if (currentTrackIndex == trackList.size() -1) {
+            nextIndex = 0 ;
+        } else {
+            nextIndex = currentTrackIndex + 1;
+        }
 
-        loadTrack(trackList.get(currentTrackIndex + 1));
-        shallPlayImmediately = true;
+        loadTrack(nextIndex);
+        shallPlayImmediately = false;
     }
-
-
 
     //
     //  OnSeekbarChangeListener
@@ -453,27 +509,48 @@ public class PlayerFragment extends AbstractBaseFragment
         Timber.d("onCompletion(): tracklist size: " + trackList.size());
 
         int currentTrackIndex = trackList.indexOf(currentTrack);
+        int lastIndex = trackList.size() -1;
+        int nextIndex = -1;
+        
         Timber.d("onCompletion(): current track is: " + currentTrackIndex);
 
         // If list is empty or the current track is the last in the list 
         // just cleanup the player, reset the update handler - and return ...
-        if (!(!trackList.isEmpty() && !(currentTrackIndex == trackList.size() - 1))) {
+        if (trackList.isEmpty()) {
             Timber.d("onCompletion(): tracklist is empty");
-
-            cleanupPlayer();
-            resetUpdateTimer();
-            return;
+            
+            // nothing to do here
         }
-       
-        // If continous play is enabled play the next track (if there is any)
-        // else cleanup etc.
-       
-        if (isContinousPlayEnabled && !trackList.isEmpty()) {
-            loadTrack(trackList.get(currentTrackIndex + 1));
+        // If REPEAT ONE is enabled: play the current track again and again and again and again
+        else if (isRepeatOneEnabled) {
+            nextIndex = currentTrackIndex;
             shallPlayImmediately = true;
+        }
+        // If REPEAT ALL is enabled play one after the other and repeat when end the is reached
+        else if (isRepeatAllEnabled) {
+            
+            if (currentTrackIndex == lastIndex) {
+                nextIndex = 0;
+            } else {
+                nextIndex = currentTrackIndex +1;
+            }
+            shallPlayImmediately = true;
+        // If SHUFFLE is enabled choose a random track from the tracklist    
+        } else if (isShufflePlayEnabled) {
+            Random rand = new Random();
+            nextIndex = rand.nextInt(trackList.size() -1);
+            shallPlayImmediately = true;
+        }
+        
+        // 
+        if (nextIndex >= 0) {
+            Timber.d("onCompletion(): moving to next track: " + nextIndex);
+            loadTrack(nextIndex);
         } else {
+            Timber.d("onCompletion(): no more next track: ");
             cleanupPlayer();
             resetUpdateTimer();
+            shallPlayImmediately = false;
         }
     }
     

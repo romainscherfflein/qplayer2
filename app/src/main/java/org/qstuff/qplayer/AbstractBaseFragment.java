@@ -61,6 +61,8 @@ public class AbstractBaseFragment extends Fragment {
     protected void saveTrackList(@NonNull String key, 
                                  @NonNull ArrayList<Track> trackList) {
 
+        Timber.d("saveTrackList(): saving " + trackList.size());
+        
         SharedPreferences.Editor editor = preferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(trackList);
