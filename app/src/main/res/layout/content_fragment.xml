@@ -9,7 +9,7 @@
     android:background="@color/white"
     android:orientation="vertical">
     
-    <org.qstuff.qplayer.util.SlidingTabLayout
+    <org.qstuff.qplayer.ui.util.SlidingTabLayout
         android:id="@+id/pager_tabs"
         android:layout_width="match_parent"
         android:layout_height="@dimen/tabbar_height"/>

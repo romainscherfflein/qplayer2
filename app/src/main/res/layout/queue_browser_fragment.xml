@@ -7,12 +7,14 @@
     android:background="@color/black">
 
     <TextView
-        android:id="@+id/queue_empty_text"
+        android:id="@+id/queue_clear_button"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/textview_height"
         style="@style/PlayerTextStyle"
-        android:text="queue is empty"
-        android:visibility="gone"/>
+        android:layout_marginLeft="5dp"
+        android:gravity="left"
+        android:text="clear queue"
+        android:padding="5dp"/>
     
     <View
         android:layout_width="fill_parent"
@@ -22,7 +24,7 @@
     <ListView
         android:id="@+id/queue_fragment_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         style="@style/ListView.FileList" />
     
 </LinearLayout>

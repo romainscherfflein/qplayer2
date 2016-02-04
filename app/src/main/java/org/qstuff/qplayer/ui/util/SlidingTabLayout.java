@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.qstuff.qplayer.util;
+package org.qstuff.qplayer.ui.util;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -22,7 +22,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -70,7 +69,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     private static final int TITLE_OFFSET_DIPS                = 0;
 
-    private static final int TAB_VIEW_PADDING_BOTTOM_DIPS     = 15;
+    private static final int TAB_VIEW_PADDING_BOTTOM_DIPS     = 10;
     private static final int TAB_VIEW_PADDING_TOP_DIPS        = 5;
 
     private static final int TAB_VIEW_PADDING_LEFT_RIGHT_DIPS = 0;

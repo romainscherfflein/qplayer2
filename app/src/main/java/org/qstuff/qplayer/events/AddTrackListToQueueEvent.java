@@ -10,11 +10,11 @@ import java.util.ArrayList;
  *
  * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
-public class AddTracksToQueueEvent {
+public class AddTrackListToQueueEvent {
 
     public ArrayList<Track> tracks;
 
-    public AddTracksToQueueEvent(ArrayList<Track> tracks) {
+    public AddTrackListToQueueEvent(ArrayList<Track> tracks) {
         this.tracks = tracks;
     }
 }

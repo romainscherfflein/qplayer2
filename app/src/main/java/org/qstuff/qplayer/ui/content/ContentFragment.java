@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.util.SlidingTabLayout;
+import org.qstuff.qplayer.ui.util.SlidingTabLayout;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -22,7 +22,8 @@ import butterknife.InjectView;
  *
  * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
-public class ContentFragment extends Fragment implements ViewPager.OnPageChangeListener {
+public class ContentFragment extends Fragment
+    implements ViewPager.OnPageChangeListener {
 
     private static final String TAG = "ContentPagerFragment";
 
@@ -63,7 +64,7 @@ public class ContentFragment extends Fragment implements ViewPager.OnPageChangeL
 
         contentPagerAdapter = new ContentPagerAdapter(getFragmentManager());
         contentPager.setAdapter(contentPagerAdapter);
-
+    
         
         pagerTabs.setViewPager(contentPager);
         pagerTabs.setOnPageChangeListener(this);
@@ -96,8 +97,6 @@ public class ContentFragment extends Fragment implements ViewPager.OnPageChangeL
     @Override
     public void onPageSelected(int position) {
         Log.d(TAG, "onPageSelected(): " + position);
-        
-//        pagerTabs.setTextColor();
     }
 
     @Override
@@ -155,6 +154,11 @@ public class ContentFragment extends Fragment implements ViewPager.OnPageChangeL
                     return getString(R.string.Playlists);                 
             }
             return "OBJECT " + (position + 1);
+        }
+        
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.ui.content;
+package org.qstuff.qplayer.ui.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -10,8 +10,7 @@ import com.squareup.otto.Bus;
 
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.data.Track;
-import org.qstuff.qplayer.events.AddTracksToQueueEvent;
-import org.qstuff.qplayer.ui.AbstractBaseDialogFragment;
+import org.qstuff.qplayer.events.AddTrackListToQueueEvent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -64,7 +63,7 @@ public class AddTracksToQueueDialogFragment extends AbstractBaseDialogFragment {
             .setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    bus.post(new AddTracksToQueueEvent(createTrackList(files)));
+                    bus.post(new AddTrackListToQueueEvent(createTrackList(files)));
                     dismiss();
                 }
             })

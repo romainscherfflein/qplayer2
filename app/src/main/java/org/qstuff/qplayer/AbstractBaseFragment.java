@@ -61,6 +61,8 @@ public class AbstractBaseFragment extends Fragment {
     protected void saveTrackList(@NonNull String key, 
                                  @NonNull ArrayList<Track> trackList) {
 
+        Timber.d("saveTrackList(): saving " + trackList.size());
+        
         SharedPreferences.Editor editor = preferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(trackList);
@@ -94,6 +96,17 @@ public class AbstractBaseFragment extends Fragment {
         String json = preferences.getString(key, "");
         if (json.isEmpty()) return null;
         return gson.fromJson(json, Track.class);
+    }
+
+    protected void saveIndex(@NonNull String key, int index) {
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(key, index);
+        editor.apply();
+    }
+
+    protected int restoreIndex(@NonNull String key) {
+        return preferences.getInt(key, -1);
     }
 
     protected void saveState(@NonNull String key, boolean state) {
