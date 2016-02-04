@@ -98,6 +98,17 @@ public class AbstractBaseFragment extends Fragment {
         return gson.fromJson(json, Track.class);
     }
 
+    protected void saveIndex(@NonNull String key, int index) {
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(key, index);
+        editor.apply();
+    }
+
+    protected int restoreIndex(@NonNull String key) {
+        return preferences.getInt(key, -1);
+    }
+
     protected void saveState(@NonNull String key, boolean state) {
 
         SharedPreferences.Editor editor = preferences.edit();

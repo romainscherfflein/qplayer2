@@ -1,5 +1,7 @@
 package org.qstuff.qplayer.ui.player;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -80,7 +82,10 @@ public class PlayerFragment extends AbstractBaseFragment
     
     @InjectView(R.id.player_button_repeat)
     ImageView buttonRepeat;
-        
+
+    @InjectView(R.id.player_text_version)
+    TextView textVersion;
+    
     @InjectView(R.id.player_text_current_track) 
     TextView textCurrentTrack;
 
@@ -129,6 +134,8 @@ public class PlayerFragment extends AbstractBaseFragment
         super.onCreate(savedInstanceState);
         Timber.d("onCreate():");
 
+        bus.register(this);
+        
         isPrepared = false;
 
         if (player == null)
@@ -171,36 +178,51 @@ public class PlayerFragment extends AbstractBaseFragment
         pitchRangeSetting.setOnItemSelectedListener(this);
 
         jogViewFrame.bringToFront();
+
+        try {
+            PackageManager packageManager = getActivity().getPackageManager();
+            String packageName = getActivity().getPackageName();
+            PackageInfo pInfo = packageManager.getPackageInfo(packageName, 0);
+            String appName = (String) packageManager.getApplicationLabel(
+                packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA));
+            
+            textVersion.setText(appName + " " + pInfo.versionName + " (" + pInfo.versionCode + ")");
+        
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        
         return v;
     }
         
     @Override
     public void onResume() {
-        super.onResume();
-        bus.register(this);
+        super.onResume(); 
+        Timber.d("onResume()");
+        // bus.register(this);
 
-        trackList    = restoreTrackList(Constants.PREFS_KEY_PLAYER_CURRENT_TRACKLIST);
-        currentTrack = restoreTrack(Constants.PREFS_KEY_PLAYER_CURRENT_TRACK);
+        trackList    = restoreTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST);
         isPlaying    = restoreState(Constants.PREFS_KEY_PLAYER_IS_PLAYING);
-
+        int currentTrackIndex = restoreIndex(Constants.PREFS_KEY_PLAYER_CURRENT_INDEX);       
+        
         if (trackList == null)
             trackList = new ArrayList<>();
         
-        if (currentTrack == null) return;
-
-        if (!player.isPlaying())
-            loadTrack(trackList.indexOf(currentTrack));
+        if (!player.isPlaying()
+            &! trackList.isEmpty()
+            && currentTrackIndex >= 0)
+            loadTrack(currentTrackIndex);
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        saveTrackList(Constants.PREFS_KEY_PLAYER_CURRENT_TRACKLIST, trackList);
-        saveTrack(Constants.PREFS_KEY_PLAYER_CURRENT_TRACK, currentTrack);
+        saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, trackList);
         saveState(Constants.PREFS_KEY_PLAYER_IS_PLAYING, player.isPlaying());
+        saveIndex(Constants.PREFS_KEY_PLAYER_CURRENT_INDEX, trackList.indexOf(currentTrack));
 
-        bus.unregister(this);
+        // bus.unregister(this);
     }
 
     @Override
@@ -208,6 +230,7 @@ public class PlayerFragment extends AbstractBaseFragment
         super.onDestroy();
         
         cleanupPlayer();
+        bus.unregister(this);
     }
 
     //
@@ -215,8 +238,8 @@ public class PlayerFragment extends AbstractBaseFragment
     //
 
     @Subscribe
-    public void onTrackSelectedEvent(TrackSelectedFromFilesEvent event) {
-        Timber.d("onTrackSelectedEvent(): " + event.track.getName());
+    public void onTrackSelectedFromFilesEvent(TrackSelectedFromFilesEvent event) {
+        Timber.d("onTrackSelectedFromFilesEvent(): " + event.track.getName());
         
         int trackIndex;
         if (!TrackUtils.trackListContainsTrack(trackList, event.track)) {
@@ -226,6 +249,8 @@ public class PlayerFragment extends AbstractBaseFragment
             trackIndex = trackList.indexOf(event.track);
         }
 
+        saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, trackList);
+        
         loadTrack(trackIndex);
         shallPlayImmediately = false;
     }
@@ -250,12 +275,25 @@ public class PlayerFragment extends AbstractBaseFragment
     public void onPlayQueueUpdateEvent(PlayQueueUpdateEvent event) {
         Timber.d("onPlayQueueUpdateEvent(): ");
 
-        // For now we only fill the tracklist if it's empty
-        // to get the latest queue on resume
-        if (trackList.isEmpty())
-            trackList = event.tracks;
+        int nextIndex = -1;
         
-        // TODO: add before/after/swap
+        // For now we only fill the tracklist if it's empty
+        // or if we are forced to swap
+        if (trackList.isEmpty() || event.forceSwap) {
+            trackList = event.tracks;
+            nextIndex = 0;
+            
+            // TODO: add append / prepend
+        } else if (event.append) {
+            //
+        }
+        else if (event.prepend) {
+            //
+        }
+        
+        loadTrack(nextIndex);
+        shallPlayImmediately = false;
+        saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, trackList);
     }
     
     //
@@ -276,6 +314,8 @@ public class PlayerFragment extends AbstractBaseFragment
         
         textCurrentTrack.setText(currentTrack.getName().replaceFirst("[.][^.]+$", ""));
         buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play_selected));
+        saveTrack(Constants.PREFS_KEY_PLAYER_CURRENT_TRACK, currentTrack);
+        saveIndex(Constants.PREFS_KEY_PLAYER_CURRENT_INDEX, index);
     }
 
     private void cleanupPlayer() {
@@ -532,11 +572,14 @@ public class PlayerFragment extends AbstractBaseFragment
         }
         // If REPEAT ONE is enabled: play the current track again and again and again and again
         else if (isRepeatOneEnabled) {
+            Timber.d("onCompletion(): REPEAT ONE");
+                
             nextIndex = currentTrackIndex;
             shallPlayImmediately = true;
         }
         // If REPEAT ALL is enabled play one after the other and repeat when end the is reached
         else if (isRepeatAllEnabled) {
+            Timber.d("onCompletion(): REPEAT ALL");
             
             if (currentTrackIndex == lastIndex) {
                 nextIndex = 0;
@@ -549,6 +592,8 @@ public class PlayerFragment extends AbstractBaseFragment
         // If SHUFFLE is enabled choose a random track from the tracklist
         // this overrides the selection from random
         if (isShufflePlayEnabled) {
+            Timber.d("onCompletion(): SHUFFLE");
+
             Random rand = new Random();
             nextIndex = rand.nextInt(trackList.size() -1);
             shallPlayImmediately = true;

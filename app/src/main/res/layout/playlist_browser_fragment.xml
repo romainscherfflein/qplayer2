@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/playlist_fragment_backnavigation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/textview_height"
         style="@style/PlayerTextStyle"
         android:layout_marginLeft="5dp"
         android:gravity="left"

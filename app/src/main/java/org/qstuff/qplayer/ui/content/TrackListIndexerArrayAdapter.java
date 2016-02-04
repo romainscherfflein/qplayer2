@@ -75,7 +75,7 @@ public class TrackListIndexerArrayAdapter<T> extends ArrayAdapter<T>
         initialize();
     }
     
-	private void initialize() {
+	public void initialize() {
 
 		alphaIndexer = new HashMap<String, Integer>();
 

@@ -4,6 +4,8 @@ import org.qstuff.qplayer.data.Track;
 
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 /**
  * Created by Claus Chierici (chierici@karlmax-berlin.com) on 2/4/16
  * for Karlmax Berlin GmbH & Co. KG
@@ -14,11 +16,18 @@ import java.util.ArrayList;
 public class TrackUtils {
     
     public static boolean trackListContainsTrack(ArrayList<Track> trackList, Track track) {
-        
+        Timber.d("trackListContainsTrack(): size  " + trackList.size());
+        Timber.d("trackListContainsTrack(): track " + track.getName());
+
         for (Track t:trackList) {
-            if (t.getUri().equals(track.getUri()))
+            Timber.d("track in list: " + t.getUri());
+            
+            if (t.getUri().compareTo(track.getUri()) == 0) {
+                Timber.d("--> match:");
                 return true;
+            }
         }
+        Timber.d("<-- NO match:");
         return false;
     }
 }

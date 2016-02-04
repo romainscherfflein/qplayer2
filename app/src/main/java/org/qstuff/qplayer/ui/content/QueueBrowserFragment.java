@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -13,7 +12,7 @@ import com.squareup.otto.Subscribe;
 import org.qstuff.qplayer.Constants;
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.data.Track;
-import org.qstuff.qplayer.events.AddTracksToQueueEvent;
+import org.qstuff.qplayer.events.AddTrackListToQueueEvent;
 import org.qstuff.qplayer.events.PlayQueueUpdateEvent;
 import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
 import org.qstuff.qplayer.events.TrackSelectedFromQueueEvent;
@@ -26,6 +25,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import butterknife.OnItemClick;
 import timber.log.Timber;
 
@@ -41,8 +41,6 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
     @InjectView(R.id.queue_fragment_listview)   
     ListView listView;
     
-    @InjectView(R.id.queue_empty_text)
-    TextView queueEmptyText;
 
     private TrackListIndexerArrayAdapter<String> queueListAdapter;
     private ArrayList<Track>                     tracks;
@@ -67,11 +65,17 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        Timber.d("onResume()");
+        bus.register(this);
+        
         tracks = restoreTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST);
         if (tracks == null)
             tracks = new ArrayList<Track>();
         trackNames = getTrackNames(tracks);
+        
+        Timber.d("onResume(): tracks:" + tracks.size());
+        Timber.d("onResume(): tracks:" + trackNames.size());
+
 
         listView.setItemsCanFocus(true);
         listView.setFastScrollEnabled(true);
@@ -84,15 +88,23 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
 
         listView.setAdapter(queueListAdapter);
         
-        bus.register(this);
+        int currentTrackIndex = restoreIndex(Constants.PREFS_KEY_PLAYER_CURRENT_INDEX);
+        
+        if (currentTrackIndex >= 0) {
+            queueListAdapter.setSelectedItemIndex(currentTrackIndex);
+            listView.setSelection(currentTrackIndex);
+        }
         // for those who want to know ...
-        bus.post(new PlayQueueUpdateEvent(tracks));
+        // bus.post(new PlayQueueUpdateEvent(tracks, true, false, false));
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        
+        Timber.d("onPause()");
+
+        Timber.d("onPause(): tracks:" + tracks.size());
+
         saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, tracks);
         bus.unregister(this);
     }
@@ -108,46 +120,60 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         Track track = tracks.get(position);
         bus.post(new TrackSelectedFromQueueEvent(track));
     }
+
+    @OnClick(R.id.queue_clear_button)
+    public void onClearButtonClicked(View view) {
+        Timber.d("onClearButtonClicked: ");
+        
+        listView.setAdapter(null);
+        tracks = new ArrayList<>();
+        trackNames = new ArrayList<>();
+        
+        bus.post(new PlayQueueUpdateEvent(tracks, true, false, false));
+        saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, tracks);
+    }
     
     //
     // Event Subscriptions
     //
 
     @Subscribe
-    public void onAddTracksToQueueEvent(AddTracksToQueueEvent event) {
-        Timber.d("onAddTracksToQueueEvent(): num " + event.tracks.size());
-        
-        if (!event.tracks.isEmpty())
-            queueEmptyText.setVisibility(View.GONE);
+    public void onAddTrackListToQueueEvent(AddTrackListToQueueEvent event) {
+        Timber.d("onAddTrackListToQueueEvent(): num " + event.tracks.size());
         
         // add to local (and adapter)
         tracks.addAll(event.tracks);
         trackNames.addAll(getTrackNames(event.tracks));
-        
-        // notify to adapter
-        queueListAdapter.notifyDataSetChanged();
-        
-        // TODO notify player of updated queue, but not here !!!
-        // bus.post(new PlayQueueUpdateEvent(tracks));
-    }
 
-    // FIXME: we need a policy on how to add tracks to the queue
-    // for now a single track from frilebrowser is added to the top
+        queueListAdapter = new TrackListIndexerArrayAdapter<>(
+            getActivity(),
+            R.layout.tracklist_item,
+            R.id.tracklist_item_text,
+            trackNames);
+
+        listView.setAdapter(queueListAdapter);
+        
+        bus.post(new PlayQueueUpdateEvent(tracks, true, false, false));
+        saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, tracks);
+    }
     
     @Subscribe
-    public void onTrackSelectedEvent(TrackSelectedFromFilesEvent event) {
-        Timber.d("onTrackSelectedEvent(): " + event.track.getName());
-        
-        if (tracks == null)
-            tracks = new ArrayList<>();
+    public void onTrackSelectedFromFilesEvent(TrackSelectedFromFilesEvent event) {
+        Timber.d("onTrackSelectedFromFilesEvent(): " + event.track.getName());
 
-        if (!TrackUtils.trackListContainsTrack(tracks, event.track)) {
-            tracks.add(0, event.track);
-            trackNames.add(0, event.track.getName());
-        }
+        tracks = restoreTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST);
         
-        // notify to adapter
-        queueListAdapter.notifyDataSetChanged();
+        if (tracks == null) return;
+
+        trackNames = getTrackNames(tracks);
+
+        queueListAdapter = new TrackListIndexerArrayAdapter<>(
+            getActivity(),
+            R.layout.tracklist_item,
+            R.id.tracklist_item_text,
+            trackNames);
+
+        listView.setAdapter(queueListAdapter);
     }
 
     @Subscribe
@@ -155,9 +181,10 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         Timber.d("onTrackSelectedToPlayEvent(): " + event.track.getName());
         
         queueListAdapter.setSelectedItemIndex(event.queueIndex);
+        listView.setSelection(event.queueIndex);
     }
 
-        //
+    //
     // private helpers
     //
     

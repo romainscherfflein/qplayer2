@@ -12,8 +12,18 @@ import java.util.ArrayList;
 public class PlayQueueUpdateEvent {
 
     public ArrayList<Track> tracks;
-    
-    public PlayQueueUpdateEvent(ArrayList<Track> tracks) {
+    public boolean          forceSwap;
+    public boolean          prepend;
+    public boolean          append;
+
+
+    public PlayQueueUpdateEvent(ArrayList<Track> tracks,
+                                boolean forceSwap,
+                                boolean prepend,
+                                boolean append) {
         this.tracks = tracks;
+        this.forceSwap = forceSwap;
+        this.prepend = prepend;
+        this.append = append;
     }
 }
