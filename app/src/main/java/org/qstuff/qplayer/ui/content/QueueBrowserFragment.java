@@ -76,7 +76,6 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         Timber.d("onResume(): tracks:" + tracks.size());
         Timber.d("onResume(): tracks:" + trackNames.size());
 
-
         listView.setItemsCanFocus(true);
         listView.setFastScrollEnabled(true);
 
@@ -113,6 +112,7 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
     // Input Handlers
     //
 
+    // List Item
     @OnItemClick(R.id.queue_fragment_listview)
     public void onListItemClicked(int position) {
         Timber.d("onListItemClicked: pos: " + position);
@@ -121,6 +121,7 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         bus.post(new TrackSelectedFromQueueEvent(track));
     }
 
+    // Clear Button
     @OnClick(R.id.queue_clear_button)
     public void onClearButtonClicked(View view) {
         Timber.d("onClearButtonClicked: ");
@@ -151,6 +152,7 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
             R.id.tracklist_item_text,
             trackNames);
 
+        listView.setAdapter(null);
         listView.setAdapter(queueListAdapter);
         
         bus.post(new PlayQueueUpdateEvent(tracks, true, false, false));
@@ -172,7 +174,8 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
             R.layout.tracklist_item,
             R.id.tracklist_item_text,
             trackNames);
-
+        
+        listView.setAdapter(null);
         listView.setAdapter(queueListAdapter);
     }
 

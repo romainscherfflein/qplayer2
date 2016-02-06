@@ -14,6 +14,11 @@ public class Track  implements Serializable {
 
     private String name;
     
+    public Track() {
+        uri = "";
+        name = "";
+    }
+    
     public Track(File file) {
         this.uri = file.getAbsolutePath();
         this.name = file.getName();

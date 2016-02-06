@@ -15,19 +15,23 @@ import timber.log.Timber;
  */
 public class TrackUtils {
     
-    public static boolean trackListContainsTrack(ArrayList<Track> trackList, Track track) {
+    public static int trackListContainsTrack(ArrayList<Track> trackList, Track track) {
         Timber.d("trackListContainsTrack(): size  " + trackList.size());
         Timber.d("trackListContainsTrack(): track " + track.getName());
 
+        int index = 0;
+        
         for (Track t:trackList) {
             Timber.d("track in list: " + t.getUri());
-            
             if (t.getUri().compareTo(track.getUri()) == 0) {
                 Timber.d("--> match:");
-                return true;
+                return index;
             }
+            index++;
         }
         Timber.d("<-- NO match:");
-        return false;
+        return -1;
     }
+    
+    
 }

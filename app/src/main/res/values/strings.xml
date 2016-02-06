@@ -6,15 +6,14 @@
     <string name="build_type">Release</string>
 
     <!-- Player -->
+    <string name="player_no_track_loaded">... no track loaded ...</string>
 
     <!-- Browser -->
-
     <string name="Queue">queue</string>
     <string name="Playlists">playlists</string>
     <string name="Filebrowser">filebrowser</string>
 
     <!-- Dialogs -->
-
     <string name="dialog_ok">Ok</string>
     <string name="dialog_cancel">Cancel</string>
 
@@ -28,7 +27,6 @@
     <string name="choose_playlist_dialog_title">Choose a playlist or create a new one</string>
     <string name="choose_playlist_dialog_add">Enter a name for new playlist:</string>
     <string name="choose_playlist_dialog_add_hint">playlist</string>
-
 
 
 </resources>
