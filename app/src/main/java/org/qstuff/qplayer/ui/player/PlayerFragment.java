@@ -1,5 +1,6 @@
 package org.qstuff.qplayer.ui.player;
 
+import android.annotation.SuppressLint;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
@@ -14,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -30,7 +30,7 @@ import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
 import org.qstuff.qplayer.events.PlayQueueUpdateEvent;
 import org.qstuff.qplayer.events.TrackSelectedFromQueueEvent;
 import org.qstuff.qplayer.events.TrackSelectedToPlayEvent;
-import org.qstuff.qplayer.ui.util.HorizontalSeekBar;
+import org.qstuff.qplayer.ui.util.PitchbarChangedListener;
 import org.qstuff.qplayer.ui.util.VerticalSeekBar;
 import org.qstuff.qplayer.util.TrackUtils;
 
@@ -38,7 +38,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -54,7 +55,6 @@ import timber.log.Timber;
  */
 public class PlayerFragment extends AbstractBaseFragment
 	implements AdapterView.OnItemSelectedListener,
-               OnSeekBarChangeListener,
                MediaPlayer.OnPreparedListener,
                MediaPlayer.OnErrorListener,
                MediaPlayer.OnCompletionListener {
@@ -117,11 +117,10 @@ public class PlayerFragment extends AbstractBaseFragment
     private boolean          shallPlayImmediately;
 
     private ArrayList<Track> trackList;
-
     private Track            currentTrack = null;
 
-    private Handler          updateHandler = new Handler();
-    private UpdateRunnable   updateRunnable;
+    private Timer            updateTimer;
+    private boolean          updateTaskRunning;
 
     private boolean          isContinousPlayEnabled = false; // TODO: need a button to toggle
     private boolean          isRepeatAllEnabled;
@@ -158,7 +157,10 @@ public class PlayerFragment extends AbstractBaseFragment
         View v = inflater.inflate(R.layout.player_fragment, container, false);
         ButterKnife.inject(this, v);
 
-        pitchControl.setOnSeekBarChangeListener(this);
+        pitchControl.setOnSeekBarChangeListener(
+            new PitchbarChangedListener(pitchControlValue));
+        
+        playerWaveform.setOnSeekBarChangeListener(new WaveformChangedListener());
         
         jogView.setWheelListener(new JogWheelImageView.JogWheelListener() {
 
@@ -328,14 +330,18 @@ public class PlayerFragment extends AbstractBaseFragment
         Timber.d("cleanupPlayer():");
 
         if (showRemainingTime)
-            textDynamicTime.setText("remain: " + milisecondsToTimeFormattedString(0));
+            textDynamicTime.setText("remain: " +
+                TrackUtils.milisecondsToTimeFormattedString(0));
         else
-            textDynamicTime.setText("current: " + milisecondsToTimeFormattedString(0));
+            textDynamicTime.setText("current: " +
+                TrackUtils.milisecondsToTimeFormattedString(0));
 
-        textTotalTime.setText("total: " + milisecondsToTimeFormattedString(0));
+        textTotalTime.setText("total: " +
+            TrackUtils.milisecondsToTimeFormattedString(0));
         textCurrentTrack.setText(getString(R.string.player_no_track_loaded));
         
         if (player != null) {
+            
             resetUpdateTimer();
             player.stop();
             player.release();
@@ -345,11 +351,50 @@ public class PlayerFragment extends AbstractBaseFragment
         }
     }
 
-    private void resetUpdateTimer () {
-        if (updateHandler != null && updateRunnable != null) {
-            updateHandler.removeCallbacks(updateRunnable);
-            updateRunnable = null;
+
+    private void resetUpdateTimer() {
+        if (updateTimer != null) {
+            updateTimer.cancel();
+            updateTimer = null;
         }
+        updateTaskRunning = false;
+    }
+    
+    private void startUpdateTimer() {
+        Timber.d("startUpdateTimer(): ");
+
+        if (!isPrepared) return;
+
+        final int total = player.getDuration();
+        updateTimer = new Timer();
+        updateTaskRunning = true;
+        updateTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateWaveformUI(total, player.getCurrentPosition());
+            }
+        }, 0, 1000);
+    }
+ 
+    private void updateWaveformUI(final int total, final int currentPosition) {
+        
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                if (isPlaying) {
+                    if (showRemainingTime)
+                        textDynamicTime.setText("remain: " +
+                            (TrackUtils.milisecondsToTimeFormattedString(total - currentPosition)));
+                    else
+                        textDynamicTime.setText("current: " +
+                            (TrackUtils.milisecondsToTimeFormattedString(currentPosition)));
+                }
+
+                int progress = TrackUtils.getProgressPercentage(currentPosition, total);
+                playerWaveform.setProgress(progress);
+            }
+        });
     }
     
     private void preparePlayer(File file) {
@@ -388,13 +433,11 @@ public class PlayerFragment extends AbstractBaseFragment
             if (player.isPlaying()) {
                 player.pause();
                 buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play_selected));
-
                 isPlaying = false;
-
+               
             } else {
                 player.start();
                 buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_pause_selected));
-
                 isPlaying = true;
             }
         }
@@ -498,6 +541,7 @@ public class PlayerFragment extends AbstractBaseFragment
 
     // Toggle remain / current time display
     
+    @SuppressLint("SetTextI18n")
     @OnClick(R.id.player_text_dynamic_time)
     public void onDynamicTimeTextViewClicked() {
         Timber.d("onDynamicTimeTextViewClicked(): " + trackList.size());
@@ -509,9 +553,16 @@ public class PlayerFragment extends AbstractBaseFragment
 
         if (!isPlaying) {
             if (showRemainingTime)
-                textDynamicTime.setText("remain: " + milisecondsToTimeFormattedString(0));
+                if (isPrepared)
+                    textDynamicTime.setText("remain: " +
+                        TrackUtils.milisecondsToTimeFormattedString(0));
+                else
+                    textDynamicTime.setText("remain: " + 
+                        TrackUtils.milisecondsToTimeFormattedString(
+                        player.getDuration()));
             else
-                textDynamicTime.setText("current: " + milisecondsToTimeFormattedString(0));
+                textDynamicTime.setText("current: " +
+                    TrackUtils.milisecondsToTimeFormattedString(0));
         }
     }
 
@@ -519,43 +570,8 @@ public class PlayerFragment extends AbstractBaseFragment
     //  OnSeekbarChangeListener
     //
 
- 	@Override
- 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
- 		Timber.d("onProgressChanged(): SB ID: " + seekBar.getId());
-		
-		if (seekBar.getId() == R.id.pitch_control) {
 
-			int diff = progress - 50;
-            Timber.d("onProgressChanged(): pitch bar value:" + diff);
-            
-			// float currPitch = (float) (((float)diff / ((float)100) * 2.0f * pitchFaktor));
-            String pre = diff > 0 ? "+":"";
-			if (diff == 0)
-                pre = "   ";
-            if (diff < 10 && diff > 0)
-                pre = "  +";
-            if (diff > -10 && diff < 0)
-                pre = "  ";
-
-            String pitch = String.format(" " + pre + "%02.01f", (float) diff);
-			
-			// player.setPlaybackRate(1000 + (diff * pitchRange));
-			pitchControlValue.setText(pitch + " %");
-		}
- 	}
-
- 	@Override
- 	public void onStartTrackingTouch(SeekBar seekBar) {
- 		// TODO Auto-generated method stub
- 		
- 	}
-
- 	@Override
- 	public void onStopTrackingTouch(SeekBar arg0) {
- 		// TODO Auto-generated method stub
- 		
- 	}
-
+    @SuppressLint("SetTextI18n")
     @Override
     public void onPrepared(MediaPlayer mp) {
         Timber.d("onPrepared():");
@@ -564,15 +580,18 @@ public class PlayerFragment extends AbstractBaseFragment
         
         int duration = mp.getDuration();
         
-        textTotalTime.setText("total: " + milisecondsToTimeFormattedString(duration));
+        textTotalTime.setText("total: " +
+            TrackUtils.milisecondsToTimeFormattedString(duration));
         if (showRemainingTime)
-            textDynamicTime.setText("remain: " + milisecondsToTimeFormattedString(duration));
+            textDynamicTime.setText("remain: " +
+                TrackUtils.milisecondsToTimeFormattedString(duration));
         else
-            textDynamicTime.setText("current: " + milisecondsToTimeFormattedString(0));
+            textDynamicTime.setText("current: " +
+                TrackUtils.milisecondsToTimeFormattedString(0));
 
-        updateRunnable = new UpdateRunnable();
-        updateRunnable.setDuration(duration);
-        updateHandler.post(updateRunnable);
+        if (!updateTaskRunning) {
+            startUpdateTimer();
+        }
         
         if (shallPlayImmediately) {
             onPlayButtonClicked();
@@ -594,26 +613,22 @@ public class PlayerFragment extends AbstractBaseFragment
         int lastIndex = trackList.size() -1;
         int nextIndex = -1;
         
-        Timber.d("onCompletion(): current track is: " + currentTrackIndex);
-
+        resetUpdateTimer();
+        
         // If list is empty or the current track is the last in the list 
         // just cleanup the player, reset the update handler - and return ...
         if (trackList.isEmpty()) {
-            Timber.d("onCompletion(): tracklist is empty");
-            
             // nothing to do here
         }
+        
         // If REPEAT ONE is enabled: play the current track again and again and again and again
         else if (isRepeatOneEnabled) {
-            Timber.d("onCompletion(): REPEAT ONE");
-                
             nextIndex = currentTrackIndex;
             shallPlayImmediately = true;
         }
         // If REPEAT ALL is enabled play one after the other and repeat when end the is reached
         else if (isRepeatAllEnabled) {
-            Timber.d("onCompletion(): REPEAT ALL");
-            
+        
             if (currentTrackIndex == lastIndex) {
                 nextIndex = 0;
             } else {
@@ -625,8 +640,7 @@ public class PlayerFragment extends AbstractBaseFragment
         // If SHUFFLE is enabled choose a random track from the tracklist
         // this overrides the selection from random
         if (isShufflePlayEnabled) {
-            Timber.d("onCompletion(): SHUFFLE");
-
+        
             Random rand = new Random();
             nextIndex = rand.nextInt(trackList.size() -1);
             shallPlayImmediately = true;
@@ -634,12 +648,9 @@ public class PlayerFragment extends AbstractBaseFragment
         
         // 
         if (nextIndex >= 0) {
-            Timber.d("onCompletion(): moving to next track: " + nextIndex);
             loadTrack(nextIndex);
         } else {
-            Timber.d("onCompletion(): no more next track: ");
             cleanupPlayer();
-            resetUpdateTimer();
             shallPlayImmediately = false;
         }
     }
@@ -666,42 +677,28 @@ public class PlayerFragment extends AbstractBaseFragment
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-    
-    
-    private String milisecondsToTimeFormattedString(int millis) {
-        return String.format("%02d:%02d:%02d",
-            TimeUnit.MILLISECONDS.toHours(millis),
-            TimeUnit.MILLISECONDS.toMinutes(millis) -
-                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
-            TimeUnit.MILLISECONDS.toSeconds(millis) -
-                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-    }
-
-    
-    private class UpdateRunnable implements Runnable {
         
-        int duration;
+    //
+    // Inner Classes
+    //
+    
+    private class WaveformChangedListener implements SeekBar.OnSeekBarChangeListener {
 
-        public UpdateRunnable() {
-            
-        }
-
-        public void setDuration(int duration) {
-            this.duration = duration;
-        }
-        
         @Override
-        public void run() {
-                        
-            if (isPlaying) {
-                if (showRemainingTime)
-                    textDynamicTime.setText("remain: " +
-                        (milisecondsToTimeFormattedString(duration - player.getCurrentPosition())));
-                else
-                    textDynamicTime.setText("current: " +
-                        (milisecondsToTimeFormattedString(player.getCurrentPosition())));
-            }
-            updateHandler.postDelayed(this, 100);
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         }
-    };
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            if (isPrepared) {
+                int currentPosition = TrackUtils.progressToTimer(seekBar.getProgress(), 
+                    player.getDuration());
+                player.seekTo(currentPosition);
+            }
+        }
+    }
 }

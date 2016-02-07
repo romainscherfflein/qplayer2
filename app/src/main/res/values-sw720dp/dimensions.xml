@@ -22,6 +22,7 @@
     <dimen name="player_button_overshoot">280dp</dimen>
 
     <dimen name="pitchbar_width">96dp</dimen>
+    <dimen name="seekbar_height">96dp</dimen>
 
     <dimen name="waveform_height">60dp</dimen>
 

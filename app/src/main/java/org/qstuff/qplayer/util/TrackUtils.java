@@ -3,6 +3,7 @@ package org.qstuff.qplayer.util;
 import org.qstuff.qplayer.data.Track;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
@@ -16,22 +17,54 @@ import timber.log.Timber;
 public class TrackUtils {
     
     public static int trackListContainsTrack(ArrayList<Track> trackList, Track track) {
-        Timber.d("trackListContainsTrack(): size  " + trackList.size());
-        Timber.d("trackListContainsTrack(): track " + track.getName());
-
+    
         int index = 0;
         
         for (Track t:trackList) {
-            Timber.d("track in list: " + t.getUri());
             if (t.getUri().compareTo(track.getUri()) == 0) {
-                Timber.d("--> match:");
                 return index;
             }
             index++;
         }
-        Timber.d("<-- NO match:");
         return -1;
     }
-    
-    
+
+    /**
+     * Calculate the current track position from seekbar progress and total track duration
+     *
+     * @param progress the seekbars progress value
+     * @param totalDuration total track duration in millis
+     * @return current track position in millis
+     */
+    public static int progressToTimer(int progress, int totalDuration) {
+        totalDuration = totalDuration / 1000;
+        return ((int) ((((double)progress) / 100) * totalDuration)) * 1000;
+    }
+
+    /**
+     * Calculate the percentage value of currentDuration from totalDuration
+     *
+     * @param currentDuration current track position in millis
+     * @param totalDuration total track duration in millis
+     * @return percentage
+     */
+    public static int getProgressPercentage(long currentDuration, long totalDuration){
+        
+        long currentSeconds = (int) (currentDuration / 1000);
+        long totalSeconds = (int) (totalDuration / 1000);
+        Double percentage =(((double)currentSeconds)/totalSeconds)*100;
+        return percentage.intValue();
+    }
+
+    public static String milisecondsToTimeFormattedString(int millis) {
+        
+        return String.format("%02d:%02d:%02d",
+            TimeUnit.MILLISECONDS.toHours(millis),
+            TimeUnit.MILLISECONDS.toMinutes(millis) -
+                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
+            TimeUnit.MILLISECONDS.toSeconds(millis) -
+                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+    }
+
+
 }
