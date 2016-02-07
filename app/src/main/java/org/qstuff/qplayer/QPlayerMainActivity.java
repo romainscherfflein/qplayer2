@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
+import timber.log.Timber;
+
 /**
  * Created by Claus Chierici (github@antamauna.net) on 2/19/15
  *
@@ -19,12 +21,12 @@ public class QPlayerMainActivity extends FragmentActivity {
     private final static String TAG = "QPlayerMainActivity";
 
     private ContentFragment contentFragment;
-    private PlayerFragment      playerFragment;
+    private PlayerFragment  playerFragment;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate():");
+        Timber.d("onCreate():");
 
         setContentView(R.layout.qplayer_main);
 
@@ -39,6 +41,6 @@ public class QPlayerMainActivity extends FragmentActivity {
         contentFragment = new ContentFragment();
         ft.replace(R.id.browser_area, contentFragment);
 
-        ft.commitAllowingStateLoss();
+        ft.commitAllowingStateLoss();QPlayerApplication.getInstance().collectScreenStats();
     }
 }

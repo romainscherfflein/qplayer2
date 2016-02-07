@@ -3,6 +3,9 @@ package org.qstuff.qplayer;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.util.DisplayMetrics;
+import android.util.Log;
 
 import com.squareup.otto.Bus;
 
@@ -33,6 +36,12 @@ public class QPlayerApplication extends Application {
 
     private ObjectGraph objectGraph;
 
+    private DisplayMetrics metrics;
+    private int            smallestWidth;
+    
+    private static QPlayerApplication    instance;
+    
+    
     @Override
     public void onCreate() {
         super.onCreate();
@@ -40,11 +49,18 @@ public class QPlayerApplication extends Application {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
+
         } else {
             Timber.plant(new TimberCrashReportingTree());
         }
+
+        instance = this;
     }
 
+    public static QPlayerApplication getInstance() {
+        return instance;
+    }
+    
     public ObjectGraph objectGraph() {
         return objectGraph;
     }
@@ -100,5 +116,60 @@ public class QPlayerApplication extends Application {
                                                      SharedPreferences sharedPreferences) {
             return new PlayListController(app.getApplicationContext(), eventBus, sharedPreferences);
         }
+    }
+
+
+    /**
+     * For debugging multiple screen layouts
+     *
+     * @return
+     */
+    public String collectScreenStats() {
+        
+        StringBuilder str = new StringBuilder();
+        metrics = getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+        int dpWidth = (int) (width / metrics.density);
+        int dpHeight = (int) (height / metrics.density);
+        smallestWidth = Math.min(dpWidth, dpHeight);
+        str.append("\n").append(Build.MANUFACTURER);
+        str.append(" ");
+        str.append(Build.MODEL);
+        str.append("\npixels:            ");
+        str.append(width);
+        str.append(" x ");
+        str.append(height);
+        str.append("\ndp (px / density): ");
+        str.append(dpWidth);
+        str.append("dp x ");
+        str.append(dpHeight);
+        str.append("dp");
+        str.append("\nsmallest width:    ").append(smallestWidth);
+        str.append("\ndensity:           ");
+        str.append(metrics.density);
+        str.append("\ndensityDpi:        ");
+        str.append(metrics.densityDpi);
+        
+        if (metrics.densityDpi >= DisplayMetrics.DENSITY_LOW
+            && metrics.densityDpi < DisplayMetrics.DENSITY_MEDIUM)
+                str.append(" (LDPI)");
+        if (metrics.densityDpi >= DisplayMetrics.DENSITY_MEDIUM
+            && metrics.densityDpi < DisplayMetrics.DENSITY_HIGH)
+                str.append(" (MDPI)");
+        if (metrics.densityDpi >= DisplayMetrics.DENSITY_HIGH
+            && metrics.densityDpi < DisplayMetrics.DENSITY_XHIGH)
+                str.append(" (HDPI)");
+        if (metrics.densityDpi >= DisplayMetrics.DENSITY_XHIGH
+            && metrics.densityDpi < DisplayMetrics.DENSITY_XXHIGH)
+                str.append(" (XHDPI)");
+        if (metrics.densityDpi >= DisplayMetrics.DENSITY_XXHIGH
+            && metrics.densityDpi < DisplayMetrics.DENSITY_XXXHIGH)
+                str.append(" (XXHDPI)");
+        if (metrics.densityDpi >= DisplayMetrics.DENSITY_XXXHIGH)
+                str.append(" (XXXHDPI)");
+        
+        Timber.d("collectScreenStats():"+ str.toString());
+        return str.toString();
     }
 }
