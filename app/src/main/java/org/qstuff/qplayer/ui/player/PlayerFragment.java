@@ -23,6 +23,7 @@ import com.squareup.otto.Subscribe;
 
 import org.qstuff.qplayer.AbstractBaseFragment;
 import org.qstuff.qplayer.Constants;
+import org.qstuff.qplayer.QPlayerApplication;
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.controller.PlayListController;
 import org.qstuff.qplayer.data.Track;
@@ -193,7 +194,10 @@ public class PlayerFragment extends AbstractBaseFragment
             String appName = (String) packageManager.getApplicationLabel(
                 packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA));
             
-            textVersion.setText(appName + " " + pInfo.versionName + " (" + pInfo.versionCode + ")");
+            textVersion.setText(appName + " " 
+                + pInfo.versionName 
+                + " (" + pInfo.versionCode + ")"
+                + "   DPI: " + QPlayerApplication.getInstance().getDPI());
         
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();

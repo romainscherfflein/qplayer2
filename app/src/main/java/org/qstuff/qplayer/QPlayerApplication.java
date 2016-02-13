@@ -119,6 +119,33 @@ public class QPlayerApplication extends Application {
     }
 
 
+    public String getDPI() {
+
+        StringBuilder str = new StringBuilder();
+        metrics = getResources().getDisplayMetrics();
+        str.append(metrics.densityDpi);
+
+        if (metrics.densityDpi >= DisplayMetrics.DENSITY_LOW
+            && metrics.densityDpi < DisplayMetrics.DENSITY_MEDIUM)
+            str.append(" (LDPI)");
+        if (metrics.densityDpi >= DisplayMetrics.DENSITY_MEDIUM
+            && metrics.densityDpi < DisplayMetrics.DENSITY_HIGH)
+            str.append(" (MDPI)");
+        if (metrics.densityDpi >= DisplayMetrics.DENSITY_HIGH
+            && metrics.densityDpi < DisplayMetrics.DENSITY_XHIGH)
+            str.append(" (HDPI)");
+        if (metrics.densityDpi >= DisplayMetrics.DENSITY_XHIGH
+            && metrics.densityDpi < DisplayMetrics.DENSITY_XXHIGH)
+            str.append(" (XHDPI)");
+        if (metrics.densityDpi >= DisplayMetrics.DENSITY_XXHIGH
+            && metrics.densityDpi < DisplayMetrics.DENSITY_XXXHIGH)
+            str.append(" (XXHDPI)");
+        if (metrics.densityDpi >= DisplayMetrics.DENSITY_XXXHIGH)
+            str.append(" (XXXHDPI)");
+
+        return str.toString();
+    }
+    
     /**
      * For debugging multiple screen layouts
      *
@@ -150,24 +177,7 @@ public class QPlayerApplication extends Application {
         str.append(metrics.density);
         str.append("\ndensityDpi:        ");
         str.append(metrics.densityDpi);
-        
-        if (metrics.densityDpi >= DisplayMetrics.DENSITY_LOW
-            && metrics.densityDpi < DisplayMetrics.DENSITY_MEDIUM)
-                str.append(" (LDPI)");
-        if (metrics.densityDpi >= DisplayMetrics.DENSITY_MEDIUM
-            && metrics.densityDpi < DisplayMetrics.DENSITY_HIGH)
-                str.append(" (MDPI)");
-        if (metrics.densityDpi >= DisplayMetrics.DENSITY_HIGH
-            && metrics.densityDpi < DisplayMetrics.DENSITY_XHIGH)
-                str.append(" (HDPI)");
-        if (metrics.densityDpi >= DisplayMetrics.DENSITY_XHIGH
-            && metrics.densityDpi < DisplayMetrics.DENSITY_XXHIGH)
-                str.append(" (XHDPI)");
-        if (metrics.densityDpi >= DisplayMetrics.DENSITY_XXHIGH
-            && metrics.densityDpi < DisplayMetrics.DENSITY_XXXHIGH)
-                str.append(" (XXHDPI)");
-        if (metrics.densityDpi >= DisplayMetrics.DENSITY_XXXHIGH)
-                str.append(" (XXXHDPI)");
+        str.append(getDPI());
         
         Timber.d("collectScreenStats():"+ str.toString());
         return str.toString();
