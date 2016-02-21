@@ -230,7 +230,7 @@ public class PlayerFragment extends AbstractBaseFragment
         super.onPause();
 
         saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, trackList);
-        saveState(Constants.PREFS_KEY_PLAYER_IS_PLAYING, player.isPlaying());
+        saveState(Constants.PREFS_KEY_PLAYER_IS_PLAYING, isPlaying);
         saveIndex(Constants.PREFS_KEY_PLAYER_CURRENT_INDEX, trackList.indexOf(currentTrack));
 
         // bus.unregister(this);

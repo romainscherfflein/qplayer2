@@ -176,7 +176,6 @@ public class QPlayerApplication extends Application {
         str.append("\ndensity:           ");
         str.append(metrics.density);
         str.append("\ndensityDpi:        ");
-        str.append(metrics.densityDpi);
         str.append(getDPI());
         
         Timber.d("collectScreenStats():"+ str.toString());
