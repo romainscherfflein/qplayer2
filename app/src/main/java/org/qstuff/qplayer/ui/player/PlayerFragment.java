@@ -247,11 +247,7 @@ public class PlayerFragment extends AbstractBaseFragment
     @Subscribe
     public void onTrackSelectedFromFilesEvent(TrackSelectedFromFilesEvent event) {
         Timber.d("onTrackSelectedFromFilesEvent(): " + event.track.getName());
-
-        if (!trackList.isEmpty()) {
-            return;
-        }
-        
+                
         int trackIndex = TrackUtils.trackListContainsTrack(trackList, event.track);
         if (trackIndex < 0) {
             trackList.add(0, event.track);
@@ -260,8 +256,10 @@ public class PlayerFragment extends AbstractBaseFragment
 
         saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, trackList);
         
-        loadTrack(trackIndex);
-        shallPlayImmediately = false;
+        if (trackList.isEmpty()) {
+            shallPlayImmediately = true;
+            loadTrack(trackIndex);
+        }
     }
 
     @Subscribe
@@ -275,8 +273,8 @@ public class PlayerFragment extends AbstractBaseFragment
             trackIndex = 0;
         }
 
+        shallPlayImmediately = player.isPlaying();
         loadTrack(trackIndex);
-        shallPlayImmediately = false;
     }
 
     @Subscribe
@@ -299,9 +297,9 @@ public class PlayerFragment extends AbstractBaseFragment
         } else if (event.prepend) {
             //
         }
-        
+
+        shallPlayImmediately = player.isPlaying();
         loadTrack(nextIndex);
-        shallPlayImmediately = false;
         saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, trackList);
     }
     
@@ -435,12 +433,17 @@ public class PlayerFragment extends AbstractBaseFragment
     public void onPlayButtonClicked() {
         Timber.d("onPlayButtonClicked(): ");
 
+        togglePlayPause();
+    }
+
+    private void togglePlayPause() {
+        
         if (isPrepared) {
             if (player.isPlaying()) {
                 player.pause();
                 buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play_selected));
                 isPlaying = false;
-               
+
             } else {
                 player.start();
                 buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_pause_selected));
@@ -448,7 +451,7 @@ public class PlayerFragment extends AbstractBaseFragment
             }
         }
     }
-
+    
     // Repeat All / Repeat One (disables Shuffle)
 
     @OnClick(R.id.player_button_repeat)
@@ -517,8 +520,8 @@ public class PlayerFragment extends AbstractBaseFragment
             nextIndex = currentTrackIndex -1;
         }
 
+        shallPlayImmediately = player.isPlaying();
         loadTrack(nextIndex);
-        shallPlayImmediately = false;
     }
 
     // Next
@@ -541,8 +544,8 @@ public class PlayerFragment extends AbstractBaseFragment
             nextIndex = currentTrackIndex + 1;
         }
 
+        shallPlayImmediately = player.isPlaying();
         loadTrack(nextIndex);
-        shallPlayImmediately = false;
     }
 
     // Toggle remain / current time display
@@ -632,6 +635,7 @@ public class PlayerFragment extends AbstractBaseFragment
             nextIndex = currentTrackIndex;
             shallPlayImmediately = true;
         }
+        
         // If REPEAT ALL is enabled play one after the other and repeat when end the is reached
         else if (isRepeatAllEnabled) {
         
