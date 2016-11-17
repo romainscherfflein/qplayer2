@@ -1,7 +1,12 @@
 package org.qstuff.qplayer.ui.content;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +26,7 @@ import org.qstuff.qplayer.events.NewPlayListEvent;
 import org.qstuff.qplayer.ui.dialogs.AbstractBaseDialogFragment;
 import org.qstuff.qplayer.ui.dialogs.AddTrackToPlayListDialogFragment;
 import org.qstuff.qplayer.ui.dialogs.AddTracksToQueueDialogFragment;
+import org.qstuff.qplayer.ui.dialogs.StoragePermissionStatementDialogFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,8 +47,11 @@ import timber.log.Timber;
  *
  * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
-public class FilesystemBrowserFragment extends BaseBrowserFragment {
+public class FilesystemBrowserFragment extends BaseBrowserFragment 
+    implements StoragePermissionStatementDialogFragment.DialogListener {
 
+    private static final int REQUEST_CODE_PERMISSIONS_STORAGE = 11;
+    
     @Inject Bus bus;
     @Inject PlayListController playListController;
 
@@ -69,7 +78,6 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate():");
-
     }
 
     @Override
@@ -87,23 +95,13 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
             paneTag = args.getString("paneTag");
             Timber.d("onCreateView(): rootDir: " + rootdir + ", paneTag: " + paneTag);
         }
-        
-        if (rootdir == null) {
-            // FIXME: this is different on different API levels. OK for >= 4.2
-            rootdir = Environment.getExternalStorageDirectory().getPath() + "/Music";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkStoragePermission();
+        } else {
+            loadRootDir();
         }
-
-        headerText.setText(rootdir);
         
-        browserParentDir.setVisibility(View.VISIBLE);
-        currentDir = new File(rootdir);
-
-        listView.setItemsCanFocus(true);
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        listView.setFastScrollEnabled(true);
-
-        browseTo(currentDir);
-
         return view;
     }
 
@@ -191,7 +189,9 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     public void onParentDirectoryClick() {
         Timber.d("onParentDirectoryClick():");
 
-        if (currentDir.getAbsolutePath().equals(rootdir)) return;
+        if (currentDir.getAbsolutePath().equals(rootdir)) {
+            return;
+        }
         browseTo(currentDir.getParentFile());
     }
     
@@ -214,6 +214,26 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     // Private
     //
 
+    private void loadRootDir() {
+
+        if (rootdir == null) {
+            // FIXME: this is different on different API levels. OK for >= 4.2
+            rootdir = Environment.getExternalStorageDirectory().getPath() + "/Music";
+        }
+
+        headerText.setText(rootdir);
+
+        browserParentDir.setVisibility(View.VISIBLE);
+        currentDir = new File(rootdir);
+
+        listView.setItemsCanFocus(true);
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        listView.setFastScrollEnabled(true);
+
+        browseTo(currentDir);
+    }
+    
+    
     private void browseTo(final File dir) {
 		Timber.d("browseTo(): " + dir.getAbsolutePath());
 
@@ -268,5 +288,56 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment {
     private void openAddToQueueDialog(File directory) {
         AbstractBaseDialogFragment dialog = AddTracksToQueueDialogFragment.newInstance(directory);
         dialog.show(getFragmentManager(), getString(R.string.add_tracks_to_queue_dialog_tag));
+    }
+
+    //
+    // Permission Check 
+    //
+    
+    private void checkStoragePermission() {
+
+        int permissionCheckReadStorage =
+            ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
+        int permissionCheckWriteStorage =
+            ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permissionCheckReadStorage != PackageManager.PERMISSION_GRANTED
+            || permissionCheckWriteStorage != PackageManager.PERMISSION_GRANTED) {
+
+            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) ||
+                shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                // Show the explanation once again.
+                StoragePermissionStatementDialogFragment permissionEducationDialogFragment = 
+                    StoragePermissionStatementDialogFragment.newInstance();
+                permissionEducationDialogFragment.setDialogListener(this);
+                permissionEducationDialogFragment.show(getFragmentManager(), StoragePermissionStatementDialogFragment.class.getName());
+            } else {
+                requestExternalStoragePermission();
+            }
+        } else {
+            loadRootDir();
+           
+        }
+    }
+
+    private void requestExternalStoragePermission() {
+        requestPermissions(new String[] {
+                Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+            REQUEST_CODE_PERMISSIONS_STORAGE);
+    }
+
+    @Override
+    public void onPositiveButtonClicked() {
+        Timber.d("onPositiveButtonClicked(): ");
+        
+        requestExternalStoragePermission();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        
+        loadRootDir();
     }
 }

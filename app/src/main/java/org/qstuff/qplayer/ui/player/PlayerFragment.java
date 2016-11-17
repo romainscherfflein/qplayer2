@@ -210,7 +210,6 @@ public class PlayerFragment extends AbstractBaseFragment
     public void onResume() {
         super.onResume(); 
         Timber.d("onResume()");
-        // bus.register(this);
 
         trackList    = restoreTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST);
         isPlaying    = restoreState(Constants.PREFS_KEY_PLAYER_IS_PLAYING);
@@ -232,15 +231,13 @@ public class PlayerFragment extends AbstractBaseFragment
         saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, trackList);
         saveState(Constants.PREFS_KEY_PLAYER_IS_PLAYING, isPlaying);
         saveIndex(Constants.PREFS_KEY_PLAYER_CURRENT_INDEX, trackList.indexOf(currentTrack));
-
-        // bus.unregister(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         
-        cleanupPlayer();
+        // cleanupPlayer();
         bus.unregister(this);
     }
 
@@ -333,15 +330,17 @@ public class PlayerFragment extends AbstractBaseFragment
     private void cleanupPlayer() {
         Timber.d("cleanupPlayer():");
 
-        if (showRemainingTime)
+        if (showRemainingTime) {
             textDynamicTime.setText("remain: " +
                 TrackUtils.milisecondsToTimeFormattedString(0));
-        else
+        } else {
             textDynamicTime.setText("current: " +
                 TrackUtils.milisecondsToTimeFormattedString(0));
-
+        }
+        
         textTotalTime.setText("total: " +
             TrackUtils.milisecondsToTimeFormattedString(0));
+        
         textCurrentTrack.setText(getString(R.string.player_no_track_loaded));
         
         if (player != null) {

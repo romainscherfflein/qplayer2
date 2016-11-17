@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import com.squareup.otto.Bus;
 
@@ -26,6 +25,7 @@ import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
 import timber.log.Timber;
+import timber.log.Timber.DebugTree;
 
 /**
  * Created by Claus Chierici (github@antamauna.net) on 2/19/15
@@ -48,7 +48,7 @@ public class QPlayerApplication extends Application {
         objectGraph = ObjectGraph.create(new MyModule(this));
 
         if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
+            Timber.plant(new DebugTree());
 
         } else {
             Timber.plant(new TimberCrashReportingTree());

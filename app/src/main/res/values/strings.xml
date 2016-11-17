@@ -28,5 +28,7 @@
     <string name="choose_playlist_dialog_add">Enter a name for new playlist:</string>
     <string name="choose_playlist_dialog_add_hint">playlist</string>
 
+    <string name="storage_permission_request_message">We need the storage permission to access the sound files on your sdcard</string>
+
 
 </resources>
