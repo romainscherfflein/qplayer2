@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -244,10 +243,14 @@ public class PlayerFragment extends AbstractBaseFragment
     //
     // Event Subscriptions
     //
-
+    
     @Subscribe
     public void onTrackSelectedFromFilesEvent(TrackSelectedFromFilesEvent event) {
         Timber.d("onTrackSelectedFromFilesEvent(): " + event.track.getName());
+
+        if (!trackList.isEmpty()) {
+            return;
+        }
         
         int trackIndex = TrackUtils.trackListContainsTrack(trackList, event.track);
         if (trackIndex < 0) {

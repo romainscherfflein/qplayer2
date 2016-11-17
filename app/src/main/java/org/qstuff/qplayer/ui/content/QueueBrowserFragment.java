@@ -165,10 +165,13 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
 
         tracks = restoreTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST);
         
-        if (tracks == null) return;
+        if (tracks == null) {
+            tracks = new ArrayList<>();
+        }
+        tracks.add(event.track);
 
         trackNames = getTrackNames(tracks);
-
+        
         queueListAdapter = new TrackListIndexerArrayAdapter<>(
             getActivity(),
             R.layout.tracklist_item,
@@ -177,6 +180,7 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         
         listView.setAdapter(null);
         listView.setAdapter(queueListAdapter);
+        queueListAdapter.notifyDataSetChanged();
     }
 
     @Subscribe
