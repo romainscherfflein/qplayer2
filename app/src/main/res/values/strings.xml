@@ -17,8 +17,12 @@
     <string name="dialog_ok">Ok</string>
     <string name="dialog_cancel">Cancel</string>
 
-    <string name="add_track_to_playlist_dialog_tag">add_track_to_playlist_dialog_tag</string>
-    <string name="add_track_to_playlist_dialog_title">Add this track to a playlist ?</string>
+    <string name="dialog_add_to_queue">To Queue</string>
+    <string name="dialog_add_to_playlist">To Playlist</string>
+    <string name="dialog_play">Play Now</string>
+
+    <string name="file_short_click_handle_dialog_tag">file_short_click_handle__dialog_tag</string>
+    <string name="file_short_click_handle_dialog_title">Add this track to a the queue, to a playlist or play it immediately ?</string>
 
     <string name="add_tracks_to_queue_dialog_tag">add_tracks_to_queue_dialog_tag</string>
     <string name="add_tracks_to_queue_dialog_title">Add these tracks to the queue ?</string>
