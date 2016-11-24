@@ -23,12 +23,12 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginTop="4dp"
-        android:paddingLeft="10dp"
+        android:paddingLeft="60dp"
         android:layout_alignParentTop="true"
         android:gravity="left"
         style="@style/PlayerTextStyle"
         android:background="@drawable/black_not_rounded_bottom_right_shape"
-        android:text="@string/app_name" />
+        tools:text="@string/app_name" />
 
     <!-- Current Track Title -->
     <TextView
@@ -90,15 +90,16 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
         android:minHeight="@dimen/seekbar_height"
         android:maxHeight="@dimen/seekbar_height"
         android:background="@color/black"
         android:max="100"
-        android:progress="0"
+        android:progress="50"
         android:progressDrawable="@drawable/pitchbar_progress"
-        android:thumb="@drawable/seekbar_progress_white" />
+        android:thumb="@drawable/seekbar_progress_white"
+        android:thumbOffset="1dp"/>
     
     <!-- Pitch Control -->
     <org.qstuff.qplayer.ui.util.VerticalSeekBar
@@ -114,7 +115,8 @@
         android:max="100"
         android:progress="50"
         android:progressDrawable="@android:color/transparent"
-        android:thumb="@drawable/pitchbar_progress_white" />
+        android:thumb="@drawable/pitchbar_progress_white"
+        android:thumbOffset="5dp" />
 
     <!-- Jog Wheel (Real) -->
     <FrameLayout
