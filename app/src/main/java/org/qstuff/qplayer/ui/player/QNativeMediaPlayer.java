@@ -2,6 +2,8 @@ package org.qstuff.qplayer.ui.player;
 
 import android.util.Log;
 
+import timber.log.Timber;
+
 /**
  * Created by Claus Chierici (github@antamauna.net) on 2/19/15
  *
@@ -109,12 +111,24 @@ public class QNativeMediaPlayer {
         return isStoppedNative();
     }
 
-    public void setAudioFileUri(String uri) {
+    public void setDataSource(String uri) {
         if (uri == null) return;
 
         currentAudioUri = uri;
         boolean ret = createAudioPlayer(uri);
-        Log.d(TAG, "loadAudioFile(): success: " + ret);
+        Timber.d("setDataSource(): success: %s", ret);
         isPlayerReady = ret;
+    }
+    
+    public int getTrackDuration() {
+        return getDuration();
+    }
+    
+    public int getTrackCurrentPosition() {
+        return getCurrentPosition();
+    }
+    
+    public void seekToPosition(int position) {
+        seekTo(position);
     }
 }

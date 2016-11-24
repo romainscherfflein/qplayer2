@@ -2,6 +2,7 @@ package org.qstuff.qplayer;
 
 import org.qstuff.qplayer.ui.content.ContentFragment;
 import org.qstuff.qplayer.ui.player.PlayerFragment;
+import org.qstuff.qplayer.ui.player.QNativePlayerFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;

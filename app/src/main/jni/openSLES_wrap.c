@@ -46,7 +46,7 @@ static SLpermille playbackMinPitch = 500;
 static SLpermille playbackMaxPitch = 2000;
 
 JNIEXPORT jboolean
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_createEngine(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_createEngine(
 		JNIEnv* env, jclass clazz) {
 	LOG_INF("createEngine(): called");
 
@@ -82,7 +82,7 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_createEngine(
 }
 
 JNIEXPORT jboolean
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_releaseEngine(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_releaseEngine(
 		JNIEnv* env, jclass clazz) {
 	LOG_INF("releaseEngine(): called");
 
@@ -114,7 +114,7 @@ void playStatusCallback(SLPlayItf play, void* context, SLuint32 event) {
 }
 
 JNIEXPORT jboolean
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_createAudioPlayer(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_createAudioPlayer(
         JNIEnv* env, jclass clazz, jstring uri) {
 	LOG_INF("createAudioPlayer(): called");
 
@@ -193,7 +193,6 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_createAudioPlayer(
     	LOG_ERR("Feature Unsupported: GetInterface(PITCH)");
     }
     */
-
     // register callback function
     result = (*uriPlayerPlay)->RegisterCallback(uriPlayerPlay,
             playStatusCallback, 0);
@@ -231,11 +230,13 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_createAudioPlayer(
     if (SL_RESULT_FEATURE_UNSUPPORTED == result) {
     	LOG_ERR("Feature Unsupported: GetRateRange()");
     }
-
+    
+    /*    
     result = (*uriPlaybackRate)->SetPropertyConstraints(uriPlaybackRate,
     		SL_RATEPROP_PITCHCORAUDIO);
     assert(SL_RESULT_SUCCESS == result);
-
+    */
+    
     if (SL_RESULT_PARAMETER_INVALID == result) {
     	LOG_ERR("Parameter Invalid");
     }
@@ -265,7 +266,7 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_createAudioPlayer(
 }
 
 JNIEXPORT jboolean
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_releaseAudioPlayer(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_releaseAudioPlayer(
         JNIEnv* env, jclass clazz) {
 	LOG_INF("releaseAudioPlayer(): called");
 
@@ -312,49 +313,49 @@ SLuint32 getPlayState() {
 }
 
 JNIEXPORT void
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_playNative(JNIEnv* env,
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_playNative(JNIEnv* env,
         jclass clazz) {
 	LOG_INF("JNI: play(): called");
     setPlayState(SL_PLAYSTATE_PLAYING);
 }
 
 JNIEXPORT void
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_stopNative(JNIEnv* env,
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_stopNative(JNIEnv* env,
         jclass clazz) {
 	LOG_INF("JNI: stop(): called");
     setPlayState(SL_PLAYSTATE_STOPPED);
 }
 
 JNIEXPORT void
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_pauseNative(JNIEnv* env,
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_pauseNative(JNIEnv* env,
         jclass clazz) {
 	LOG_INF("JNI: pause(): called");
     setPlayState(SL_PLAYSTATE_PAUSED);
 }
 
 JNIEXPORT jboolean
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_isPlayingNative(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_isPlayingNative(
         JNIEnv* env, jclass clazz) {
 	LOG_INF("JNI: isPlaying(): called");
     return (getPlayState() == SL_PLAYSTATE_PLAYING);
 }
 
 JNIEXPORT jboolean
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_isPausedNative(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_isPausedNative(
         JNIEnv* env, jclass clazz) {
 	LOG_INF("JNI: isPaused(): called");
     return (getPlayState() == SL_PLAYSTATE_PAUSED);
 }
 
 JNIEXPORT jboolean
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_isStoppedNative(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_isStoppedNative(
         JNIEnv* env, jclass clazz) {
 	LOG_INF("JNI: isStopped(): called");
     return (getPlayState() == SL_PLAYSTATE_STOPPED);
 }
 
 JNIEXPORT void
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_seekTo(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_seekTo(
         JNIEnv* env, jclass clazz, jint position) {
 	LOG_INF("JNI: seekTo(): called");
 
@@ -374,7 +375,7 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_seekTo(
 }
 
 JNIEXPORT jint
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_getDuration(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_getDuration(
         JNIEnv* env, jclass clazz) {
 //	LOG_INF("JNI: getDuration(): called");
 
@@ -392,7 +393,7 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_getDuration(
 }
 
 JNIEXPORT jint
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_getCurrentPosition(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_getCurrentPosition(
         JNIEnv* env, jclass clazz) {
 //	LOG_INF("JNI: getPosition(): called");
 
@@ -411,7 +412,7 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_getCurrentPosition(
 }
 
 JNIEXPORT void
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_setPitch(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_setPitch(
         JNIEnv* env, jclass clazz, jint rate) {
 	LOG_INF("JNI: setPitch(): called. rate: %i", rate);
 
@@ -424,7 +425,7 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_setPitch(
 }
 
 JNIEXPORT void
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_setPlaybackRate(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_setPlaybackRate(
         JNIEnv* env, jclass clazz, jint rate) {
 	LOG_INF("JNI: setPlaybackRate(): called. rate: %i", rate);
     if (NULL != uriPlaybackRate) {
@@ -436,7 +437,7 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_setPlaybackRate(
 }
 
 JNIEXPORT jint
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_getPlaybackRate(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_getPlaybackRate(
         JNIEnv* env, jclass clazz) {
 	LOG_INF("JNI: getPlaybackRate(): called");
 
@@ -453,7 +454,7 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_getPlaybackRate(
 }
 
 JNIEXPORT jboolean
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_setLoop(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_setLoop(
         JNIEnv* env, jclass clazz, jint startPos, jint endPos) {
 	LOG_INF("JNI: setLoop(): called. startPos: %i, endPos: %i", startPos, endPos);
 
@@ -467,7 +468,7 @@ Java_org_qstuff_qplayer_player_QNativeMediaPlayer_setLoop(
 }
 
 JNIEXPORT jboolean
-Java_org_qstuff_qplayer_player_QNativeMediaPlayer_setNoLoop(
+Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_setNoLoop(
         JNIEnv* env, jclass clazz) {
 	LOG_INF("JNI: setNoLoop(): called");
 
