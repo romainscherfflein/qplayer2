@@ -4,8 +4,16 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+
+import com.squareup.otto.Bus;
 
 import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.data.Track;
+
+import java.io.File;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 
@@ -14,10 +22,27 @@ import butterknife.ButterKnife;
  *
  * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
-public class FileShortClickHandleDialogFragment extends AbstractBaseDialogFragment {
+public class FileLongClickHandleDialogFragment extends AbstractBaseDialogFragment {
+    
+    private static final String ARG_TRACK = "ARG_TRACK";
+    private Track track;
+    
+    public static FileLongClickHandleDialogFragment newInstance(Track track) {
 
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_TRACK, track);
+
+        FileLongClickHandleDialogFragment frg = new FileLongClickHandleDialogFragment();
+        frg.setArguments(args);
+
+        return frg;
+    }
+    
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        
+        track = (Track) getArguments().getSerializable(ARG_TRACK);
         
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         Dialog dialog = builder
@@ -27,8 +52,7 @@ public class FileShortClickHandleDialogFragment extends AbstractBaseDialogFragme
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
 
-                    // Add to queue
-
+                    onAddToQueueButtonClicked(track);
                     dismiss();
                 }
             })
@@ -36,15 +60,14 @@ public class FileShortClickHandleDialogFragment extends AbstractBaseDialogFragme
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     
-                    // Add to queue
-                    
+                    onPlayNowButtonClicked(track);
                     dismiss();
                 }
             })
             .setPositiveButton(getString(R.string.dialog_add_to_playlist), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    openChoosePlayListDialog();
+                    onAddToPlaylistButtonClicked();
                     dismiss();
                 }
             })

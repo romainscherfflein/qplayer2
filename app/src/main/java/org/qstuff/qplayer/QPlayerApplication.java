@@ -11,7 +11,7 @@ import com.squareup.otto.Bus;
 
 import org.qstuff.qplayer.controller.PlayListController;
 import org.qstuff.qplayer.ui.dialogs.AbstractBaseDialogFragment;
-import org.qstuff.qplayer.ui.dialogs.FileShortClickHandleDialogFragment;
+import org.qstuff.qplayer.ui.dialogs.FileLongClickHandleDialogFragment;
 import org.qstuff.qplayer.ui.dialogs.AddTracksToQueueDialogFragment;
 import org.qstuff.qplayer.ui.dialogs.ChoosePlayListDialogFragment;
 import org.qstuff.qplayer.ui.content.QueueBrowserFragment;
@@ -26,7 +26,6 @@ import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
 import timber.log.Timber;
-import timber.log.Timber.DebugTree;
 
 /**
  * Created by Claus Chierici (github@antamauna.net) on 2/19/15
@@ -79,7 +78,7 @@ public class QPlayerApplication extends Application {
             PlayListController.class,
             AbstractBaseDialogFragment.class,
             ChoosePlayListDialogFragment.class,
-            FileShortClickHandleDialogFragment.class,
+            FileLongClickHandleDialogFragment.class,
             AddTracksToQueueDialogFragment.class
        
         },

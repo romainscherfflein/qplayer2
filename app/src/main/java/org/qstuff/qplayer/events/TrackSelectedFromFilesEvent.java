@@ -12,8 +12,10 @@ import java.io.File;
 public class TrackSelectedFromFilesEvent {
 
     public Track track;
+    public boolean playNow;
 
-    public TrackSelectedFromFilesEvent(Track track) {
+    public TrackSelectedFromFilesEvent(Track track, boolean playNow) {
         this.track = track;
+        this.playNow = playNow;
     }
 }

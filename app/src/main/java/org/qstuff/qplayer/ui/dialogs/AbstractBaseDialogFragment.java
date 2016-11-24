@@ -5,9 +5,14 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
 import com.negusoft.holoaccent.dialog.DividerPainter;
+import com.squareup.otto.Bus;
 
 import org.qstuff.qplayer.QPlayerApplication;
 import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.data.Track;
+import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
+
+import javax.inject.Inject;
 
 
 /**
@@ -16,6 +21,8 @@ import org.qstuff.qplayer.R;
  * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
 public class AbstractBaseDialogFragment extends DialogFragment {
+
+    @Inject Bus bus;
 
     ///////////////////////////////////////////////////////////////////////////
     // Fragment lifecycle
@@ -38,8 +45,16 @@ public class AbstractBaseDialogFragment extends DialogFragment {
             new DividerPainter(getActivity()).paint(d.getWindow());
     }
         
-    public void openChoosePlayListDialog() {
+    public void onAddToPlaylistButtonClicked() {
         ChoosePlayListDialogFragment dialog = new ChoosePlayListDialogFragment();
         dialog.show(getFragmentManager(), getString(R.string.choose_laylist_dialog_tag));
+    }
+    
+    public void onPlayNowButtonClicked(Track track) {
+        bus.post(new TrackSelectedFromFilesEvent(track, true));
+    }
+
+    public void onAddToQueueButtonClicked(Track track) {
+        bus.post(new TrackSelectedFromFilesEvent(track, false));
     }
 }

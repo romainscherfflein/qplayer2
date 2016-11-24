@@ -22,7 +22,6 @@ import butterknife.ButterKnife;
 
 public class AddTracksToQueueDialogFragment extends AbstractBaseDialogFragment {
 
-    @Inject Bus bus;
     
     private static final String ARG_DIRECTORY = "ARG_DIRECTORY";
     private File directory;

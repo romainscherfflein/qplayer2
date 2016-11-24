@@ -162,7 +162,9 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
     
     @Subscribe
     public void onTrackSelectedFromFilesEvent(TrackSelectedFromFilesEvent event) {
-        Timber.d("onTrackSelectedFromFilesEvent(): " + event.track.getName());
+        Timber.d("onTrackSelectedFromFilesEvent(): name: %s", event.track.getName());
+        Timber.d("onTrackSelectedFromFilesEvent(): play: %b", event.playNow);
+
 
         tracks = restoreTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST);
         
@@ -184,7 +186,8 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         listView.setAdapter(queueListAdapter);
         queueListAdapter.notifyDataSetChanged();
         
-        bus.post(new PlayQueueUpdateEvent(tracks, true, false, false, tracks.indexOf(event.track)));
+        bus.post(new PlayQueueUpdateEvent(tracks, true, false, false, 
+            event.playNow ? tracks.indexOf(event.track) : -1));
         saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, tracks);
     }
     

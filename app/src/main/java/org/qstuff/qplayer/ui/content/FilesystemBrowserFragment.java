@@ -24,7 +24,7 @@ import org.qstuff.qplayer.events.AddTrackToPlayListEvent;
 import org.qstuff.qplayer.events.NewPlayListEvent;
 import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
 import org.qstuff.qplayer.ui.dialogs.AbstractBaseDialogFragment;
-import org.qstuff.qplayer.ui.dialogs.FileShortClickHandleDialogFragment;
+import org.qstuff.qplayer.ui.dialogs.FileLongClickHandleDialogFragment;
 import org.qstuff.qplayer.ui.dialogs.AddTracksToQueueDialogFragment;
 import org.qstuff.qplayer.ui.dialogs.StoragePermissionStatementDialogFragment;
 
@@ -162,7 +162,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment
         final File item = new File(currentDir.getAbsolutePath() + "/" + dir);
 
         if (item.isFile())
-            bus.post(new TrackSelectedFromFilesEvent(new Track(item)));
+            bus.post(new TrackSelectedFromFilesEvent(new Track(item), true));
         else if (item.isDirectory())
             browseTo(item);
         else
@@ -180,7 +180,7 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment
         if (item.isDirectory()) {
             openAddToQueueDialog(item);
         } else {
-            openShortClickFileHandleDialog();
+            openLongClickFileHandleDialog(new Track(item));
         }
         
         return true;
@@ -281,8 +281,8 @@ public class FilesystemBrowserFragment extends BaseBrowserFragment
 		dirListAdapter.notifyDataSetChanged();
 	}
 
-    private void openShortClickFileHandleDialog() {
-        AbstractBaseDialogFragment dialog = new FileShortClickHandleDialogFragment();
+    private void openLongClickFileHandleDialog(Track track) {
+        AbstractBaseDialogFragment dialog = FileLongClickHandleDialogFragment.newInstance(track);
         dialog.show(getFragmentManager(), getString(R.string.file_short_click_handle_dialog_tag));
     }
 

@@ -120,7 +120,7 @@ public class PlaylistBrowserFragment extends BaseBrowserFragment {
             showTrackList(currentPlayList);            
         } else {
             Track track = currentPlayList.getTrackList().get(position);
-            bus.post(new TrackSelectedFromFilesEvent(track));
+            bus.post(new TrackSelectedFromFilesEvent(track, true));
         }        
     }
 
