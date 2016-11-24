@@ -30,66 +30,76 @@
         android:background="@drawable/black_not_rounded_bottom_right_shape"
         tools:text="@string/app_name" />
 
-    <!-- Current Track Title -->
-    <TextView
-        android:id="@+id/player_text_current_track"
+    <LinearLayout
+        android:id="@+id/track_info_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/textview_height"
-        style="@style/PlayerTextStyle"
-        android:textColor="@color/q_orange"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="4dp"
-        android:gravity="left"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_below="@+id/jog_wheel_frame"
-        android:layout_toRightOf="@+id/pitch_control"
-        android:text="@string/player_no_track_loaded" />
-
-    <!-- Background -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/textview_height"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_below="@+id/player_text_current_track"
-        android:layout_alignBottom="@+id/pitch_control"
-        android:layout_toRightOf="@+id/pitch_control"
-        android:background="@drawable/black_rounded_shape"/>
-
-    <!-- Total Track Time -->
-    <TextView
-        android:id="@+id/player_text_total_time"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/textview_height"
-        android:layout_marginLeft="5dp"
-        android:layout_below="@+id/player_text_current_track"
-        android:layout_toRightOf="@+id/pitch_control"
-        android:layout_alignBottom="@+id/pitch_control"
-        style="@style/PlayerTextStyle"
-        android:text="total: 00:00:00" />
-
-    <!-- Dynamic Track Time (Elapsed or Remain)-->
-    <TextView
-        android:id="@+id/player_text_dynamic_time"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/textview_height"
-        android:layout_marginRight="4dp"
-        android:textColor="@color/q_orange"
-        android:layout_below="@+id/player_text_current_track"
-        android:layout_alignParentRight="true"
-        android:layout_alignBottom="@+id/pitch_control"
-        style="@style/PlayerTextStyle"
-        android:text="remain: 00:00:00" />
-
+        android:layout_toRightOf="@+id/pitch_control">
+    
+        <!-- Current Track Title -->
+        <TextView
+            android:id="@+id/player_text_current_track"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/textview_height"
+            style="@style/PlayerTextStyle"
+            android:textColor="@color/q_orange"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="4dp"
+            android:paddingLeft="15dp"
+            android:gravity="left|center_vertical"
+            android:text="@string/player_no_track_loaded" />
+    
+        <!-- Background -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/textview_height">    
+        
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/black_rounded_shape"/>
+        
+            <!-- Total Track Time -->
+            <TextView
+                android:id="@+id/player_text_total_time"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/textview_height"
+                android:layout_marginLeft="15dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                style="@style/PlayerTextStyle"
+                tools:text="total: 00:00:00" />
+        
+            <!-- Dynamic Track Time (Elapsed or Remain)-->
+            <TextView
+                android:id="@+id/player_text_dynamic_time"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/textview_height"
+                android:layout_marginRight="15dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:textColor="@color/q_orange"
+                style="@style/PlayerTextStyle"
+                tools:text="remain: 00:00:00" />
+                
+        </RelativeLayout>
+        
+    </LinearLayout>
+    
     <!-- Waveform Progress View -->
     <SeekBar
         android:id="@+id/player_waveform"
         android:layout_width="match_parent"
         android:layout_height="@dimen/seekbar_height"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="5dp"
+        android:layout_below="@id/track_info_container"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
+        android:layout_marginTop="4dp"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
         android:minHeight="@dimen/seekbar_height"
@@ -108,7 +118,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/player_text_version"
         android:layout_above="@+id/player_waveform"
-        android:layout_marginBottom="5dp"
         android:layout_marginLeft="4dp"
         android:layout_marginTop="5dp"
         android:background="@drawable/black_not_rounded_top_right_shape"
@@ -223,7 +232,7 @@
         android:id="@+id/player_buttons_row_one"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/player_text_current_track"
+        android:layout_above="@+id/track_info_container"
         android:layout_toRightOf="@+id/pitch_control"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="5dp"

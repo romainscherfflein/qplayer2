@@ -27,12 +27,12 @@ public class PitchbarChangedListener
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        Timber.v("onProgressChanged(): SB ID: " + seekBar.getId());
+        Timber.d("onProgressChanged(): SB ID: " + seekBar.getId());
 
         if (seekBar.getId() == R.id.pitch_control) {
 
             int diff = progress - 50;
-            Timber.v("onProgressChanged(): pitch bar value:" + diff);
+            Timber.d("onProgressChanged(): pitch bar value:" + diff);
 
             // float currPitch = (float) (((float)diff / ((float)100) * 2.0f * pitchFaktor));
             String pre = diff > 0 ? "+":"";

@@ -8,8 +8,13 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import timber.log.Timber;
 
 /**
@@ -24,6 +29,12 @@ public class QPlayerMainActivity extends FragmentActivity {
     private ContentFragment contentFragment;
     private PlayerFragment  playerFragment;
 	
+    @InjectView(R.id.player_area)
+    FrameLayout playerArea;
+
+    @InjectView(R.id.browser_area)
+    FrameLayout browserArea;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +42,10 @@ public class QPlayerMainActivity extends FragmentActivity {
 
         setContentView(R.layout.qplayer_main);
 
+        ButterKnife.inject(this);
+        
+        // setFragmentHeights();
+        
         // load fragments dynamically
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft;
@@ -43,5 +58,22 @@ public class QPlayerMainActivity extends FragmentActivity {
         ft.replace(R.id.browser_area, contentFragment);
 
         ft.commitAllowingStateLoss();QPlayerApplication.getInstance().collectScreenStats();
+    }
+
+    private void setFragmentHeights() {
+        ViewGroup.LayoutParams playerLayout = playerArea.getLayoutParams();
+        ViewGroup.LayoutParams browserLayout = browserArea.getLayoutParams();
+        
+        playerLayout.height = 600;
+        browserLayout.height = getScreenHeight() - 600;
+
+        playerArea.setLayoutParams(playerLayout);
+        browserArea.setLayoutParams(browserLayout);
+    }
+    
+    private int getScreenHeight() {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        return displaymetrics.heightPixels;
     }
 }
