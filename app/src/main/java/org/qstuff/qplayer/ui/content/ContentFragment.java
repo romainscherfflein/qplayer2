@@ -64,7 +64,7 @@ public class ContentFragment extends Fragment
 
         contentPagerAdapter = new ContentPagerAdapter(getFragmentManager());
         contentPager.setAdapter(contentPagerAdapter);
-    
+        contentPager.setOffscreenPageLimit(0);
         
         pagerTabs.setViewPager(contentPager);
         pagerTabs.setOnPageChangeListener(this);

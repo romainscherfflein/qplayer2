@@ -243,25 +243,7 @@ public class PlayerFragment extends AbstractBaseFragment
     //
     // Event Subscriptions
     //
-    
-    @Subscribe
-    public void onTrackSelectedFromFilesEvent(TrackSelectedFromFilesEvent event) {
-        Timber.d("onTrackSelectedFromFilesEvent(): " + event.track.getName());
-                
-        int trackIndex = TrackUtils.trackListContainsTrack(trackList, event.track);
-        if (trackIndex < 0) {
-            trackList.add(0, event.track);
-            trackIndex = 0;
-        }
-
-        saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, trackList);
         
-        if (trackList.isEmpty()) {
-            shallPlayImmediately = true;
-            loadTrack(trackIndex);
-        }
-    }
-
     @Subscribe
     public void onTrackSelectedFromQueueEvent(TrackSelectedFromQueueEvent event) {
         Timber.d("onTrackSelectedFromQueueEvent(): " + event.track.getName());
@@ -273,33 +255,40 @@ public class PlayerFragment extends AbstractBaseFragment
             trackIndex = 0;
         }
 
-        shallPlayImmediately = player.isPlaying();
+        shallPlayImmediately = true;
         loadTrack(trackIndex);
     }
 
     @Subscribe
     public void onPlayQueueUpdateEvent(PlayQueueUpdateEvent event) {
         Timber.d("onPlayQueueUpdateEvent(): size: " + event.tracks.size());
+        Timber.d("onPlayQueueUpdateEvent(): play: " + event.indexTrackImmediatePlay);
+
 
         int nextIndex = -1;
-        
+
         // Empty list we can bail out
         if (event.tracks.isEmpty()) {
             trackList = event.tracks;
-        // should swap the lists: proceed at index 0
+            // should swap the lists: proceed at index 0
         } else if (event.forceSwap) {
             trackList = event.tracks;
             nextIndex = 0;
-        
-        // TODO: add append / prepend
+
+            // TODO: add append / prepend
         } else if (event.append) {
             //
         } else if (event.prepend) {
             //
         }
 
-        shallPlayImmediately = player.isPlaying();
-        loadTrack(nextIndex);
+        if (player != null && player.isPlaying()) {
+            shallPlayImmediately = player.isPlaying();
+        }
+        if (event.indexTrackImmediatePlay >= 0)
+            shallPlayImmediately = true;
+
+        loadTrack(event.indexTrackImmediatePlay < 0 ? nextIndex : event.indexTrackImmediatePlay);
         saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, trackList);
     }
     
@@ -324,6 +313,7 @@ public class PlayerFragment extends AbstractBaseFragment
         
         textCurrentTrack.setText(currentTrack.getName().replaceFirst("[.][^.]+$", ""));
         buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play_selected));
+        
         saveTrack(Constants.PREFS_KEY_PLAYER_CURRENT_TRACK, currentTrack);
         saveIndex(Constants.PREFS_KEY_PLAYER_CURRENT_INDEX, index);
     }
@@ -583,7 +573,7 @@ public class PlayerFragment extends AbstractBaseFragment
     @SuppressLint("SetTextI18n")
     @Override
     public void onPrepared(MediaPlayer mp) {
-        Timber.d("onPrepared():");
+        Timber.d("onPrepared(): play now: " + shallPlayImmediately);
         
         isPrepared = true;
         

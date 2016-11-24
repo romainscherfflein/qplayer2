@@ -1,30 +1,49 @@
 package org.qstuff.qplayer.util;
 
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import timber.log.Timber;
 
-/**
- * Created by Claus Chierici (chierici@karlmax-berlin.com) on 4/16/15
- * for Karlmax Berlin GmbH & Co. KG
- * <p/>
- * Copyright (C) 2014 Karlmax Berlin GmbH & Co. KG, All rights reserved.
- */
-public class TimberCrashReportingTree extends Timber.HollowTree {
+public class TimberCrashReportingTree extends Timber.DebugTree {
 
-    @Override public void i(String message, Object... args) {
-        // TODO e.g., Crashlytics.log(String.format(message, args));
+    private static final Pattern ANONYMOUS_CLASS = Pattern.compile("(\\$\\d+)+$");
+    private final String mTag;
+
+    public TimberCrashReportingTree(String tag) {
+        mTag = tag;
     }
 
-    @Override public void i(Throwable t, String message, Object... args) {
-        i(message, args); // Just add to the log.
+    private static String createPrefix() {
+
+        final StackTraceElement[] stackTrace = new Throwable().getStackTrace();
+        if (stackTrace.length < 7) {
+            throw new IllegalStateException(
+                "Synthetic stacktrace didn't have enough elements: are you using proguard?");
+        }
+
+        String className = stackTrace[6].getClassName();
+        final Matcher m = ANONYMOUS_CLASS.matcher(className);
+        if (m.find()) {
+            className = m.replaceAll("");
+        }
+        className = className.substring(className.lastIndexOf('.') + 1);
+
+        final String fileName = stackTrace[6].getFileName();
+        final String methodName = stackTrace[6].getMethodName();
+        final int lineNumber = stackTrace[6].getLineNumber();
+
+        return String.format(Locale.ENGLISH, "%s.%s(%s:%,d)",
+            className, methodName, fileName, lineNumber);
     }
 
-    @Override public void e(String message, Object... args) {
-        i("ERROR: " + message, args); // Just add to the log.
-    }
+    @Override
+    protected void log(int priority, String tag, String message, Throwable t) {
 
-    @Override public void e(Throwable t, String message, Object... args) {
-        e(message, args);
+        final String prefix = createPrefix();
+        message = String.format(Locale.ENGLISH, "%s   %s", prefix, message);
 
-        // TODO e.g., Crashlytics.logException(t);
+        super.log(priority, mTag, message, t);
     }
 }

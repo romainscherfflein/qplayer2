@@ -70,7 +70,7 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         
         tracks = restoreTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST);
         if (tracks == null)
-            tracks = new ArrayList<Track>();
+            tracks = new ArrayList<>();
         trackNames = getTrackNames(tracks);
         
         Timber.d("onResume(): tracks:" + tracks.size());
@@ -130,8 +130,8 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         tracks = new ArrayList<>();
         trackNames = new ArrayList<>();
         
-        bus.post(new PlayQueueUpdateEvent(tracks, true, false, false));
         saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, tracks);
+        bus.post(new PlayQueueUpdateEvent(tracks, true, false, false, -1));
     }
     
     //
@@ -154,8 +154,9 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
 
         listView.setAdapter(null);
         listView.setAdapter(queueListAdapter);
+        queueListAdapter.notifyDataSetChanged();
         
-        bus.post(new PlayQueueUpdateEvent(tracks, true, false, false));
+        bus.post(new PlayQueueUpdateEvent(tracks, true, false, false, -1));
         saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, tracks);
     }
     
@@ -168,6 +169,7 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         if (tracks == null) {
             tracks = new ArrayList<>();
         }
+                
         tracks.add(event.track);
 
         trackNames = getTrackNames(tracks);
@@ -181,8 +183,11 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
         listView.setAdapter(null);
         listView.setAdapter(queueListAdapter);
         queueListAdapter.notifyDataSetChanged();
+        
+        bus.post(new PlayQueueUpdateEvent(tracks, true, false, false, tracks.indexOf(event.track)));
+        saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, tracks);
     }
-
+    
     @Subscribe
     public void onTrackSelectedToPlayEvent(TrackSelectedToPlayEvent event) {
         Timber.d("onTrackSelectedToPlayEvent(): " + event.track.getName());
@@ -202,5 +207,13 @@ public class QueueBrowserFragment extends BaseBrowserFragment {
             ret.add(t.getName());
         }
         return ret;
+    }
+    
+    private boolean isInTracklist(Track track) {
+        for (Track t : tracks) {
+            if (t.getName().equals(track.getName())
+                &&t.getUri().equals(track.getUri())) return true;
+        }
+        return false;
     }
 }

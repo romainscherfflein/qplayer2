@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.StrictMode;
 import android.util.DisplayMetrics;
 
 import com.squareup.otto.Bus;
@@ -48,10 +49,8 @@ public class QPlayerApplication extends Application {
         objectGraph = ObjectGraph.create(new MyModule(this));
 
         if (BuildConfig.DEBUG) {
-            Timber.plant(new DebugTree());
-
-        } else {
-            Timber.plant(new TimberCrashReportingTree());
+            initStrictMode();
+            Timber.plant(new TimberCrashReportingTree("QPLAYER"));
         }
 
         instance = this;
@@ -117,7 +116,12 @@ public class QPlayerApplication extends Application {
             return new PlayListController(app.getApplicationContext(), eventBus, sharedPreferences);
         }
     }
-
+    
+    private void initStrictMode() {
+        StrictMode.allowThreadDiskReads();
+        StrictMode.allowThreadDiskWrites();
+        StrictMode.enableDefaults();
+    }
 
     public String getDPI() {
 

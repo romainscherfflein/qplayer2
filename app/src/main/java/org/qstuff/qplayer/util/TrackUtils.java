@@ -21,11 +21,12 @@ public class TrackUtils {
         int index = 0;
         
         for (Track t:trackList) {
-            if (t.getUri().compareTo(track.getUri()) == 0) {
+            if (t.getUri().equals(track.getUri())) {
                 return index;
             }
             index++;
         }
+        // Not in List
         return -1;
     }
 
