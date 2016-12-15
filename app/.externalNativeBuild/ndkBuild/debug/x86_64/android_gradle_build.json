@@ -1,24 +1,24 @@
 {
   "buildFiles": [
-    "/home/claus/work/qstuff/repos/qplayer2/app/src/main/jni/Android.mk",
-    "/home/claus/work/qstuff/repos/qplayer2/app/src/main/jni/Application.mk"
+    "/home/claus/work/qstuff/repos/qplayer2-romain/app/src/main/jni/Android.mk",
+    "/home/claus/work/qstuff/repos/qplayer2-romain/app/src/main/jni/Application.mk"
   ],
   "cleanCommands": [
-    "/home/claus/work/android/sdk/android-sdk/ndk-bundle/ndk-build NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003d/home/claus/work/qstuff/repos/qplayer2/app/src/main/jni/Android.mk NDK_APPLICATION_MK\u003d/home/claus/work/qstuff/repos/qplayer2/app/src/main/jni/Application.mk APP_ABI\u003dx86_64 NDK_ALL_ABIS\u003dx86_64 NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-21 NDK_OUT\u003d/home/claus/work/qstuff/repos/qplayer2/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003d/home/claus/work/qstuff/repos/qplayer2/app/build/intermediates/ndkBuild/debug/lib clean"
+    "/home/claus/work/android/sdk/android-sdk/ndk-bundle/ndk-build NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003d/home/claus/work/qstuff/repos/qplayer2-romain/app/src/main/jni/Android.mk NDK_APPLICATION_MK\u003d/home/claus/work/qstuff/repos/qplayer2-romain/app/src/main/jni/Application.mk APP_ABI\u003dx86_64 NDK_ALL_ABIS\u003dx86_64 NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-21 NDK_OUT\u003d/home/claus/work/qstuff/repos/qplayer2-romain/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003d/home/claus/work/qstuff/repos/qplayer2-romain/app/build/intermediates/ndkBuild/debug/lib clean"
   ],
   "libraries": {
     "opensles_wrap-debug-x86_64": {
-      "buildCommand": "/home/claus/work/android/sdk/android-sdk/ndk-bundle/ndk-build NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003d/home/claus/work/qstuff/repos/qplayer2/app/src/main/jni/Android.mk NDK_APPLICATION_MK\u003d/home/claus/work/qstuff/repos/qplayer2/app/src/main/jni/Application.mk APP_ABI\u003dx86_64 NDK_ALL_ABIS\u003dx86_64 NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-21 NDK_OUT\u003d/home/claus/work/qstuff/repos/qplayer2/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003d/home/claus/work/qstuff/repos/qplayer2/app/build/intermediates/ndkBuild/debug/lib /home/claus/work/qstuff/repos/qplayer2/app/build/intermediates/ndkBuild/debug/obj/local/x86_64/libopensles_wrap.so",
+      "buildCommand": "/home/claus/work/android/sdk/android-sdk/ndk-bundle/ndk-build NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003d/home/claus/work/qstuff/repos/qplayer2-romain/app/src/main/jni/Android.mk NDK_APPLICATION_MK\u003d/home/claus/work/qstuff/repos/qplayer2-romain/app/src/main/jni/Application.mk APP_ABI\u003dx86_64 NDK_ALL_ABIS\u003dx86_64 NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-21 NDK_OUT\u003d/home/claus/work/qstuff/repos/qplayer2-romain/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003d/home/claus/work/qstuff/repos/qplayer2-romain/app/build/intermediates/ndkBuild/debug/lib /home/claus/work/qstuff/repos/qplayer2-romain/app/build/intermediates/ndkBuild/debug/obj/local/x86_64/libopensles_wrap.so",
       "toolchain": "toolchain-x86_64",
       "abi": "x86_64",
       "artifactName": "opensles_wrap",
       "files": [
         {
-          "src": "/home/claus/work/qstuff/repos/qplayer2/app/src/main/jni/openSLES_wrap.c",
-          "flags": "\"-gcc-toolchain\" \"/home/claus/work/android/sdk/android-sdk-linux/ndk-bundle/toolchains/x86_64-4.9/prebuilt/linux-x86_64\" \"-target\" \"x86_64-none-linux-android\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-fPIC\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-g\" \"-O0\" \"-UNDEBUG\" \"-fno-limit-debug-info\" \"-I/home/claus/work/qstuff/repos/qplayer2/app/src/main/jni\" \"-DANDROID\" \"-DHAVE_CONFIG_H\" \"-DFPM_ARM\" \"-ffast-math\" \"-O3\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/home/claus/work/android/sdk/android-sdk-linux/ndk-bundle/platforms/android-21/arch-x86_64/usr/include\""
+          "src": "/home/claus/work/qstuff/repos/qplayer2-romain/app/src/main/jni/openSLES_wrap.c",
+          "flags": "\"-gcc-toolchain\" \"/home/claus/work/android/sdk/android-sdk-linux/ndk-bundle/toolchains/x86_64-4.9/prebuilt/linux-x86_64\" \"-target\" \"x86_64-none-linux-android\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-fPIC\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-g\" \"-O0\" \"-UNDEBUG\" \"-fno-limit-debug-info\" \"-I/home/claus/work/qstuff/repos/qplayer2-romain/app/src/main/jni\" \"-DANDROID\" \"-DHAVE_CONFIG_H\" \"-DFPM_ARM\" \"-ffast-math\" \"-O3\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"-isystem\" \"/home/claus/work/android/sdk/android-sdk-linux/ndk-bundle/platforms/android-21/arch-x86_64/usr/include\""
         }
       ],
-      "output": "/home/claus/work/qstuff/repos/qplayer2/app/build/intermediates/ndkBuild/debug/obj/local/x86_64/libopensles_wrap.so"
+      "output": "/home/claus/work/qstuff/repos/qplayer2-romain/app/build/intermediates/ndkBuild/debug/obj/local/x86_64/libopensles_wrap.so"
     }
   },
   "toolchains": {
