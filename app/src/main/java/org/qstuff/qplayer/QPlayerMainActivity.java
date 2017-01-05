@@ -52,10 +52,10 @@ public class QPlayerMainActivity extends FragmentActivity {
 
         if (BuildConfig.USE_NATIVE_PLAYER) {
             nativePlayerFragment = new QNativePlayerFragment();
-            ft.replace(R.id.player_area, playerFragment);
+            ft.replace(R.id.player_area, nativePlayerFragment);
         } else {
             playerFragment = new PlayerFragment();
-            ft.replace(R.id.player_area, nativePlayerFragment);
+            ft.replace(R.id.player_area, playerFragment);
         }
 
         contentFragment = new ContentFragment();
