@@ -186,13 +186,13 @@ Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_createAudioPlayer(
 
     // get playback pitch interface
     // TODO: not supported
-    /*
+    
     result = (*uriPlayerObject)->GetInterface(uriPlayerObject, SL_IID_PITCH, &uriPlaybackPitch);
     assert(SL_RESULT_SUCCESS == result);
     if (SL_RESULT_FEATURE_UNSUPPORTED == result) {
     	LOG_ERR("Feature Unsupported: GetInterface(PITCH)");
     }
-    */
+    
     // register callback function
     result = (*uriPlayerPlay)->RegisterCallback(uriPlayerPlay,
             playStatusCallback, 0);
@@ -231,11 +231,9 @@ Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_createAudioPlayer(
     	LOG_ERR("Feature Unsupported: GetRateRange()");
     }
     
-    /*    
     result = (*uriPlaybackRate)->SetPropertyConstraints(uriPlaybackRate,
     		SL_RATEPROP_PITCHCORAUDIO);
     assert(SL_RESULT_SUCCESS == result);
-    */
     
     if (SL_RESULT_PARAMETER_INVALID == result) {
     	LOG_ERR("Parameter Invalid");
@@ -244,17 +242,13 @@ Java_org_qstuff_qplayer_ui_player_QNativeMediaPlayer_createAudioPlayer(
     	LOG_ERR("Feature Unsupported: SetPropertyConstraints()");
     }
 
-    /*
      result = (*uriPlaybackPitch)->GetPitchCapabilities(uriPlaybackPitch, &playbackMinPitch, &playbackMaxPitch);
-     assert(SL_RESULT_SUCCESS == result);*/
+     assert(SL_RESULT_SUCCESS == result);
 
-    /*
      SLpermille minRate, maxRate, stepSize, rate = 1000;
-     SLuint32 capa;
      (*uriPlaybackRate)->GetRateRange(uriPlaybackRate, 0, &minRate, &maxRate, &stepSize, &capa);
 
      (*uriPlaybackRate)->SetRate(uriPlaybackRate, minRate);
-     */
 
     if (SL_RESULT_SUCCESS == result) {
         LOG_DBG("createAudioPlayer(): Success");

@@ -51,6 +51,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    productFlavors {
+        
+        nativePlayer {
+            buildConfigField 'boolean', 'USE_NATIVE_PLAYER', 'true'    
+        }
+        
+        androidPlayer {
+            buildConfigField 'boolean', 'USE_NATIVE_PLAYER', 'false'
+        }
+    }
+    
     externalNativeBuild {
         ndkBuild {
             path 'src/main/jni/Android.mk'

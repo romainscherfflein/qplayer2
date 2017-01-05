@@ -24,10 +24,9 @@ import timber.log.Timber;
  */
 public class QPlayerMainActivity extends FragmentActivity {
 
-    private final static String TAG = "QPlayerMainActivity";
-
-    private ContentFragment contentFragment;
-    private PlayerFragment  playerFragment;
+    private ContentFragment        contentFragment;
+    private PlayerFragment         playerFragment;
+    private QNativePlayerFragment  nativePlayerFragment;
 	
     @InjectView(R.id.player_area)
     FrameLayout playerArea;
@@ -51,8 +50,13 @@ public class QPlayerMainActivity extends FragmentActivity {
         FragmentTransaction ft;
         ft = fm.beginTransaction();
 
-        playerFragment = new PlayerFragment();
-        ft.replace(R.id.player_area, playerFragment);
+        if (BuildConfig.USE_NATIVE_PLAYER) {
+            nativePlayerFragment = new QNativePlayerFragment();
+            ft.replace(R.id.player_area, playerFragment);
+        } else {
+            playerFragment = new PlayerFragment();
+            ft.replace(R.id.player_area, nativePlayerFragment);
+        }
 
         contentFragment = new ContentFragment();
         ft.replace(R.id.browser_area, contentFragment);
