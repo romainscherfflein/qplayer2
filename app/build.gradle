@@ -8,9 +8,9 @@ android {
     defaultConfig {
         applicationId "org.qstuff.qplayer"
 
-        minSdkVersion 15
-        targetSdkVersion 23
-        versionCode 14
+        minSdkVersion 23
+        targetSdkVersion 25
+        versionCode 15
         versionName "1.0.0"
 
         ndk {
@@ -60,7 +60,11 @@ android {
         }
         
         androidPlayer {
+<<<<<<< Updated upstream
             buildConfigField 'boolean', 'USE_NATIVE_PLAYER', 'false'
+=======
+            buildConfigField 'int', 'PLAYER_TYPE', '1'
+>>>>>>> Stashed changes
         }
     }
     
@@ -79,7 +83,7 @@ dependencies {
     compile 'com.squareup:otto:1.3.6'
     // Dependency injection
     compile 'com.squareup.dagger:dagger:1.2.2'
-    apt 'com.squareup.dagger:dagger-compiler:1.2.2'
+    apt     'com.squareup.dagger:dagger-compiler:1.2.2'
     // Logging
     compile 'com.jakewharton.timber:timber:4.1.2'
     // Holo styling

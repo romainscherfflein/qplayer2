@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -157,9 +158,6 @@ public class PlayerFragment extends AbstractBaseFragment
         View v = inflater.inflate(R.layout.player_fragment, container, false);
         ButterKnife.inject(this, v);
 
-        pitchControl.setOnSeekBarChangeListener(
-            new PitchbarChangedListener(pitchControlValue));
-        
         playerWaveform.setOnSeekBarChangeListener(new WaveformChangedListener());
         
         jogView.setWheelListener(new JogWheelImageView.JogWheelListener() {
@@ -411,6 +409,10 @@ public class PlayerFragment extends AbstractBaseFragment
         player.setOnErrorListener(this);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.prepareAsync();
+
+        pitchControl.setOnSeekBarChangeListener(
+            new PitchbarChangedListener(pitchControlValue, player));
+        
     }
 
     //

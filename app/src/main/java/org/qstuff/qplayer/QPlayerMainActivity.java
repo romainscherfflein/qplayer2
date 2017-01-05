@@ -5,11 +5,11 @@ import org.qstuff.qplayer.ui.player.PlayerFragment;
 import org.qstuff.qplayer.ui.player.QNativePlayerFragment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -23,10 +23,6 @@ import timber.log.Timber;
  * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
 public class QPlayerMainActivity extends FragmentActivity {
-
-    private ContentFragment        contentFragment;
-    private PlayerFragment         playerFragment;
-    private QNativePlayerFragment  nativePlayerFragment;
 	
     @InjectView(R.id.player_area)
     FrameLayout playerArea;
@@ -50,15 +46,17 @@ public class QPlayerMainActivity extends FragmentActivity {
         FragmentTransaction ft;
         ft = fm.beginTransaction();
 
-        if (BuildConfig.USE_NATIVE_PLAYER) {
-            nativePlayerFragment = new QNativePlayerFragment();
-            ft.replace(R.id.player_area, nativePlayerFragment);
-        } else {
-            playerFragment = new PlayerFragment();
-            ft.replace(R.id.player_area, playerFragment);
+        Fragment frg;
+        
+        if (BuildConfig.PLAYER_TYPE == 0) {
+            frg = new QNativePlayerFragment();
+        } else if (BuildConfig.PLAYER_TYPE == 1) {
+            frg = new PlayerFragment();
         }
 
-        contentFragment = new ContentFragment();
+        ft.replace(R.id.player_area, frg);
+        
+        ContentFragment contentFragment = new ContentFragment();
         ft.replace(R.id.browser_area, contentFragment);
 
         ft.commitAllowingStateLoss();QPlayerApplication.getInstance().collectScreenStats();

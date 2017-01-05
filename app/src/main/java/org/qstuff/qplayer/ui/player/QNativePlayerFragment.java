@@ -156,7 +156,7 @@ public class QNativePlayerFragment extends AbstractBaseFragment
         ButterKnife.inject(this, v);
 
         pitchControl.setOnSeekBarChangeListener(
-            new PitchbarChangedListener(pitchControlValue));
+            new PitchbarChangedListener(pitchControlValue, null));
         
         playerWaveform.setOnSeekBarChangeListener(new WaveformChangedListener());
         
