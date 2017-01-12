@@ -2,11 +2,9 @@ package org.qstuff.qplayer;
 
 import org.qstuff.qplayer.ui.content.ContentFragment;
 import org.qstuff.qplayer.ui.player.PlayerFragment;
-import org.qstuff.qplayer.ui.player.QNativePlayerFragment;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -49,14 +47,7 @@ public class QPlayerMainActivity extends FragmentActivity {
         FragmentTransaction ft;
         ft = fm.beginTransaction();
 
-        Fragment frg;
-        
-        if (BuildConfig.USE_NATIVE_PLAYER) {
-            frg = new QNativePlayerFragment();
-        } else {
-            frg = new PlayerFragment();
-        }
-
+        PlayerFragment frg = PlayerFragment.newInstance(BuildConfig.PLAYER_TYPE);
         ft.replace(R.id.player_area, frg);
         
         ContentFragment contentFragment = new ContentFragment();

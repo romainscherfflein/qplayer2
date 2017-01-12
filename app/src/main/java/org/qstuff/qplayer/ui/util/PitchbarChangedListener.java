@@ -1,7 +1,5 @@
 package org.qstuff.qplayer.ui.util;
 
-import android.media.MediaPlayer;
-import android.media.PlaybackParams;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,25 +7,19 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.ui.player.QPlayerWrapper;
 
-import butterknife.InjectView;
 import timber.log.Timber;
 
-/**
- * Created by Claus Chierici (chierici@karlmax-berlin.com) on 2/6/16
- * for Karlmax Berlin GmbH & Co. KG
- * <p/>
- * Copyright (C) 2013, 2014, 2015 Karlmax Berlin GmbH & Co. KG,
- * All rights reserved.
- */
+
 public class PitchbarChangedListener 
     implements SeekBar.OnSeekBarChangeListener {
 
-    TextView    pitchControlValue;
-    MediaPlayer player;
+    private TextView       pitchControlValue;
+    private QPlayerWrapper player;
 
     public PitchbarChangedListener(@NonNull TextView pitchControlValue, 
-                                   @Nullable MediaPlayer player) {
+                                   @Nullable QPlayerWrapper player) {
         
         this.pitchControlValue = pitchControlValue;
         this.player = player;
@@ -59,7 +51,7 @@ public class PitchbarChangedListener
             Timber.d("onProgressChanged(): pitch bar value: %f", 1.0f + Math.abs(diff/100));
             
             if (player != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                player.setPlaybackParams(player.getPlaybackParams().setSpeed(1.0f + Math.abs(diff/100)));
+                player.setSpeed(1.0f + Math.abs(diff/100));
             }
         }
     }
