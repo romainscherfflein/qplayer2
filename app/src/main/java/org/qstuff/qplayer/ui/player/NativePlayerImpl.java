@@ -1,7 +1,9 @@
 package org.qstuff.qplayer.ui.player;
 
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import timber.log.Timber;
@@ -85,7 +87,8 @@ public class NativePlayerImpl
     }
 
     @Override
-    public void create(@NonNull QPlayerEventListener qPlayerEventListener) {
+    public void create(@NonNull QPlayerEventListener qPlayerEventListener,
+                       @Nullable Context ctx) {
 
         createEngine();
 

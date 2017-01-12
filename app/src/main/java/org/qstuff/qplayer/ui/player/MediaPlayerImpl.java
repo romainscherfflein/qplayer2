@@ -1,9 +1,11 @@
 package org.qstuff.qplayer.ui.player;
 
+import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,11 +26,12 @@ public class MediaPlayerImpl
 
     
     private static QPlayerWrapper instance;
+    
     private MediaPlayer           player;
     private QPlayerEventListener  qPlayerEventListener;
         
 
-    MediaPlayerImpl() {
+    private MediaPlayerImpl() {
         
     }
 
@@ -60,7 +63,8 @@ public class MediaPlayerImpl
     }
     
     @Override
-    public void create(@NonNull QPlayerEventListener qPlayerEventListener) {
+    public void create(@NonNull QPlayerEventListener qPlayerEventListener, 
+                       @Nullable Context ctx) {
         
         if (player == null) {
             player = new MediaPlayer();

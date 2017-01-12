@@ -91,6 +91,8 @@ dependencies {
     compile 'com.jakewharton.timber:timber:4.1.2'
     // Holo styling
     compile 'com.negusoft.holoaccent:library:1.0.1'
+    // Exoplayer
+    compile 'com.google.android.exoplayer:exoplayer:r2.1.1'
     // Gson
     compile 'com.google.code.gson:gson:2.5'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {

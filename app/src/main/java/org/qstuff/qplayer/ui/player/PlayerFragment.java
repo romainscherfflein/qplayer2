@@ -165,15 +165,15 @@ public class PlayerFragment extends AbstractBaseFragment
         switch (playerType) {
             case PLAYER_TYPE_ANDROID:
                 player = MediaPlayerImpl.getInstance();
-                player.create(this);
+                player.create(this, getContext());
                 break;
             case PLAYER_TYPE_NATIVE:
                 player = NativePlayerImpl.getInstance();
-                player.create(this);
+                player.create(this, getContext());
                 break;
             case PLAYER_TYPE_EXO:
                 player = ExoPlayerImpl.getInstance();
-                player.create(this);
+                player.create(this, getContext());
                 break;
             default:
                 player = null;
@@ -427,7 +427,7 @@ public class PlayerFragment extends AbstractBaseFragment
         
         if (player == null) {
             player = MediaPlayerImpl.getInstance();
-            player.create(this);
+            player.create(this, getContext());
         }
 
         player.loadTrackSync(file);
