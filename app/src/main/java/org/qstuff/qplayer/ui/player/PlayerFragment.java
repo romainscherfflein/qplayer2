@@ -166,12 +166,15 @@ public class PlayerFragment extends AbstractBaseFragment
             case PLAYER_TYPE_ANDROID:
                 player = MediaPlayerImpl.getInstance();
                 player.create(this);
-                    
                 break;
             case PLAYER_TYPE_NATIVE:
-                // TODO
+                player = NativePlayerImpl.getInstance();
+                player.create(this);
+                break;
             case PLAYER_TYPE_EXO:
-                // TODO
+                player = ExoPlayerImpl.getInstance();
+                player.create(this);
+                break;
             default:
                 player = null;
                 break;

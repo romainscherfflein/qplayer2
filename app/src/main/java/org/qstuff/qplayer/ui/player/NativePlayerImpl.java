@@ -22,7 +22,7 @@ public class NativePlayerImpl
     private QPlayerEventListener  qPlayerEventListener;
     
     //
-    // JNI methods
+    // JNI native methods
     //
 
     private native boolean createEngine();
@@ -122,7 +122,7 @@ public class NativePlayerImpl
 
     @Override
     public void seekTo(int position) {
-        seekTo(position);
+        seekToNative(position);
     }
 
     @Override
