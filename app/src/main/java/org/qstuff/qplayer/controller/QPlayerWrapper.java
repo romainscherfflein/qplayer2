@@ -1,8 +1,9 @@
-package org.qstuff.qplayer.ui.player;
+package org.qstuff.qplayer.controller;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 
 import java.io.File;
 
@@ -12,7 +13,8 @@ public interface QPlayerWrapper {
     void pause();
     void stop();
     
-    void create(@NonNull QPlayerEventListener qPlayerEventListener, @Nullable Context ctx);
+    void create(@NonNull QPlayerEventListener qPlayerEventListener, 
+                @Nullable Context ctx);
     void destroy();
     
     boolean isPlaying();

@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.ui.player;
+package org.qstuff.qplayer.controller;
 
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -21,7 +21,7 @@ public class NativePlayerImpl
     private String  currentAudioUri;
     private boolean isPlayerReady;
 
-    private QPlayerEventListener  qPlayerEventListener;
+    private QPlayerEventListener qPlayerEventListener;
     
     //
     // JNI native methods

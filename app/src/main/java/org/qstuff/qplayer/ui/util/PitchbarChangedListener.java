@@ -7,7 +7,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.ui.player.QPlayerWrapper;
+import org.qstuff.qplayer.controller.QPlayerWrapper;
 
 import timber.log.Timber;
 

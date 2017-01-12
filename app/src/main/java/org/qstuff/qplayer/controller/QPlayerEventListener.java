@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.ui.player;
+package org.qstuff.qplayer.controller;
 
 /**
  * Created by Claus Chierici (chierici@karlmax-berlin.com) on 1/12/17

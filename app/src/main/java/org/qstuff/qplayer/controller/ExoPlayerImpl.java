@@ -1,7 +1,6 @@
-package org.qstuff.qplayer.ui.player;
+package org.qstuff.qplayer.controller;
 
 import android.content.Context;
-import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,9 +24,8 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 
-import java.io.File;
 
-import timber.log.Timber;
+import java.io.File;
 
 /**
  * Created by Claus Chierici (github@antamauna.net) on 2/19/15

@@ -1,4 +1,4 @@
-package org.qstuff.qplayer.ui.player;
+package org.qstuff.qplayer.controller;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -28,7 +28,7 @@ public class MediaPlayerImpl
     private static QPlayerWrapper instance;
     
     private MediaPlayer           player;
-    private QPlayerEventListener  qPlayerEventListener;
+    private QPlayerEventListener qPlayerEventListener;
         
 
     private MediaPlayerImpl() {

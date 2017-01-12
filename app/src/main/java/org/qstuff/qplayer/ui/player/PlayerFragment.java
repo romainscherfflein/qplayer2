@@ -3,8 +3,6 @@ package org.qstuff.qplayer.ui.player;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +22,12 @@ import org.qstuff.qplayer.AbstractBaseFragment;
 import org.qstuff.qplayer.Constants;
 import org.qstuff.qplayer.QPlayerApplication;
 import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.controller.ExoPlayerImpl;
+import org.qstuff.qplayer.controller.MediaPlayerImpl;
+import org.qstuff.qplayer.controller.NativePlayerImpl;
 import org.qstuff.qplayer.controller.PlayListController;
+import org.qstuff.qplayer.controller.QPlayerEventListener;
+import org.qstuff.qplayer.controller.QPlayerWrapper;
 import org.qstuff.qplayer.data.Track;
 import org.qstuff.qplayer.events.PlayQueueUpdateEvent;
 import org.qstuff.qplayer.events.TrackSelectedFromQueueEvent;
@@ -34,7 +37,6 @@ import org.qstuff.qplayer.ui.util.VerticalSeekBar;
 import org.qstuff.qplayer.util.TrackUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
@@ -117,7 +119,7 @@ public class PlayerFragment extends AbstractBaseFragment
     @Inject PlayListController playListController;
 
 
-    private QPlayerWrapper   player;
+    private QPlayerWrapper player;
     
     private boolean          isPrepared;
     private boolean          isPlaying;
