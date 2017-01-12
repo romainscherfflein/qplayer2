@@ -8,7 +8,7 @@ android {
     defaultConfig {
         applicationId "org.qstuff.qplayer"
 
-        minSdkVersion 23
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 15
         versionName "1.0.0"
@@ -60,11 +60,7 @@ android {
         }
         
         androidPlayer {
-<<<<<<< Updated upstream
             buildConfigField 'boolean', 'USE_NATIVE_PLAYER', 'false'
-=======
-            buildConfigField 'int', 'PLAYER_TYPE', '1'
->>>>>>> Stashed changes
         }
     }
     

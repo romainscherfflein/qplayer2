@@ -2,6 +2,7 @@ package org.qstuff.qplayer.ui.util;
 
 import android.media.MediaPlayer;
 import android.media.PlaybackParams;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.SeekBar;
@@ -57,10 +58,9 @@ public class PitchbarChangedListener
             Timber.d("onProgressChanged(): pitch bar value: %f", diff);
             Timber.d("onProgressChanged(): pitch bar value: %f", 1.0f + Math.abs(diff/100));
             
-            if (player != null) {
+            if (player != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 player.setPlaybackParams(player.getPlaybackParams().setSpeed(1.0f + Math.abs(diff/100)));
             }
-            
         }
     }
 

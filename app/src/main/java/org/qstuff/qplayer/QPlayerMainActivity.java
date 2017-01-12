@@ -4,6 +4,7 @@ import org.qstuff.qplayer.ui.content.ContentFragment;
 import org.qstuff.qplayer.ui.player.PlayerFragment;
 import org.qstuff.qplayer.ui.player.QNativePlayerFragment;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -39,7 +40,9 @@ public class QPlayerMainActivity extends FragmentActivity {
 
         ButterKnife.inject(this);
         
-        // setFragmentHeights();
+        if(getResources().getBoolean(R.bool.is_phone)){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         
         // load fragments dynamically
         FragmentManager fm = getSupportFragmentManager();
@@ -48,9 +51,9 @@ public class QPlayerMainActivity extends FragmentActivity {
 
         Fragment frg;
         
-        if (BuildConfig.PLAYER_TYPE == 0) {
+        if (BuildConfig.USE_NATIVE_PLAYER) {
             frg = new QNativePlayerFragment();
-        } else if (BuildConfig.PLAYER_TYPE == 1) {
+        } else {
             frg = new PlayerFragment();
         }
 
@@ -59,7 +62,9 @@ public class QPlayerMainActivity extends FragmentActivity {
         ContentFragment contentFragment = new ContentFragment();
         ft.replace(R.id.browser_area, contentFragment);
 
-        ft.commitAllowingStateLoss();QPlayerApplication.getInstance().collectScreenStats();
+        ft.commitAllowingStateLoss();
+        
+        QPlayerApplication.getInstance().collectScreenStats();
     }
 
     private void setFragmentHeights() {
