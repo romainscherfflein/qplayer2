@@ -136,6 +136,8 @@ public class PlayerFragment extends AbstractBaseFragment
     private boolean          isRepeatOneEnabled;
     private boolean          isShufflePlayEnabled;
     private boolean          showRemainingTime;
+    
+    private int              playerType;
 
 
     public static PlayerFragment newInstance(int playerType) {
@@ -162,26 +164,9 @@ public class PlayerFragment extends AbstractBaseFragment
         isPrepared = false;
 
         Bundle args = getArguments();
-        int playerType = args.getInt(ARG_PLAYER_TYPE, -1);
+        playerType = args.getInt(ARG_PLAYER_TYPE, -1);
+        createPlayer();
         
-        switch (playerType) {
-            case PLAYER_TYPE_ANDROID:
-                player = MediaPlayerImpl.getInstance();
-                player.create(this, getContext());
-                break;
-            case PLAYER_TYPE_NATIVE:
-                player = NativePlayerImpl.getInstance();
-                player.create(this, getContext());
-                break;
-            case PLAYER_TYPE_EXO:
-                player = ExoPlayerImpl.getInstance();
-                player.create(this, getContext());
-                break;
-            default:
-                player = null;
-                break;
-        }
-
         trackList = new ArrayList<>();
     }
 
@@ -243,17 +228,19 @@ public class PlayerFragment extends AbstractBaseFragment
         super.onResume(); 
         Timber.d("onResume()");
 
-        trackList    = restoreTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST);
-        isPlaying    = restoreState(Constants.PREFS_KEY_PLAYER_IS_PLAYING);
+        trackList             = restoreTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST);
+        isPlaying             = restoreState(Constants.PREFS_KEY_PLAYER_IS_PLAYING);
         int currentTrackIndex = restoreIndex(Constants.PREFS_KEY_PLAYER_CURRENT_INDEX);       
         
-        if (trackList == null)
+        if (trackList == null) {
             trackList = new ArrayList<>();
+        }
         
         if (!player.isPlaying()
             &! trackList.isEmpty()
-            && currentTrackIndex >= 0)
+            && currentTrackIndex >= 0) {
             loadTrack(currentTrackIndex);
+        }
     }
 
     @Override
@@ -273,6 +260,28 @@ public class PlayerFragment extends AbstractBaseFragment
         bus.unregister(this);
     }
 
+    private void createPlayer() {
+        
+        switch (playerType) {
+            case PLAYER_TYPE_ANDROID:
+                player = MediaPlayerImpl.getInstance();
+                player.create(this, getContext());
+                break;
+            case PLAYER_TYPE_NATIVE:
+                player = NativePlayerImpl.getInstance();
+                player.create(this, getContext());
+                break;
+            case PLAYER_TYPE_EXO:
+                player = ExoPlayerImpl.getInstance();
+                player.create(this, getContext());
+                break;
+            default:
+                player = null;
+                break;
+        }        
+    }
+    
+    
     //
     // Event Subscriptions
     //
@@ -428,8 +437,7 @@ public class PlayerFragment extends AbstractBaseFragment
         isPrepared = false;
         
         if (player == null) {
-            player = MediaPlayerImpl.getInstance();
-            player.create(this, getContext());
+            createPlayer();
         }
 
         player.loadTrackSync(file);

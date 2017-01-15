@@ -49,23 +49,27 @@ public class MediaPlayerImpl
     
     @Override
     public void play() {
+        Timber.d("play():");
         player.start();
     }
 
     @Override
     public void pause() {
+        Timber.d("pause():");
         player.pause();
     }
 
     @Override
     public void stop() {
+        Timber.d("stop():");
         player.stop();
     }
     
     @Override
     public void create(@NonNull QPlayerEventListener qPlayerEventListener, 
                        @Nullable Context ctx) {
-        
+        Timber.d("create():");
+
         if (player == null) {
             player = new MediaPlayer();
         }

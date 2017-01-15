@@ -1,6 +1,7 @@
 package org.qstuff.qplayer.controller;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +16,9 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -23,9 +27,14 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 
 import java.io.File;
+import java.io.IOException;
+
+import timber.log.Timber;
 
 /**
  * Created by Claus Chierici (github@antamauna.net) on 2/19/15
@@ -35,52 +44,62 @@ import java.io.File;
 public class ExoPlayerImpl
     implements QPlayerWrapper,
     ExoPlayer.EventListener,
-    AudioRendererEventListener {
+    AudioRendererEventListener,
+    ExtractorMediaSource.EventListener {
 
 
     private static ExoPlayerImpl instance;
-    
     private SimpleExoPlayer      exoPlayer;
     private QPlayerEventListener qPlayerEventListener;
+
+    private Handler mainHandler;
+    
+    private Context ctx;
     
     
     private ExoPlayerImpl() {
-        
+        mainHandler = new Handler(); 
     }
 
     public static ExoPlayerImpl getInstance() {
 
     	if (instance == null) {
 			instance = new ExoPlayerImpl();
-		}
+		} 
 		return instance;
     }
-
+    
     //
     // QPlayerWrapper
     //
 
     @Override
     public void play() {
+        Timber.d("play():");
         exoPlayer.setPlayWhenReady(true);
     }
 
     @Override
     public void pause() {
+        Timber.d("pause():");
         exoPlayer.setPlayWhenReady(false);
     }
 
     @Override
     public void stop() {
+        Timber.d("stop():");
         exoPlayer.stop();
     }
 
     @Override
     public void create(@NonNull  QPlayerEventListener qPlayerEventListener, 
                        @Nullable Context ctx) {
+        Timber.d("create():");
 
         this.qPlayerEventListener = qPlayerEventListener;
-        
+        if (this.ctx == null) {
+            this.ctx = ctx;
+        }
         // 1. Create a default TrackSelector
         Handler mainHandler = new Handler();
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
@@ -93,7 +112,7 @@ public class ExoPlayerImpl
         LoadControl loadControl = new DefaultLoadControl();
 
         // 3. Create the player
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(ctx, trackSelector, loadControl);
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(this.ctx, trackSelector, loadControl);
         
         exoPlayer.addListener(this);
         exoPlayer.setAudioDebugListener(this);
@@ -101,7 +120,10 @@ public class ExoPlayerImpl
 
     @Override
     public void destroy() {
-
+        ctx = null;
+        mainHandler = null;
+        exoPlayer.release();
+        exoPlayer = null;
     }
 
     @Override
@@ -142,7 +164,16 @@ public class ExoPlayerImpl
 
     @Override
     public void loadTrackSync(@NonNull File file) {
+        Uri uri = Uri.parse(file.getAbsolutePath());
+        String userAgent = Util.getUserAgent(this.ctx, "qplayer");
+        MediaSource mediaSource = new ExtractorMediaSource(
+            uri,
+            new DefaultDataSourceFactory(this.ctx, userAgent),
+            new DefaultExtractorsFactory(),
+            mainHandler,
+            this);
         
+        exoPlayer.prepare(mediaSource);
     }
 
     //
@@ -211,5 +242,14 @@ public class ExoPlayerImpl
     @Override
     public void onAudioDisabled(DecoderCounters counters) {
 
+    }
+
+    //
+    // ExtractorMediaSource.EventListener
+    //
+    
+    @Override
+    public void onLoadError(IOException error) {
+        Timber.e(error, "ExtractorMediaSource.onLoadError()");
     }
 }
