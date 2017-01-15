@@ -174,6 +174,7 @@ public class ExoPlayerImpl
             this);
         
         exoPlayer.prepare(mediaSource);
+        pause();
     }
 
     //
@@ -182,31 +183,34 @@ public class ExoPlayerImpl
     
     @Override
     public void onTimelineChanged(Timeline timeline, Object manifest) {
-
+        Timber.d("ExoPlayer.EventListener.onTimelineChanged()");
     }
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
+        Timber.d("ExoPlayer.EventListener.onTracksChanged()");
     }
 
     @Override
     public void onLoadingChanged(boolean isLoading) {
-        
+        Timber.d("ExoPlayer.EventListener.onLoadingChanged()");
     }
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
+        Timber.d("ExoPlayer.EventListener.onPlayerStateChanged()");
     }
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
+        Timber.d("ExoPlayer.EventListener.onPlayerError()");
+
         qPlayerEventListener.onError();
     }
 
     @Override
     public void onPositionDiscontinuity() {
+        Timber.d("ExoPlayer.EventListener.onPositionDiscontinuity()");
 
     }
 
@@ -216,31 +220,41 @@ public class ExoPlayerImpl
     
     @Override
     public void onAudioEnabled(DecoderCounters counters) {
+        Timber.d("AudioRendererEventListener.onAudioEnabled()");
 
     }
 
     @Override
     public void onAudioSessionId(int audioSessionId) {
+        Timber.d("AudioRendererEventListener.onAudioSessionId()");
 
     }
 
     @Override
-    public void onAudioDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
+    public void onAudioDecoderInitialized(String decoderName, 
+                                          long initializedTimestampMs, 
+                                          long initializationDurationMs) {
+        Timber.d("AudioRendererEventListener.onAudioDecoderInitialized()");
         
     }
 
     @Override
     public void onAudioInputFormatChanged(Format format) {
+        Timber.d("AudioRendererEventListener.onAudioInputFormatChanged()");
 
     }
 
     @Override
-    public void onAudioTrackUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs) {
+    public void onAudioTrackUnderrun(int bufferSize, 
+                                     long bufferSizeMs, 
+                                     long elapsedSinceLastFeedMs) {
+        Timber.d("AudioRendererEventListener.onAudioTrackUnderrun()");
 
     }
 
     @Override
     public void onAudioDisabled(DecoderCounters counters) {
+        Timber.d("AudioRendererEventListener.onAudioDisabled()");
 
     }
 
