@@ -12,4 +12,6 @@ public interface QPlayerEventListener {
 
     void onError();
     void onCompletion();
+    void onPitchControllChanged(int progress);
+    void onPrepared(boolean prepared);
 }

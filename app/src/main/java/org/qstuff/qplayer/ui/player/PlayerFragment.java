@@ -3,6 +3,7 @@ package org.qstuff.qplayer.ui.player;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -333,7 +334,7 @@ public class PlayerFragment extends AbstractBaseFragment
         loadTrack(event.indexTrackImmediatePlay < 0 ? nextIndex : event.indexTrackImmediatePlay);
         saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, trackList);
     }
-    
+
     //
     // Private
     //
@@ -411,7 +412,8 @@ public class PlayerFragment extends AbstractBaseFragment
     }
  
     private void updateWaveformUI(final int total, final int currentPosition) {
-        
+        Timber.d("updateWaveformUI(): total %d, current %d", total, currentPosition);
+
         getActivity().runOnUiThread(new Runnable() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -441,10 +443,9 @@ public class PlayerFragment extends AbstractBaseFragment
         }
 
         player.loadTrackSync(file);
-        
-        onPrepared();
-        
-        pitchControl.setOnSeekBarChangeListener(new PitchbarChangedListener(pitchControlValue, player));
+
+        pitchControl.setOnSeekBarChangeListener(
+            new PitchbarChangedListener(this));
     }
 
     @SuppressLint("SetTextI18n")
@@ -635,7 +636,7 @@ public class PlayerFragment extends AbstractBaseFragment
     }
 
     //
-    // MediaPlayerImpl.QPlayerEventListener
+    // QPlayerEventListener
     // 
     
     @Override
@@ -693,7 +694,45 @@ public class PlayerFragment extends AbstractBaseFragment
             shallPlayImmediately = false;
         }
     }
-    
+
+    @Override
+    public void onPitchControllChanged(int progress) {
+        Timber.d("onProgressChanged():");
+
+        float diff = progress - 50;
+
+        // float currPitch = (float) (((float)diff / ((float)100) * 2.0f * pitchFaktor));
+        String pre = diff > 0 ? "+":"";
+        if (diff == 0)
+            pre = "   ";
+        if (diff < 10 && diff > 0)
+            pre = "  +";
+        if (diff > -10 && diff < 0)
+            pre = "  ";
+
+        String pitch = String.format(" " + pre + "%02.01f", diff);
+
+        // player.setPlaybackRate(1000 + (diff * pitchRange));
+        pitchControlValue.setText(pitch + " %");
+
+        Timber.d("onProgressChanged(): pitch bar value: %f", diff);
+        Timber.d("onProgressChanged(): pitch bar value: %f", 1.0f + Math.abs(diff/100));
+
+        if (player != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            player.setSpeed(1.0f + Math.abs(diff/100));
+        }
+    }
+
+    @Override
+    public void onPrepared(boolean prepared) {
+        Timber.d("onPrepared(): %s", prepared);
+
+        isPrepared = prepared;
+        if (isPrepared) {
+            onPrepared();
+        }
+    }
+
     //
     //  OnItemSelectedListener
     //
@@ -733,6 +772,7 @@ public class PlayerFragment extends AbstractBaseFragment
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
+
             if (isPrepared) {
                 int currentPosition = TrackUtils.progressToTimer(seekBar.getProgress(), 
                     player.getDuration());

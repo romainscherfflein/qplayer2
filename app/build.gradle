@@ -38,12 +38,16 @@ android {
         
         debug {
             applicationIdSuffix '.dev'
-            versionNameSuffix "-dev"
+            versionNameSuffix
+
+            signingConfig android.signingConfigs.debug;
         }
         
         beta {
             applicationIdSuffix '.beta'
             versionNameSuffix "-beta"
+
+            signingConfig android.signingConfigs.debug;
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'

@@ -51,11 +51,9 @@ public class ExoPlayerImpl
     private static ExoPlayerImpl instance;
     private SimpleExoPlayer      exoPlayer;
     private QPlayerEventListener qPlayerEventListener;
-
-    private Handler mainHandler;
-    
-    private Context ctx;
-    
+    private Handler              mainHandler;
+    private Context              ctx;
+    private boolean              prepared;
     
     private ExoPlayerImpl() {
         mainHandler = new Handler(); 
@@ -100,6 +98,8 @@ public class ExoPlayerImpl
         if (this.ctx == null) {
             this.ctx = ctx;
         }
+        prepared = false;
+
         // 1. Create a default TrackSelector
         Handler mainHandler = new Handler();
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
@@ -164,6 +164,11 @@ public class ExoPlayerImpl
 
     @Override
     public void loadTrackSync(@NonNull File file) {
+        Timber.d("loadTrackSync(): %s", file.getAbsolutePath());
+
+        prepared = false;
+        qPlayerEventListener.onPrepared(prepared);
+
         Uri uri = Uri.parse(file.getAbsolutePath());
         String userAgent = Util.getUserAgent(this.ctx, "qplayer");
         MediaSource mediaSource = new ExtractorMediaSource(
@@ -198,7 +203,12 @@ public class ExoPlayerImpl
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        Timber.d("ExoPlayer.EventListener.onPlayerStateChanged()");
+        Timber.d("ExoPlayer.EventListener.onPlayerStateChanged(): ");
+
+        if (playbackState == ExoPlayer.STATE_READY && !prepared) {
+            prepared = true;
+            qPlayerEventListener.onPrepared(prepared);
+        }
     }
 
     @Override
