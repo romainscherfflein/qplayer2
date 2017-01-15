@@ -412,7 +412,7 @@ public class PlayerFragment extends AbstractBaseFragment
     }
  
     private void updateWaveformUI(final int total, final int currentPosition) {
-        Timber.d("updateWaveformUI(): total %d, current %d", total, currentPosition);
+        Timber.v("updateWaveformUI(): total %d, current %d", total, currentPosition);
 
         getActivity().runOnUiThread(new Runnable() {
             @SuppressLint("SetTextI18n")
@@ -615,23 +615,23 @@ public class PlayerFragment extends AbstractBaseFragment
     public void onDynamicTimeTextViewClicked() {
         Timber.d("onDynamicTimeTextViewClicked(): %d", trackList.size());
 
-        if (showRemainingTime)
-            showRemainingTime = false;
-        else
-            showRemainingTime = true;
+        showRemainingTime = !showRemainingTime;
 
         if (!isPlaying) {
-            if (showRemainingTime)
-                if (isPrepared)
+
+            if (showRemainingTime) {
+                if (isPrepared) {
                     textDynamicTime.setText("remain: " +
-                        TrackUtils.milisecondsToTimeFormattedString(0));
-                else
-                    textDynamicTime.setText("remain: " + 
-                        TrackUtils.milisecondsToTimeFormattedString(
-                        player.getDuration()));
-            else
+                                                TrackUtils.milisecondsToTimeFormattedString(0));
+                } else {
+                    textDynamicTime.setText("remain: " +
+                                                TrackUtils.milisecondsToTimeFormattedString(
+                                                    player.getDuration()));
+                }
+            } else {
                 textDynamicTime.setText("current: " +
-                    TrackUtils.milisecondsToTimeFormattedString(0));
+                                            TrackUtils.milisecondsToTimeFormattedString(0));
+            }
         }
     }
 
@@ -646,7 +646,7 @@ public class PlayerFragment extends AbstractBaseFragment
 
     @Override
     public void onCompletion() {
-        Timber.d("onCompletion(): tracklist size: " + trackList.size());
+        Timber.d("onCompletion(): tracklist size: %d", trackList.size());
 
         int currentTrackIndex = trackList.indexOf(currentTrack);
         int lastIndex = trackList.size() -1;
