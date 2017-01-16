@@ -719,7 +719,7 @@ public class PlayerFragment extends AbstractBaseFragment
         Timber.d("onProgressChanged(): pitch bar value: %f", 1.0f + Math.abs(diff/100));
 
         if (player != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            player.setSpeed(1.0f + Math.abs(diff/100));
+            player.setSpeed(1.0f + (diff/100));
         }
     }
 

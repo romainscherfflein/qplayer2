@@ -30,7 +30,6 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-
 import java.io.File;
 import java.io.IOException;
 
@@ -46,7 +45,6 @@ public class ExoPlayerImpl
     ExoPlayer.EventListener,
     AudioRendererEventListener,
     ExtractorMediaSource.EventListener {
-
 
     private static ExoPlayerImpl instance;
     private SimpleExoPlayer      exoPlayer;
@@ -123,6 +121,7 @@ public class ExoPlayerImpl
         ctx = null;
         mainHandler = null;
         exoPlayer.release();
+        exoPlayer.removeListener(this);
         exoPlayer = null;
     }
 
@@ -138,13 +137,13 @@ public class ExoPlayerImpl
 
     @Override
     public void setSpeed(float factor) {
-        // TODO:
+        Timber.d("setSpeed(): %f", factor);
+        exoPlayer.setPlaybackSpeed(factor);
     }
 
     @Override
     public void setPitch(float factor) {
         // TODO     
-        // setPitchNative((int)factor);
     }
 
     @Override
@@ -166,11 +165,11 @@ public class ExoPlayerImpl
     public void loadTrackSync(@NonNull File file) {
         Timber.d("loadTrackSync(): %s", file.getAbsolutePath());
 
-        prepared = false;
-        qPlayerEventListener.onPrepared(prepared);
+        qPlayerEventListener.onPrepared(prepared = false);
 
         Uri uri = Uri.parse(file.getAbsolutePath());
         String userAgent = Util.getUserAgent(this.ctx, "qplayer");
+
         MediaSource mediaSource = new ExtractorMediaSource(
             uri,
             new DefaultDataSourceFactory(this.ctx, userAgent),
@@ -180,6 +179,7 @@ public class ExoPlayerImpl
         
         exoPlayer.prepare(mediaSource);
         pause();
+        
     }
 
     //
