@@ -18,7 +18,6 @@ import org.qstuff.qplayer.ui.content.QueueBrowserFragment;
 import org.qstuff.qplayer.ui.content.FilesystemBrowserFragment;
 import org.qstuff.qplayer.ui.content.PlaylistBrowserFragment;
 import org.qstuff.qplayer.ui.player.PlayerFragment;
-import org.qstuff.qplayer.ui.player.QNativePlayerFragment;
 import org.qstuff.qplayer.util.TimberCrashReportingTree;
 
 import javax.inject.Singleton;
@@ -71,7 +70,6 @@ public class QPlayerApplication extends Application {
     @Module(injects = {
             Bus.class,
             QPlayerMainActivity.class,
-            QNativePlayerFragment.class,
             PlayerFragment.class,
             FilesystemBrowserFragment.class,
             AbstractBaseFragment.class,

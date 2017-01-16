@@ -71,7 +71,7 @@ public class AbstractBaseFragment extends Fragment {
     }
 
     @Nullable
-    protected ArrayList restoreTrackList(@NonNull String key) {
+    protected ArrayList<Track> restoreTrackList(@NonNull String key) {
 
         Gson gson = new Gson();
         String json = preferences.getString(key, "");

@@ -3,8 +3,7 @@ package org.qstuff.qplayer.ui.player;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,9 +23,13 @@ import org.qstuff.qplayer.AbstractBaseFragment;
 import org.qstuff.qplayer.Constants;
 import org.qstuff.qplayer.QPlayerApplication;
 import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.controller.ExoPlayerImpl;
+import org.qstuff.qplayer.controller.MediaPlayerImpl;
+import org.qstuff.qplayer.controller.NativePlayerImpl;
 import org.qstuff.qplayer.controller.PlayListController;
+import org.qstuff.qplayer.controller.QPlayerEventListener;
+import org.qstuff.qplayer.controller.QPlayerWrapper;
 import org.qstuff.qplayer.data.Track;
-import org.qstuff.qplayer.events.TrackSelectedFromFilesEvent;
 import org.qstuff.qplayer.events.PlayQueueUpdateEvent;
 import org.qstuff.qplayer.events.TrackSelectedFromQueueEvent;
 import org.qstuff.qplayer.events.TrackSelectedToPlayEvent;
@@ -35,7 +38,6 @@ import org.qstuff.qplayer.ui.util.VerticalSeekBar;
 import org.qstuff.qplayer.util.TrackUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
@@ -55,12 +57,14 @@ import timber.log.Timber;
  */
 public class PlayerFragment extends AbstractBaseFragment
 	implements AdapterView.OnItemSelectedListener,
-               MediaPlayer.OnPreparedListener,
-               MediaPlayer.OnErrorListener,
-               MediaPlayer.OnCompletionListener {
+               QPlayerEventListener {
     
-    @Inject Bus bus;
-    @Inject PlayListController playListController;
+    private static final String ARG_PLAYER_TYPE = "ARG_PLAYER_TYPE";
+    
+    private static final int PLAYER_TYPE_ANDROID = 0;
+    private static final int PLAYER_TYPE_EXO     = 1;
+    private static final int PLAYER_TYPE_NATIVE  = 2;
+
 
     //
     // UI Elements
@@ -110,8 +114,14 @@ public class PlayerFragment extends AbstractBaseFragment
 
     @InjectView(R.id.pitch_range_setting)
     Spinner pitchRangeSetting;
+
+
+    @Inject Bus bus;
+    @Inject PlayListController playListController;
+
+
+    private QPlayerWrapper player;
     
-    private MediaPlayer      player;
     private boolean          isPrepared;
     private boolean          isPlaying;
     private boolean          shallPlayImmediately;
@@ -127,8 +137,21 @@ public class PlayerFragment extends AbstractBaseFragment
     private boolean          isRepeatOneEnabled;
     private boolean          isShufflePlayEnabled;
     private boolean          showRemainingTime;
+    
+    private int              playerType;
 
 
+    public static PlayerFragment newInstance(int playerType) {
+
+        PlayerFragment myFragment = new PlayerFragment();
+
+        Bundle args = new Bundle();
+        args.putInt(ARG_PLAYER_TYPE, playerType);
+        myFragment.setArguments(args);
+
+        return myFragment;
+    }
+    
     //
     // Fragment Lifecycle
     //
@@ -139,14 +162,13 @@ public class PlayerFragment extends AbstractBaseFragment
         Timber.d("onCreate():");
 
         bus.register(this);
-        
         isPrepared = false;
 
-        if (player == null)
-            player = new MediaPlayer();
-        player.reset();
-
-        trackList = new ArrayList<Track>();
+        Bundle args = getArguments();
+        playerType = args.getInt(ARG_PLAYER_TYPE, -1);
+        createPlayer();
+        
+        trackList = new ArrayList<>();
     }
 
     @Override
@@ -157,9 +179,6 @@ public class PlayerFragment extends AbstractBaseFragment
         View v = inflater.inflate(R.layout.player_fragment, container, false);
         ButterKnife.inject(this, v);
 
-        pitchControl.setOnSeekBarChangeListener(
-            new PitchbarChangedListener(pitchControlValue));
-        
         playerWaveform.setOnSeekBarChangeListener(new WaveformChangedListener());
         
         jogView.setWheelListener(new JogWheelImageView.JogWheelListener() {
@@ -210,17 +229,19 @@ public class PlayerFragment extends AbstractBaseFragment
         super.onResume(); 
         Timber.d("onResume()");
 
-        trackList    = restoreTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST);
-        isPlaying    = restoreState(Constants.PREFS_KEY_PLAYER_IS_PLAYING);
+        trackList             = restoreTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST);
+        isPlaying             = restoreState(Constants.PREFS_KEY_PLAYER_IS_PLAYING);
         int currentTrackIndex = restoreIndex(Constants.PREFS_KEY_PLAYER_CURRENT_INDEX);       
         
-        if (trackList == null)
+        if (trackList == null) {
             trackList = new ArrayList<>();
+        }
         
         if (!player.isPlaying()
             &! trackList.isEmpty()
-            && currentTrackIndex >= 0)
+            && currentTrackIndex >= 0) {
             loadTrack(currentTrackIndex);
+        }
     }
 
     @Override
@@ -240,13 +261,35 @@ public class PlayerFragment extends AbstractBaseFragment
         bus.unregister(this);
     }
 
+    private void createPlayer() {
+        
+        switch (playerType) {
+            case PLAYER_TYPE_ANDROID:
+                player = MediaPlayerImpl.getInstance();
+                player.create(this, getContext());
+                break;
+            case PLAYER_TYPE_NATIVE:
+                player = NativePlayerImpl.getInstance();
+                player.create(this, getContext());
+                break;
+            case PLAYER_TYPE_EXO:
+                player = ExoPlayerImpl.getInstance();
+                player.create(this, getContext());
+                break;
+            default:
+                player = null;
+                break;
+        }        
+    }
+    
+    
     //
     // Event Subscriptions
     //
         
     @Subscribe
     public void onTrackSelectedFromQueueEvent(TrackSelectedFromQueueEvent event) {
-        Timber.d("onTrackSelectedFromQueueEvent(): " + event.track.getName());
+        Timber.d("onTrackSelectedFromQueueEvent(): %s", event.track.getName());
 
         int trackIndex = TrackUtils.trackListContainsTrack(trackList, event.track);
         
@@ -261,8 +304,8 @@ public class PlayerFragment extends AbstractBaseFragment
 
     @Subscribe
     public void onPlayQueueUpdateEvent(PlayQueueUpdateEvent event) {
-        Timber.d("onPlayQueueUpdateEvent(): size: " + event.tracks.size());
-        Timber.d("onPlayQueueUpdateEvent(): play: " + event.indexTrackImmediatePlay);
+        Timber.d("onPlayQueueUpdateEvent(): size: %s", event.tracks.size());
+        Timber.d("onPlayQueueUpdateEvent(): play: %s", event.indexTrackImmediatePlay);
 
 
         int nextIndex = -1;
@@ -291,13 +334,13 @@ public class PlayerFragment extends AbstractBaseFragment
         loadTrack(event.indexTrackImmediatePlay < 0 ? nextIndex : event.indexTrackImmediatePlay);
         saveTrackList(Constants.PREFS_KEY_QUEUE_TRACKLIST, trackList);
     }
-    
+
     //
     // Private
     //
 
     private void loadTrack(int index) {
-        Timber.d("loadTrack(): index: " + index);
+        Timber.d("loadTrack(): index: %d", index);
 
         cleanupPlayer();
         
@@ -318,35 +361,33 @@ public class PlayerFragment extends AbstractBaseFragment
         saveIndex(Constants.PREFS_KEY_PLAYER_CURRENT_INDEX, index);
     }
 
+    @SuppressLint("SetTextI18n")
     private void cleanupPlayer() {
         Timber.d("cleanupPlayer():");
 
         if (showRemainingTime) {
-            textDynamicTime.setText("remain: " +
-                TrackUtils.milisecondsToTimeFormattedString(0));
+            textDynamicTime.setText("remain: " + TrackUtils.milisecondsToTimeFormattedString(0));
         } else {
-            textDynamicTime.setText("current: " +
-                TrackUtils.milisecondsToTimeFormattedString(0));
+            textDynamicTime.setText("current: " + TrackUtils.milisecondsToTimeFormattedString(0));
         }
         
-        textTotalTime.setText("total: " +
-            TrackUtils.milisecondsToTimeFormattedString(0));
+        textTotalTime.setText("total: " + TrackUtils.milisecondsToTimeFormattedString(0));
         
         textCurrentTrack.setText(getString(R.string.player_no_track_loaded));
         
         if (player != null) {
             
             resetUpdateTimer();
-            player.stop();
-            player.release();
+            player.destroy();
             player = null;
+
             isPrepared = false;
             isPlaying = false;
         }
     }
 
-
     private void resetUpdateTimer() {
+        
         if (updateTimer != null) {
             updateTimer.cancel();
             updateTimer = null;
@@ -371,18 +412,19 @@ public class PlayerFragment extends AbstractBaseFragment
     }
  
     private void updateWaveformUI(final int total, final int currentPosition) {
-        
+        Timber.v("updateWaveformUI(): total %d, current %d", total, currentPosition);
+
         getActivity().runOnUiThread(new Runnable() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void run() {
 
                 if (isPlaying) {
-                    if (showRemainingTime)
-                        textDynamicTime.setText("remain: " +
-                            (TrackUtils.milisecondsToTimeFormattedString(total - currentPosition)));
-                    else
-                        textDynamicTime.setText("current: " +
-                            (TrackUtils.milisecondsToTimeFormattedString(currentPosition)));
+                    if (showRemainingTime) {
+                        textDynamicTime.setText("remain: " + (TrackUtils.milisecondsToTimeFormattedString(total - currentPosition)));
+                    } else {
+                        textDynamicTime.setText("current: " + (TrackUtils.milisecondsToTimeFormattedString(currentPosition)));
+                    }
                 }
 
                 int progress = TrackUtils.getProgressPercentage(currentPosition, total);
@@ -392,25 +434,44 @@ public class PlayerFragment extends AbstractBaseFragment
     }
     
     private void preparePlayer(File file) {
-        Timber.d("preparePlayer(): " + file.getAbsolutePath());
+        Timber.d("preparePlayer(): %s", file.getAbsolutePath());
         
         isPrepared = false;
         
         if (player == null) {
-            player = new MediaPlayer();
+            createPlayer();
         }
 
-        try {
-            player.setDataSource(file.getAbsolutePath());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
+        player.loadTrackSync(file);
+
+        pitchControl.setOnSeekBarChangeListener(
+            new PitchbarChangedListener(this));
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void onPrepared() {
+        Timber.d("onPrepared(): play now: %s", shallPlayImmediately);
+
+        isPrepared = true;
+
+        int duration = player.getDuration();
+
+        textTotalTime.setText("total: " + TrackUtils.milisecondsToTimeFormattedString(duration));
+        
+        if (showRemainingTime) {
+            textDynamicTime.setText("remain: " + TrackUtils.milisecondsToTimeFormattedString(duration));
+        } else {
+            textDynamicTime.setText("current: " + TrackUtils.milisecondsToTimeFormattedString(0));
         }
-        player.setOnPreparedListener(this);
-        player.setOnCompletionListener(this);
-        player.setOnErrorListener(this);
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        player.prepareAsync();
+        
+        if (!updateTaskRunning) {
+            startUpdateTimer();
+        }
+
+        if (shallPlayImmediately) {
+            onPlayButtonClicked();
+            shallPlayImmediately = false;
+        }
     }
 
     //
@@ -430,12 +491,14 @@ public class PlayerFragment extends AbstractBaseFragment
         
         if (isPrepared) {
             if (player.isPlaying()) {
+                
                 player.pause();
                 buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play_selected));
                 isPlaying = false;
 
             } else {
-                player.start();
+                
+                player.play();
                 buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_pause_selected));
                 isPlaying = true;
             }
@@ -446,22 +509,26 @@ public class PlayerFragment extends AbstractBaseFragment
 
     @OnClick(R.id.player_button_repeat)
     public void onRepeatButtonClicked() {
-        Timber.d("onRepeatButtonClicked(): all: " + isRepeatAllEnabled);
-        Timber.d("onRepeatButtonClicked(): one: " + isRepeatOneEnabled);
+        Timber.d("onRepeatButtonClicked(): all: %s", isRepeatAllEnabled);
+        Timber.d("onRepeatButtonClicked(): one: %s", isRepeatOneEnabled);
 
         if (isRepeatAllEnabled) {
             
             if (isRepeatOneEnabled) {
+            
                 buttonRepeat.setImageDrawable(getResources().getDrawable(R.drawable.button_loop));
                 isRepeatAllEnabled = false;
                 isRepeatOneEnabled = false;
+            
             } else {
+            
                 buttonRepeat.setImageDrawable(getResources().getDrawable(R.drawable.button_loop1_selected));
                 isRepeatAllEnabled = true;
                 isRepeatOneEnabled = true;
             }
         
         } else {
+            
             buttonRepeat.setImageDrawable(getResources().getDrawable(R.drawable.button_loop_selected));
             isRepeatAllEnabled = true;
             isRepeatOneEnabled = false;
@@ -478,9 +545,12 @@ public class PlayerFragment extends AbstractBaseFragment
         Timber.d("onShuffleButtonClicked(): ");
 
         if (isShufflePlayEnabled) {
+            
             buttonShuffle.setImageDrawable(getResources().getDrawable(R.drawable.button_shuffle));
             isShufflePlayEnabled = false;
+        
         } else {
+        
             buttonShuffle.setImageDrawable(getResources().getDrawable(R.drawable.button_shuffle_selected));
             isShufflePlayEnabled = true;
 
@@ -494,7 +564,7 @@ public class PlayerFragment extends AbstractBaseFragment
 
     @OnClick(R.id.player_button_previous)
     public void onPreviousButtonClicked() {
-        Timber.d("onPreviousButtonClicked(): " + trackList.size());
+        Timber.d("onPreviousButtonClicked(): %d", trackList.size());
         
         int currentTrackIndex = trackList.indexOf(currentTrack);
         int nextIndex;
@@ -518,7 +588,7 @@ public class PlayerFragment extends AbstractBaseFragment
 
     @OnClick(R.id.player_button_next)
     public void onNextButtonClicked() {
-        Timber.d("onNextButtonClicked(): " + trackList.size());
+        Timber.d("onNextButtonClicked(): %d", trackList.size());
 
         int currentTrackIndex = trackList.indexOf(currentTrack);
         int nextIndex;
@@ -543,70 +613,40 @@ public class PlayerFragment extends AbstractBaseFragment
     @SuppressLint("SetTextI18n")
     @OnClick(R.id.player_text_dynamic_time)
     public void onDynamicTimeTextViewClicked() {
-        Timber.d("onDynamicTimeTextViewClicked(): " + trackList.size());
+        Timber.d("onDynamicTimeTextViewClicked(): %d", trackList.size());
 
-        if (showRemainingTime)
-            showRemainingTime = false;
-        else
-            showRemainingTime = true;
+        showRemainingTime = !showRemainingTime;
 
         if (!isPlaying) {
-            if (showRemainingTime)
-                if (isPrepared)
+
+            if (showRemainingTime) {
+                if (isPrepared) {
                     textDynamicTime.setText("remain: " +
-                        TrackUtils.milisecondsToTimeFormattedString(0));
-                else
-                    textDynamicTime.setText("remain: " + 
-                        TrackUtils.milisecondsToTimeFormattedString(
-                        player.getDuration()));
-            else
+                                                TrackUtils.milisecondsToTimeFormattedString(0));
+                } else {
+                    textDynamicTime.setText("remain: " +
+                                                TrackUtils.milisecondsToTimeFormattedString(
+                                                    player.getDuration()));
+                }
+            } else {
                 textDynamicTime.setText("current: " +
-                    TrackUtils.milisecondsToTimeFormattedString(0));
+                                            TrackUtils.milisecondsToTimeFormattedString(0));
+            }
         }
     }
 
     //
-    //  OnSeekbarChangeListener
-    //
-
-
-    @SuppressLint("SetTextI18n")
+    // QPlayerEventListener
+    // 
+    
     @Override
-    public void onPrepared(MediaPlayer mp) {
-        Timber.d("onPrepared(): play now: " + shallPlayImmediately);
-        
-        isPrepared = true;
-        
-        int duration = mp.getDuration();
-        
-        textTotalTime.setText("total: " +
-            TrackUtils.milisecondsToTimeFormattedString(duration));
-        if (showRemainingTime)
-            textDynamicTime.setText("remain: " +
-                TrackUtils.milisecondsToTimeFormattedString(duration));
-        else
-            textDynamicTime.setText("current: " +
-                TrackUtils.milisecondsToTimeFormattedString(0));
-
-        if (!updateTaskRunning) {
-            startUpdateTimer();
-        }
-        
-        if (shallPlayImmediately) {
-            onPlayButtonClicked();
-            shallPlayImmediately = false;
-        }
+    public void onError() {
+        Timber.d("onError(): PLAYER reorted ERROR:");
     }
 
     @Override
-    public boolean onError(MediaPlayer mp, int what, int extra) {
-        Timber.d("onError(): PLAYER reorted ERROR: " + what);
-        return false;
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-        Timber.d("onCompletion(): tracklist size: " + trackList.size());
+    public void onCompletion() {
+        Timber.d("onCompletion(): tracklist size: %d", trackList.size());
 
         int currentTrackIndex = trackList.indexOf(currentTrack);
         int lastIndex = trackList.size() -1;
@@ -654,7 +694,45 @@ public class PlayerFragment extends AbstractBaseFragment
             shallPlayImmediately = false;
         }
     }
-    
+
+    @Override
+    public void onPitchControllChanged(int progress) {
+        Timber.d("onProgressChanged():");
+
+        float diff = progress - 50;
+
+        // float currPitch = (float) (((float)diff / ((float)100) * 2.0f * pitchFaktor));
+        String pre = diff > 0 ? "+":"";
+        if (diff == 0)
+            pre = "   ";
+        if (diff < 10 && diff > 0)
+            pre = "  +";
+        if (diff > -10 && diff < 0)
+            pre = "  ";
+
+        String pitch = String.format(" " + pre + "%02.01f", diff);
+
+        // player.setPlaybackRate(1000 + (diff * pitchRange));
+        pitchControlValue.setText(pitch + " %");
+
+        Timber.d("onProgressChanged(): pitch bar value: %f", diff);
+        Timber.d("onProgressChanged(): pitch bar value: %f", 1.0f + Math.abs(diff/100));
+
+        if (player != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            player.setSpeed(1.0f + (diff/100));
+        }
+    }
+
+    @Override
+    public void onPrepared(boolean prepared) {
+        Timber.d("onPrepared(): %s", prepared);
+
+        isPrepared = prepared;
+        if (isPrepared) {
+            onPrepared();
+        }
+    }
+
     //
     //  OnItemSelectedListener
     //
@@ -694,6 +772,7 @@ public class PlayerFragment extends AbstractBaseFragment
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
+
             if (isPrepared) {
                 int currentPosition = TrackUtils.progressToTimer(seekBar.getProgress(), 
                     player.getDuration());
