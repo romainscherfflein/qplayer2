@@ -409,7 +409,7 @@ public class PlayerFragment extends AbstractBaseFragment
             public void run() {
                 updateWaveformUI(total, player.getCurrentPosition());
             }
-        }, 0, 1000);
+        }, 0, 100);
     }
  
     private void stopUpdateTimer() {
@@ -715,11 +715,10 @@ public class PlayerFragment extends AbstractBaseFragment
 
     @Override
     public void onPitchControllChanged(int progress) {
-        Timber.d("onProgressChanged():");
+        Timber.d("onProgressChanged(): %d", progress);
 
-        float diff = progress - 50;
+        float diff = progress - 500;
 
-        // float currPitch = (float) (((float)diff / ((float)100) * 2.0f * pitchFaktor));
         String pre = diff > 0 ? "+":"";
         if (diff == 0)
             pre = "   ";
@@ -730,13 +729,12 @@ public class PlayerFragment extends AbstractBaseFragment
 
         String pitch = String.format(" " + pre + "%02.01f", diff);
 
-        // player.setPlaybackRate(1000 + (diff * pitchRange));
         pitchControlValue.setText(pitch + " %");
 
         Timber.d("onProgressChanged(): pitch bar value: %f", diff);
-        Timber.d("onProgressChanged(): pitch bar value: %f", 1.0f + Math.abs(diff/100));
+        Timber.d("onProgressChanged(): pitch bar value: %f", 1.0f + diff/100);
 
-        player.setSpeed(1.0f + (diff/100));
+       //  player.setSpeed(1.0f + (diff/100));
     }
 
     @Override

@@ -13,6 +13,8 @@ import android.widget.SeekBar;
 
 import org.qstuff.qplayer.R;
 
+import timber.log.Timber;
+
 /**
  * Thanks to http://kersevanivan.org
  * 
@@ -78,34 +80,35 @@ public class VerticalSeekBar extends SeekBar {
         canvas.translate(-getHeight(), 0);
         int offset = getThumbOffset();
         int progress = getProgress();
-        
-        rect.set(0 + offset,
-            (getWidth() / 2) - (seekbarWidth / 2),
-            getHeight(),
-            (getWidth() / 2) + (seekbarWidth / 2));
+		
+	    rect.set(offset,
+            	 (getWidth() / 2) - (seekbarWidth / 2),
+            	 getHeight(),
+            	 (getWidth() / 2) + (seekbarWidth / 2));
         
         paint.setColor(getResources().getColor(R.color.black));
 
         canvas.drawRect(rect, paint);
-
-        if (progress > 50) {
-            
+        
+        float diff = (float)getHeight() / 1000;
+        
+        if (progress > 500) {
+	    	
             rect.set(getHeight() / 2,
-                (getWidth() / 2) - (seekbarWidth / 2),
-                getHeight() / 2 + (getHeight() / 100) * (getProgress() - 50), 
-                getWidth() / 2 + (seekbarWidth / 2));
+                	 (getWidth() / 2) - (seekbarWidth / 2),
+                     (int)(getHeight() / 2  + (diff) * (getProgress() - 500)), 
+                	 getWidth() / 2   + (seekbarWidth / 2));
             
             paint.setColor(getResources().getColor(R.color.q_orange));
             canvas.drawRect(rect, paint);
-
         }
 
-        if (progress < 50) {
-
-            rect.set(getHeight() / 2 - ((getHeight() / 100) * (50 - progress)),
-                (getWidth() / 2) - (seekbarWidth / 2),
-                getHeight() / 2,
-                getWidth() / 2 + (seekbarWidth / 2));
+        if (progress < 500) {
+	
+            rect.set((int)(getHeight() / 2 - ((diff) * (500 - progress))),
+                	 (getWidth() / 2) - (seekbarWidth / 2),
+                	 getHeight() / 2,
+                	 getWidth() / 2   + (seekbarWidth / 2));
             
             paint.setColor(getResources().getColor(R.color.q_orange));
             canvas.drawRect(rect, paint);
