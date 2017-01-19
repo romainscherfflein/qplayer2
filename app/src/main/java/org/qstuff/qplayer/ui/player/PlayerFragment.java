@@ -24,6 +24,7 @@ import org.qstuff.qplayer.Constants;
 import org.qstuff.qplayer.QPlayerApplication;
 import org.qstuff.qplayer.R;
 import org.qstuff.qplayer.controller.ExoPlayerImpl;
+import org.qstuff.qplayer.controller.MediaPlayerExtendedImpl;
 import org.qstuff.qplayer.controller.MediaPlayerImpl;
 import org.qstuff.qplayer.controller.NativePlayerImpl;
 import org.qstuff.qplayer.controller.PlayListController;
@@ -61,9 +62,11 @@ public class PlayerFragment extends AbstractBaseFragment
     
     private static final String ARG_PLAYER_TYPE = "ARG_PLAYER_TYPE";
     
-    private static final int PLAYER_TYPE_ANDROID = 0;
-    private static final int PLAYER_TYPE_EXO     = 1;
-    private static final int PLAYER_TYPE_NATIVE  = 2;
+    private static final int PLAYER_TYPE_ANDROID  = 0;
+    private static final int PLAYER_TYPE_EXO      = 1;
+    private static final int PLAYER_TYPE_NATIVE   = 2;
+    private static final int PLAYER_TYPE_EXTENDED = 3;
+
 
 
     //
@@ -276,14 +279,17 @@ public class PlayerFragment extends AbstractBaseFragment
                 player = ExoPlayerImpl.getInstance();
                 player.create(this, getContext());
                 break;
+            case PLAYER_TYPE_EXTENDED:
+                player = MediaPlayerExtendedImpl.getInstance();
+                player.create(this, getContext());
+                break;
             default:
                 player = null;
                 break;
         }        
     }
     
-    
-    //
+        //
     // Event Subscriptions
     //
         
@@ -412,7 +418,7 @@ public class PlayerFragment extends AbstractBaseFragment
     }
  
     private void updateWaveformUI(final int total, final int currentPosition) {
-        Timber.v("updateWaveformUI(): total %d, current %d", total, currentPosition);
+//        Timber.v("updateWaveformUI(): total %d, current %d", total, currentPosition);
 
         getActivity().runOnUiThread(new Runnable() {
             @SuppressLint("SetTextI18n")

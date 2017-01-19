@@ -9,6 +9,7 @@
         android:name=".QPlayerApplication"
         android:label="@string/app_name"
         android:allowBackup="true"
+        android:largeHeap="true"
         android:icon="@drawable/qplayer_launcher">
         
         <activity android:name=".QPlayerMainActivity"
