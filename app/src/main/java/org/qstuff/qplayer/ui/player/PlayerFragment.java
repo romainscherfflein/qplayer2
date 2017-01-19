@@ -63,8 +63,7 @@ public class PlayerFragment extends AbstractBaseFragment
     private static final int PLAYER_TYPE_EXO      = 1;
     private static final int PLAYER_TYPE_NATIVE   = 2;
     private static final int PLAYER_TYPE_EXTENDED = 3;
-
-
+    private static final float[] PITCH_RANGE_FACTORS = {62.5f, 33.3f, 10f, 5f};
 
     //
     // UI Elements
@@ -137,6 +136,7 @@ public class PlayerFragment extends AbstractBaseFragment
     private boolean          isRepeatOneEnabled;
     private boolean          isShufflePlayEnabled;
     private boolean          showRemainingTime;
+    private float            pitchRange;
     
     private int              playerType;
 
@@ -197,7 +197,7 @@ public class PlayerFragment extends AbstractBaseFragment
         ArrayAdapter<String> spinnerAdapter = 
             new ArrayAdapter<String>(getActivity(), 
                 android.R.layout.simple_spinner_item, 
-                getResources().getStringArray(R.array.pitch_range_values));
+                getResources().getStringArray(R.array.pitch_range_values_names));
 
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_pitch_range);
         pitchRangeSetting.setAdapter(spinnerAdapter);
@@ -409,7 +409,7 @@ public class PlayerFragment extends AbstractBaseFragment
             public void run() {
                 updateWaveformUI(total, player.getCurrentPosition());
             }
-        }, 0, 1000);
+        }, 0, 100);
     }
  
     private void stopUpdateTimer() {
@@ -653,6 +653,14 @@ public class PlayerFragment extends AbstractBaseFragment
         }
     }
 
+    // Reset Pitch
+    @OnClick(R.id.pitch_reset_button)
+    public void onPitchResetButtonClicked() {
+        Timber.d("onPitchResetButtonClicked():");
+        
+        pitchControl.reset();
+    }
+    
     //
     // QPlayerEventListener
     // 
@@ -715,11 +723,10 @@ public class PlayerFragment extends AbstractBaseFragment
 
     @Override
     public void onPitchControllChanged(int progress) {
-        Timber.d("onProgressChanged():");
+        Timber.d("onProgressChanged(): %d", progress);
 
-        float diff = progress - 50;
+        float diff = ((float) (progress - 500)) / pitchRange;
 
-        // float currPitch = (float) (((float)diff / ((float)100) * 2.0f * pitchFaktor));
         String pre = diff > 0 ? "+":"";
         if (diff == 0)
             pre = "   ";
@@ -730,11 +737,10 @@ public class PlayerFragment extends AbstractBaseFragment
 
         String pitch = String.format(" " + pre + "%02.01f", diff);
 
-        // player.setPlaybackRate(1000 + (diff * pitchRange));
         pitchControlValue.setText(pitch + " %");
 
         Timber.d("onProgressChanged(): pitch bar value: %f", diff);
-        Timber.d("onProgressChanged(): pitch bar value: %f", 1.0f + Math.abs(diff/100));
+        Timber.d("onProgressChanged(): pitch bar value: %f", 1.0f + diff/100);
 
         player.setSpeed(1.0f + (diff/100));
     }
@@ -757,14 +763,8 @@ public class PlayerFragment extends AbstractBaseFragment
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Timber.d("onItemSelected(): " + position);
 
-        String item = (String) parent.getItemAtPosition(position);
-
-        /*
-        TextView selected = ((TextView) parent.getChildAt(0));
-        selected.setTextSize(getResources().getDimension(R.dimen.font_size_version_title));
-        selected.setTypeface(Typeface.DEFAULT_BOLD);
-        selected.setTextColor(getResources().getColor(R.color.q_orange));
-        */
+        pitchRange = PITCH_RANGE_FACTORS[position];
+        onPitchControllChanged(pitchControl.getProgress());
     }
 
     @Override
