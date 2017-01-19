@@ -26,8 +26,8 @@ public class VerticalSeekBar extends SeekBar {
 
 	private Rect  rect;
 	private Paint paint ;
-	private int seekbarWidth;
-	
+	private int   seekbarWidth;
+	private int   progress = 500;
 	
 	private OnSeekBarChangeListener seekbarListener;
 	 
@@ -71,6 +71,14 @@ public class VerticalSeekBar extends SeekBar {
 	    this.seekbarListener = mListener;
 	}
 
+	public void reset() {
+
+		setProgress(500);
+		onSizeChanged(getWidth(), getHeight(), 0, 0);
+		if(seekbarListener!=null)
+			seekbarListener.onProgressChanged(this, 500, true);
+	}
+	
 	/**
 	 * this does the rotation
 	 */
@@ -79,8 +87,9 @@ public class VerticalSeekBar extends SeekBar {
         canvas.rotate(-90);
         canvas.translate(-getHeight(), 0);
         int offset = getThumbOffset();
-        int progress = getProgress();
 		
+        progress = getProgress();
+	
 	    rect.set(offset,
             	 (getWidth() / 2) - (seekbarWidth / 2),
             	 getHeight(),
@@ -96,7 +105,7 @@ public class VerticalSeekBar extends SeekBar {
 	    	
             rect.set(getHeight() / 2,
                 	 (getWidth() / 2) - (seekbarWidth / 2),
-                     (int)(getHeight() / 2  + (diff) * (getProgress() - 500)), 
+                     (int)(getHeight() / 2  + (diff) * (progress - 500)), 
                 	 getWidth() / 2   + (seekbarWidth / 2));
             
             paint.setColor(getResources().getColor(R.color.q_orange));
@@ -138,7 +147,7 @@ public class VerticalSeekBar extends SeekBar {
 	        		position = 0;
 	        	if(position > getMax())
 	        		position = getMax();
- 
+				Timber.d("settingProgress(): %s", position);
 	            setProgress(position);
 	            onSizeChanged(getWidth(), getHeight(), 0, 0);
 	            
