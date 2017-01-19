@@ -1,7 +1,4 @@
 include ':app'
 
-include ':ExoPlayerSpeed'
-project(':ExoPlayerSpeed').projectDir=new File('../ExoPlayerSpeed/library')
-
 include ':ExtendedMediaPlayer'
 project(':ExtendedMediaPlayer').projectDir=new File('../MediaPlayer-Extended/MediaPlayer')

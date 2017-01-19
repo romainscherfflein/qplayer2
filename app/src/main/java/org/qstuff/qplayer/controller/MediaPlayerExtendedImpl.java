@@ -144,7 +144,7 @@ public class MediaPlayerExtendedImpl
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         
         try {
-            player.setDataSource(new FileSource(null, file));
+            player.setDataSource(new FileSource(file));
             player.prepare();
             qPlayerEventListener.onPrepared(true);
             

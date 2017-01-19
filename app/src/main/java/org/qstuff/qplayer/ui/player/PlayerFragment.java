@@ -3,7 +3,6 @@ package org.qstuff.qplayer.ui.player;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +22,8 @@ import org.qstuff.qplayer.AbstractBaseFragment;
 import org.qstuff.qplayer.Constants;
 import org.qstuff.qplayer.QPlayerApplication;
 import org.qstuff.qplayer.R;
-import org.qstuff.qplayer.controller.ExoPlayerImpl;
 import org.qstuff.qplayer.controller.MediaPlayerExtendedImpl;
 import org.qstuff.qplayer.controller.MediaPlayerImpl;
-import org.qstuff.qplayer.controller.NativePlayerImpl;
 import org.qstuff.qplayer.controller.PlayListController;
 import org.qstuff.qplayer.controller.QPlayerEventListener;
 import org.qstuff.qplayer.controller.QPlayerWrapper;
@@ -267,29 +264,34 @@ public class PlayerFragment extends AbstractBaseFragment
     private void createPlayer() {
         
         switch (playerType) {
+
             case PLAYER_TYPE_ANDROID:
                 player = MediaPlayerImpl.getInstance();
                 player.create(this, getContext());
                 break;
+
             case PLAYER_TYPE_NATIVE:
-                player = NativePlayerImpl.getInstance();
-                player.create(this, getContext());
+//                player = NativePlayerImpl.getInstance();
+//                player.create(this, getContext());
                 break;
+
             case PLAYER_TYPE_EXO:
-                player = ExoPlayerImpl.getInstance();
-                player.create(this, getContext());
+//                player = ExoPlayerImpl.getInstance();
+//                player.create(this, getContext());
                 break;
+
             case PLAYER_TYPE_EXTENDED:
                 player = MediaPlayerExtendedImpl.getInstance();
                 player.create(this, getContext());
                 break;
+
             default:
                 player = null;
                 break;
         }        
     }
     
-        //
+    //
     // Event Subscriptions
     //
         
