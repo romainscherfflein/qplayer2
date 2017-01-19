@@ -393,20 +393,13 @@ public class PlayerFragment extends AbstractBaseFragment
             isPlaying = false;
         }
     }
-
-    private void resetUpdateTimer() {
-        
-        if (updateTimer != null) {
-            updateTimer.cancel();
-            updateTimer = null;
-        }
-        updateTaskRunning = false;
-    }
     
     private void startUpdateTimer() {
         Timber.d("startUpdateTimer(): ");
 
-        if (!isPrepared) return;
+        if (!isPrepared || updateTaskRunning) {
+            return;
+        }
 
         final int total = player.getDuration();
         updateTimer = new Timer();
@@ -419,8 +412,21 @@ public class PlayerFragment extends AbstractBaseFragment
         }, 0, 1000);
     }
  
+    private void stopUpdateTimer() {
+        updateTimer.purge();        
+    }
+
+    private void resetUpdateTimer() {
+
+        if (updateTimer != null) {
+            updateTimer.cancel();
+            updateTimer = null;
+        }
+        updateTaskRunning = false;
+    }
+    
     private void updateWaveformUI(final int total, final int currentPosition) {
-//        Timber.v("updateWaveformUI(): total %d, current %d", total, currentPosition);
+        Timber.v("updateWaveformUI(): total %d, current %d", total, currentPosition);
 
         getActivity().runOnUiThread(new Runnable() {
             @SuppressLint("SetTextI18n")
@@ -503,12 +509,16 @@ public class PlayerFragment extends AbstractBaseFragment
                 player.pause();
                 buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_play_selected));
                 isPlaying = false;
-
+                
+                resetUpdateTimer();
+                
             } else {
                 
                 player.play();
                 buttonPlay.setImageDrawable(getResources().getDrawable(R.drawable.button_pause_selected));
                 isPlaying = true;
+                
+                startUpdateTimer();
             }
         }
     }
