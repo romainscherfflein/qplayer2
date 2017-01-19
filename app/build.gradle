@@ -12,14 +12,14 @@ android {
         targetSdkVersion 25
         versionCode 16
         versionName "1.0.0"
-
+/*
         ndk {
             moduleName "opensles_wrap"
             cFlags "-DHAVE_CONFIG_H -DFPM_ARM -ffast-math -O3"
             ldLibs "OpenSLES", "log"
             stl "stlport_shared"
         }
-        
+*/        
         generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
@@ -31,7 +31,7 @@ android {
     }
 
     sourceSets.main {
-        jni.srcDirs = []
+    //    jni.srcDirs = []
     }
 
     buildTypes {
@@ -65,19 +65,15 @@ android {
             buildConfigField 'int', 'PLAYER_TYPE', '0'
         }
 
-        exoPlayer {
-            buildConfigField 'int', 'PLAYER_TYPE', '1'
-        }
-
-        nativePlayer {
-            buildConfigField 'int', 'PLAYER_TYPE', '2'    
+        extendedMediaPlayer {
+            buildConfigField 'int', 'PLAYER_TYPE', '3'
         }
 
     }
     
     externalNativeBuild {
         ndkBuild {
-            path 'src/main/jni/Android.mk'
+        //    path 'src/main/jni/Android.mk'
         }
     }
 }
@@ -102,5 +98,7 @@ dependencies {
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    compile project(':ExoPlayerSpeed')
+    
+    compile project(':ExtendedMediaPlayer')
+
 }
