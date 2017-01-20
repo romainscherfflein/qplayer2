@@ -8,18 +8,18 @@ android {
     defaultConfig {
         applicationId "org.qstuff.qplayer"
 
-        minSdkVersion 15
-        targetSdkVersion 23
-        versionCode 14
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 17
         versionName "1.0.0"
-
+/*
         ndk {
             moduleName "opensles_wrap"
             cFlags "-DHAVE_CONFIG_H -DFPM_ARM -ffast-math -O3"
             ldLibs "OpenSLES", "log"
             stl "stlport_shared"
         }
-        
+*/        
         generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
@@ -31,30 +31,49 @@ android {
     }
 
     sourceSets.main {
-        jni.srcDirs = []
+    //    jni.srcDirs = []
     }
 
     buildTypes {
+        
         debug {
             applicationIdSuffix '.dev'
-            versionNameSuffix "-dev"
+            versionNameSuffix
+
+            signingConfig android.signingConfigs.debug;
         }
+        
         beta {
             applicationIdSuffix '.beta'
             versionNameSuffix "-beta"
 
+            signingConfig android.signingConfigs.debug;
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+        
         release {
             minifyEnabled false
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    productFlavors {
+        androidPlayer {
+            buildConfigField 'int', 'PLAYER_TYPE', '0'
+        }
+
+        extendedMediaPlayer {
+            buildConfigField 'int', 'PLAYER_TYPE', '3'
+        }
+
+    }
+    
     externalNativeBuild {
         ndkBuild {
-            path 'src/main/jni/Android.mk'
+        //    path 'src/main/jni/Android.mk'
         }
     }
 }
@@ -72,9 +91,14 @@ dependencies {
     compile 'com.jakewharton.timber:timber:4.1.2'
     // Holo styling
     compile 'com.negusoft.holoaccent:library:1.0.1'
+    // Exoplayer
+    //compile 'com.google.android.exoplayer:exoplayer:r2.1.1'
     // Gson
     compile 'com.google.code.gson:gson:2.5'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
+    
+    compile project(':ExtendedMediaPlayer')
+
 }

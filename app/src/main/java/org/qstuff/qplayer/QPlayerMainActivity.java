@@ -2,14 +2,13 @@ package org.qstuff.qplayer;
 
 import org.qstuff.qplayer.ui.content.ContentFragment;
 import org.qstuff.qplayer.ui.player.PlayerFragment;
-import org.qstuff.qplayer.ui.player.QNativePlayerFragment;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -23,11 +22,6 @@ import timber.log.Timber;
  * Copyright (C) 2015 Claus Chierici, All rights reserved.
  */
 public class QPlayerMainActivity extends FragmentActivity {
-
-    private final static String TAG = "QPlayerMainActivity";
-
-    private ContentFragment contentFragment;
-    private PlayerFragment  playerFragment;
 	
     @InjectView(R.id.player_area)
     FrameLayout playerArea;
@@ -44,20 +38,24 @@ public class QPlayerMainActivity extends FragmentActivity {
 
         ButterKnife.inject(this);
         
-        // setFragmentHeights();
+        if(getResources().getBoolean(R.bool.is_phone)){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         
         // load fragments dynamically
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft;
         ft = fm.beginTransaction();
 
-        playerFragment = new PlayerFragment();
-        ft.replace(R.id.player_area, playerFragment);
-
-        contentFragment = new ContentFragment();
+        PlayerFragment frg = PlayerFragment.newInstance(BuildConfig.PLAYER_TYPE);
+        ft.replace(R.id.player_area, frg);
+        
+        ContentFragment contentFragment = new ContentFragment();
         ft.replace(R.id.browser_area, contentFragment);
 
-        ft.commitAllowingStateLoss();QPlayerApplication.getInstance().collectScreenStats();
+        ft.commitAllowingStateLoss();
+        
+        QPlayerApplication.getInstance().collectScreenStats();
     }
 
     private void setFragmentHeights() {

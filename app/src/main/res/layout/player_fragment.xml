@@ -121,8 +121,8 @@
         android:layout_marginLeft="4dp"
         android:layout_marginTop="5dp"
         android:background="@drawable/black_not_rounded_top_right_shape"
-        android:max="100"
-        android:progress="50"
+        android:max="1000"
+        android:progress="500"
         android:progressDrawable="@android:color/transparent"
         android:thumb="@drawable/pitchbar_progress_white"
         android:thumbOffset="5dp" />

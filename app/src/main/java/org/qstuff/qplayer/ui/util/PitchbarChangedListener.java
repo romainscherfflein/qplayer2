@@ -1,52 +1,34 @@
 package org.qstuff.qplayer.ui.util;
 
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.qstuff.qplayer.R;
+import org.qstuff.qplayer.controller.QPlayerEventListener;
+import org.qstuff.qplayer.controller.QPlayerWrapper;
 
-import butterknife.InjectView;
 import timber.log.Timber;
 
-/**
- * Created by Claus Chierici (chierici@karlmax-berlin.com) on 2/6/16
- * for Karlmax Berlin GmbH & Co. KG
- * <p/>
- * Copyright (C) 2013, 2014, 2015 Karlmax Berlin GmbH & Co. KG,
- * All rights reserved.
- */
+
 public class PitchbarChangedListener 
     implements SeekBar.OnSeekBarChangeListener {
 
+    private QPlayerEventListener qPlayerEventListener;
 
-    TextView pitchControlValue;
-
-    public PitchbarChangedListener(TextView pitchControlValue) {
-        this.pitchControlValue = pitchControlValue;
+    public PitchbarChangedListener(@NonNull QPlayerEventListener qPlayerEventListener) {
+        
+        this.qPlayerEventListener = qPlayerEventListener;
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        Timber.d("onProgressChanged(): SB ID: " + seekBar.getId());
+        Timber.d("onProgressChanged():");
 
         if (seekBar.getId() == R.id.pitch_control) {
-
-            int diff = progress - 50;
-            Timber.d("onProgressChanged(): pitch bar value:" + diff);
-
-            // float currPitch = (float) (((float)diff / ((float)100) * 2.0f * pitchFaktor));
-            String pre = diff > 0 ? "+":"";
-            if (diff == 0)
-                pre = "   ";
-            if (diff < 10 && diff > 0)
-                pre = "  +";
-            if (diff > -10 && diff < 0)
-                pre = "  ";
-
-            String pitch = String.format(" " + pre + "%02.01f", (float) diff);
-
-            // player.setPlaybackRate(1000 + (diff * pitchRange));
-            pitchControlValue.setText(pitch + " %");
+            qPlayerEventListener.onPitchControllChanged(progress);
         }
     }
 
@@ -61,5 +43,4 @@ public class PitchbarChangedListener
         // TODO Auto-generated method stub
 
     }
-
 }

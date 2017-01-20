@@ -1,1 +1,4 @@
 include ':app'
+
+include ':ExtendedMediaPlayer'
+project(':ExtendedMediaPlayer').projectDir=new File('../MediaPlayer-Extended/MediaPlayer')
